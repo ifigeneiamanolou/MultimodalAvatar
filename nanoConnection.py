@@ -1,14 +1,9 @@
 import os
 from openai import OpenAI
 from dotenv import load_dotenv
-import whisper
 import edge_tts
-import os
-import time
 import asyncio
-
-
-# https://dev.to/abhinowww/how-to-build-a-simple-chatbot-in-python-using-openai-step-by-step-guide-hfg
+from faster_whisper import WhisperModel
 
 load_dotenv()
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
@@ -41,12 +36,23 @@ def start_chatbot():
 
 async def main():
     # ASR
-    model = whisper.load_model("tiny")
-    result = model.transcribe("file.m4a")       # To be moved to a Google Collab GPU and to enable parallel processing (now 3.2s)
+    model = WhisperModel(model_size_or_path="large-v3", device="cuda", compute_type="int8_float16") # To investigate models
+    audio_file = "file.m4a"
+    segments, _ = model.transcribe(
+        audio_file,
+        beam_size=5,
+        vad_filter=True,
+        vad_parameters=dict(min_silence_duration_ms=500),
+    )   
+    segments = list(segments)
+    for seg in segments:
+        print(f"for segment {seg} text is {seg.text} \n")
+    # To be moved to a Google Collab GPU and to enable parallel processing (now 3.2s)
 
     # Directory with the input audio file
     file = open("input.txt", "w")
-    file.write(result["text"])
+    full_text = " ".join(seg.text for seg in segments)
+    file.write(full_text)
     file.close()
 
     # NLP
@@ -65,7 +71,7 @@ async def main():
     # Save speech in an mp4 file
     await tts.save("output.mp4")
 
-    # Generate facial animation using Audio2Face (NVIDIA)
+    # Generate facial animation using OVR Lip Syncing (NVIDIA)
 
 asyncio.run(main())
  
