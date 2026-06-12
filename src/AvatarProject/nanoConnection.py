@@ -73,5 +73,5 @@ async def main():
 
     # Generate facial animation using OVR Lip Syncing (NVIDIA)
 
-asyncio.run(main())
+asyncio.run(main())    
  
