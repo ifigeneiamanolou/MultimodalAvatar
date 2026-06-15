@@ -52,7 +52,7 @@ async def speechRecognition(websocket : WebSocket):
             print("data on which to perform suscription", audio_data);
 
             # Perform audio transcription
-            segments, info = model.transcribe(audio_data)
+            segments, _ = model.transcribe(audio_data)
             text = " ".join([segment.text for segment in segments])
 
             # Send back the result of the transcription to the frontend
@@ -81,6 +81,6 @@ async def generateTextResponse():
 
 # Some way to control facial animation on the right of the screen
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host = "127.0.0.1", port = 8000)       # Custom server configuration
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run(app, host = "127.0.0.1", port = 8000)       # Custom server configuration

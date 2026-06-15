@@ -10,7 +10,7 @@ export default function Index() {
   const mediaStream = useRef<MediaStream | null>(null);        
   const mediaRecorder = useRef<MediaRecorder | null>(null);                         // Stream of media content (several tracks)
   const chunks = useRef<Blob[]>([]);                                                // Recorded audio
-  const [recordedUrl, setRecordedUrl] = useState<string | null>(null);
+  const [recordedUrl, setRecordedUrl] = useState<string | undefined>(undefined);
   const [recordedText, setRecordedText] = useState('Waiting for recording'); 
 
   useEffect(() => {
