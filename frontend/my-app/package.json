@@ -3,6 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
+    "@breezystack/lamejs": "^1.2.7",
     "@expo/ui": "~56.0.17",
     "@heroicons/react": "^2.2.0",
     "babel-preset-expo": "^56.0.15",
@@ -20,6 +21,7 @@
     "expo-symbols": "~56.0.6",
     "expo-system-ui": "~56.0.5",
     "expo-web-browser": "~56.0.5",
+    "extendable-media-recorder": "^9.2.37",
     "nativewind": "^4.2.5",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "react": "19.2.3",
