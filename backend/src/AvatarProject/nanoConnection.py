@@ -44,6 +44,11 @@ def start_chatbot():
         print(f"You : {user_input} \n")
         return generate_response(user_input)
     
+def asr(input_audio):
+    model = WhisperModel(model_size_or_path="large-v3", device="cuda", compute_type="int8_float16") 
+    result = model.transcribe(input_audio)
+    return result
+    
 
 async def main():
     # ASR

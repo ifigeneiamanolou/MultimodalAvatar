@@ -5,7 +5,7 @@ description = "An application used to create a multimodal avatar, incorporating 
 authors = [{name = "Ifigeneia Manolou",email = "ipm33@bath.ac.uk"}]
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies=["openai (>=2.41.1,<3.0.0)", "edge-tts (>=7.2.8,<8.0.0)", "faster-whisper (>=1.2.1,<2.0.0)", "py-audio2face (>=0.1.3,<0.2.0)", "dotenv (>=0.9.9,<0.10.0)"]
+dependencies=["openai (>=2.41.1,<3.0.0)", "edge-tts (>=7.2.8,<8.0.0)", "faster-whisper (>=1.2.1,<2.0.0)", "py-audio2face (>=0.1.3,<0.2.0)", "dotenv (>=0.9.9,<0.10.0)", "fastapi[standard] (>=0.136.3,<0.137.0)"]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
