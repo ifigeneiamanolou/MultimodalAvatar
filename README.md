@@ -1,12 +1,3 @@
 # MultimodalAvatar    
 
-Ressources used 
-https://dev.to/abhinowww/how-to-build-a-simple-chatbot-in-python-using-openai-step-by-step-guide-hfg
-
-
-
-To set up facial animations
-https://github.com/NVIDIA/Audio2Face-3D-SDK
-https://github.com/NVIDIA/Audio2Face-3D-SDK/tree/main/docs (high level documentation)
-
-! Python virtual environment has to be at least version 3.10.0
+This project explores how AI can be used to render conversational agents capable of epxressing emotion both through voice and facial expressions. The goal is to map dialogue to expressive facial expressions and lip sychronization, while achieving low latency using pipelines that combine speech recognition, natural language processing, speech generation and facial animation synthesis.

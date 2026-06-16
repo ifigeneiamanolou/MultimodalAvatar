@@ -1,8 +1,41 @@
-# Welcome to your Expo app 👋
+# Introduction
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+The app is build using the Expo framework in order to enable both Android/ios installation and web applications. It is based on Typescript, along with React, tailwind css and nativewind to accomodate for mobile apps' appearance.
 
-## Get started
+# Why React and Typescript
+
+React is a popular Javascript library used to create reusable components for web applications, enabling interactive and dynamic websites. TypeScript that builds on Javascript by adding static data types, helping to catch mistakes early and maintain and understand code. Advantages of this setup include:
+
+1. Enhanced type safety and early error detection
+2. Improved code readability
+3. Scalability for large codebases
+4. Enhanced collaboration in teams
+5. Known ecosystem with a lot of ressources
+6. Improved maintainability (easy refactoring)
+
+For more detail see : https://www.geeksforgeeks.org/typescript/compelling-reasons-to-use-typescript-with-react-a-developers-guide/
+
+# Why Expo
+
+Ecosystem of tools built around React Native, designed to help built applications both for Android/ios and the Web. It helps in initializing a project, developing up to deploying and monitoring the final application. The two main services are:
+
+1. Expo Open-Source tools : Expo CLI for managing and creating projects, Expo Router (routing library that simplifies app navigaiton) and Expo CDK (a collection of over 75 pre-made APIs that provide access to devices like camera)
+
+2. Expo Application Services (EAS) : helps in shipping an application (build your application, submit on Apple Store or Google Play Store and update the application with OTA updates)
+
+See : https://www.metacto.com/blogs/what-is-expo-a-comprehensive-guide-for-mobile-app-development
+
+# Why tailwind / nativewind
+
+The key reasons for using tailwind are:
+1. rapid prototyping through inline CSS
+2. high customability
+3. active community
+4. easier adaptive design (various size screens, dark mode)
+
+See : https://dev.to/codedthemes/why-is-tailwind-css-so-popular-and-is-it-worth-using-1pmf
+
+# Get started
 
 1. Install dependencies
 
@@ -25,17 +58,7 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-### Other setup steps
+## Other setup steps
 
 - To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
 - If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
@@ -47,10 +70,3 @@ To learn more about developing your project with Expo, look at the following res
 
 - [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
 - [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
