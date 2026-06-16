@@ -155,28 +155,62 @@ export default function Index() {
   const handleText = (e : React.ChangeEvent<HTMLInputElement>) => setRecordedText(e.target.value);
 
   return (
-    <div className = "flex flex-col place-content-end items-start gap-4 p-6 h-full w-80 shadow-md shadow-gray-200 m-4">
-      <div className = "flex flex-col gap-4">
-        <div className = "scroll-smooth">
-          {messages.length === 0 ? <p> Your conversation will appear here </p> : messages.map((msg, i) => (
-              <div className = "" key = {i}>
-                <span className = "">
-                  <strong> {msg.sender} </strong> {msg.message}
-                </span>
-              </div>
-            ))
-          }
-        </div>
-        <div className = "flex flex-row gap-4 py-2">
-          <input value = {recordedText} id = "textInput" onChange = {handleText} type = "text" className = "grow focus:border-blue-300 border-gray-300 bg-gray-50 text-gray-500 text-sm p-2 border-2 rounded-lg outline-none"/>
-          <button className = "flex-none bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700" onClick = {sendText}> OK </button>
-        </div>
-        <audio className = "w-full" controls src = {recordedUrl}/>
-        <div className = "flex flex-row items-center py-2 gap-4">
-          <button className = "bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700" onClick = {startRecording}> Start Recording </button>
-          <button className = "bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700" onClick= {stopRecording}> Stop recording </button>
+    <div className = "flex flex-row h-screen py-6">
+      {/* Chat interaction */}
+      <div className = "flex flex-col place-content-end items-start gap-4 p-6 h-full w-80 shadow-md shadow-gray-300 m-4">
+        {/* Text conversation */}
+        <div className = "flex flex-col gap-4">
+          <div className = "scroll-smooth">
+            {messages.length === 0 ? <p> Your conversation will appear here </p> : messages.map((msg, i) => (
+                <div className = "" key = {i}>
+                  <span className = "">
+                    <strong> {msg.sender} </strong> {msg.message}
+                  </span>
+                </div>
+              ))
+            }
+          </div>
+
+          {/* Input through text */}
+          <div className = "flex flex-row gap-4 py-2">
+            <input value = {recordedText} id = "textInput" onChange = {handleText} type = "text" className = "grow focus:border-blue-300 border-gray-300 bg-gray-50 text-gray-500 text-sm p-2 border-2 rounded-lg outline-none"/>
+            <button className = "flex-none bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700" onClick = {sendText}> OK </button>
+          </div>
+
+          {/* Input through speech and ASR*/}
+          <audio className = "w-full" controls src = {recordedUrl}/>
+          <div className = "flex flex-row items-center py-2 gap-4">
+            <button className = "bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700" onClick = {startRecording}> Start Recording </button>
+            <button className = "bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700" onClick= {stopRecording}> Stop recording </button>
+          </div>
         </div>
       </div>
+
+      <div className = "flex flex-col flex-1 h-full">
+        {/* Avatar */}
+        <div className = "flex flex-1 basis-3/4">
+
+        </div>
+
+        {/* Feedback generation */}
+        <div className = "flex flex-1 flex-row basis-1/4 gap-4 shadow-md shadow-gray-300 m-4 p-4">
+          {/* Feedback */}
+          <div className = "flex grow border-black border-2 rounded-md"> </div>
+
+          {/* Buttons to generate feedback */}
+          <div className = "grid grid-rows-2 gap-4 place-items-center">
+            <button className = "flex items-center bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700">
+              <svg className = "fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/></svg>
+              <span> Download</span>
+            </button>
+            <button className = "bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700">
+              <span> Feedback </span>
+            </button> 
+          </div>
+
+        </div>
+      </div>
+      
     </div>
   );
 }
