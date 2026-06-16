@@ -12,8 +12,8 @@ venv/
 .json
 
 
-# Dataset 
-data/Audio2Face-3D-Samples/
+# Datasets
+backend/data/
 
 # Notebooks
 notebooks/

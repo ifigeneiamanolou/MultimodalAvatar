@@ -2973,6 +2973,17 @@ socks = ["pysocks (>=1.5.6,!=1.5.7,<2.0)"]
 zstd = ["backports-zstd (>=1.0.0) ; python_version < \"3.14\""]
 
 [[package]]
+name = "uuid"
+version = "1.30"
+description = "UUID object and generation functions (Python 2.3 or higher)"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "uuid-1.30.tar.gz", hash = "sha256:1f87cc004ac5120466f36c5beae48b4c48cc411968eed0eaecd3da82aa96193f"},
+]
+
+[[package]]
 name = "uvicorn"
 version = "0.49.0"
 description = "The lightning-fast ASGI server."
@@ -3377,4 +3388,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10"
-content-hash = "b6ef98d939c5fd8441eadee4a15896a1da75fe9228b8d6a13f236ec49bab4fe0"
+content-hash = "16bf6f3df400e1be135823ea670c6fe51dd8d1c8a23d36f7606dd55de1694bcb"
