@@ -19,3 +19,9 @@ This needs to run along with the application, so that the app runs correctly.
 # Port configuration information
 
 The backend server runs using HTTP protocol (ws when converted to a WebSocket) in "127.0.0.1" origin and port 8000. The frontend Expo server runs again using the HTTP protocol on localhost and port 8081. In case, one wants to use a different backend server URL, the corresponding variables should change in the file "index.tsx" (wsUrl, wsResponseUrl, wsAvatarUrl). In case, one wants to use a different frontend server URL, this should be reflected in the origins array used for CorsMiddleware in "avatar.py" to avoid errors.
+
+# ASR
+
+# NLP
+
+# TTS

@@ -1,5 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 import '../../global.css';
+import { Avatar } from '@readyplayerme/visage';
 
 // Site used for audio recording: https://www.cybrosys.com/blog/how-to-implement-audio-recording-in-a-react-application
 // Connection to web sockets : https://websocket.org/guides/frameworks/react/
@@ -10,13 +11,18 @@ export default function Index() {
   const ws = useRef<WebSocket | null>(null);  
   const open = useRef<boolean>(false);     // Dealing with web socket open and closing mutliple times
 
+  // Microphone recording
   const mediaStream = useRef<MediaStream | null>(null);        
   const mediaRecorder = useRef<MediaRecorder | null>(null);                         // Stream of media content (several tracks)
   const chunks = useRef<Blob[]>([]);                                                // Recorded audio
   const [recordedUrl, setRecordedUrl] = useState<string | undefined>(undefined);
 
+  // Displayed chat
   const [recordedText, setRecordedText] = useState('');
   const [messages, setMessages] = useState<{sender : string, message : string}[]>([]);
+
+  // Avatar
+  const modelSrc = 'https://readyplayerme.github.io/visage/male.glb';
 
   useEffect(() => {
     if(open.current){
@@ -184,7 +190,7 @@ export default function Index() {
       <div className = "flex flex-col flex-1 h-full">
         {/* Avatar */}
         <div className = "flex flex-1 basis-3/4">
-
+            <Avatar modelSrc={modelSrc} />
         </div>
 
         {/* Feedback generation */}

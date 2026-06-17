@@ -6,6 +6,7 @@
     "@breezystack/lamejs": "^1.2.7",
     "@expo/ui": "~56.0.17",
     "@heroicons/react": "^2.2.0",
+    "@readyplayerme/visage": "^6.16.0",
     "babel-preset-expo": "^56.0.15",
     "expo": "~56.0.11",
     "expo-constants": "~56.0.18",

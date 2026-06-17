@@ -590,6 +590,29 @@ typing-extensions = ">=4.1.0,<5.0.0"
 dev = ["black", "isort", "mypy", "pylint", "types-tabulate"]
 
 [[package]]
+name = "elevenlabs"
+version = "2.53.0"
+description = ""
+optional = false
+python-versions = "<4.0,>=3.8"
+groups = ["main"]
+files = [
+    {file = "elevenlabs-2.53.0-py3-none-any.whl", hash = "sha256:c1cb3bce2134ddc42375de77d88a8154c92bef497593ece2634b23e616ef057e"},
+    {file = "elevenlabs-2.53.0.tar.gz", hash = "sha256:4681561f12a72baffc451f5d9d14b915dffe7e3d9b007917a1b077859bc63866"},
+]
+
+[package.dependencies]
+httpx = ">=0.21.2"
+pydantic = ">=1.9.2"
+pydantic-core = ">=2.18.2"
+requests = ">=2.20"
+typing_extensions = ">=4.0.0"
+websockets = ">=11.0"
+
+[package.extras]
+pyaudio = ["pyaudio (>=0.2.14)"]
+
+[[package]]
 name = "email-validator"
 version = "2.3.0"
 description = "A robust email address syntax and deliverability validation library."
@@ -3398,5 +3421,5 @@ propcache = ">=0.2.1"
 
 [metadata]
 lock-version = "2.1"
-python-versions = ">=3.10"
-content-hash = "49bc418a528d0c01810c65028e5929401eaede614801ad8084a0404b685a15b3"
+python-versions = ">=3.10,<4.0"
+content-hash = "fed16702676417f8216bee44890d59eb1bbbe8f730d1c445ec2835572a004888"

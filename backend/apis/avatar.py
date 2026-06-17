@@ -5,17 +5,28 @@ import os
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from openai import OpenAI, RateLimitError
+from elevenlabs.client import ElevenLabs
+from elevenlabs.play import play
 
-app = FastAPI()
+# Constants
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# Environment variables
+load_dotenv()
+OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+ELEVENLABS_API_KEY = os.environ["ELEVENLABS_API_KEY"]
+
+# Servers
+app = FastAPI()
+tts = ElevenLabs(
+    api_key=ELEVENLABS_API_KEY,
+)
+client = OpenAI(api_key = OPENAI_API_KEY)
+
+# Pydantic models
 class UserInput(BaseModel):
     input : str
     session_id : str = "default"
-
-load_dotenv()
-OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
-client = OpenAI(api_key = OPENAI_API_KEY)
 
 app.add_middleware(
     CORSMiddleware,
@@ -106,7 +117,6 @@ async def speechRecognition(websocket : WebSocket):
 @app.post("/response")
 async def generateTextResponse(user_input : UserInput):
     # Retrieve file name to save the response
-    current_dir = os.getcwd()
     path = next_path(os.path.join(BASE_DIR, "../data/raw/response-%s.txt"))
 
     # Generate response from OpenAI
@@ -119,17 +129,37 @@ async def generateTextResponse(user_input : UserInput):
     # Return the response to the frontend server
     return {"response" : response}
 
-def get_answer(input, fallback = "No API credit"):
+def get_answer(input):
     try:
         answer = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4o-mini",                    # To change during production
             messages=[{"role": "user", "content": input}]
         )
         return answer.choices[0].message.content
     except RateLimitError as e:
-        return fallback
+        return "No API credit"
     except Exception as e:
-        return f"error: {e}"
+        return f"Other Error: {e}"
+
+@app.post("/tts")
+async def generateAudio(user_input : UserInput):
+    text = user_input.input
+
+    audio = tts.text_to_speech.with_raw_response.convert(
+        text = text,
+        voice_id = "JBFqnCBsd6RMkjVDRZzb",  # "George" 
+        model_id = "eleven_v3",             # To switch to v2.5-flash
+        output_format = "mp3_44100_128",
+        language_code = "en",
+    )
+
+    # Play the audio
+    play(audio)
+
+    # Save the audio
+    path = next_path(os.path.join(BASE_DIR, "../data/processed/tts-%s.txt"))
+    with open(path, "w") as f:
+        f.write(audio.data)
 
 # Some way to control facial animation on the right of the screen
 @app.post("/avatar")
