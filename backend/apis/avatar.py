@@ -7,6 +7,10 @@ from dotenv import load_dotenv
 from openai import OpenAI, RateLimitError
 from elevenlabs.client import ElevenLabs
 from elevenlabs.play import play
+from phonemizer import phonemize
+from phonemizer.separator import Separator
+from phonemizer.backend import EspeakBackend
+import pandas as pd
 
 # Constants
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -22,6 +26,9 @@ tts = ElevenLabs(
     api_key=ELEVENLABS_API_KEY,
 )
 client = OpenAI(api_key = OPENAI_API_KEY)
+backend = EspeakBackend(language = 'en',
+                        preserve_punctuation = True, 
+                        with_stress = True)
 
 # Pydantic models
 class UserInput(BaseModel):
@@ -89,7 +96,7 @@ async def speechRecognition(websocket : WebSocket):
             try:
                 # Perform audio transcription
                 segments, _ = model.transcribe(
-                    path,                  # Absolute path to webm file stored locally
+                    path,                     # Absolute path to webm file stored locally
                     language = "en",
                     no_speech_threshold=0.4,  # default is 0.6
                     log_prob_threshold=-1.0,
@@ -148,7 +155,7 @@ async def generateAudio(user_input : UserInput):
     audio = tts.text_to_speech.with_raw_response.convert(
         text = text,
         voice_id = "JBFqnCBsd6RMkjVDRZzb",  # "George" 
-        model_id = "eleven_v3",             # To switch to v2.5-flash
+        model_id = "eleven_flash_v2_5",            
         output_format = "mp3_44100_128",
         language_code = "en",
     )
@@ -161,10 +168,18 @@ async def generateAudio(user_input : UserInput):
     with open(path, "w") as f:
         f.write(audio.data)
 
-# Some way to control facial animation on the right of the screen
+# Generate facial animations given input text
 @app.post("/avatar")
-async def generateAnimations():
-    pass
+async def generateAnimations(text : str):
+    try:
+        result = backend.phonemize(
+            text, 
+            separator = Separator(phone = None, syllable = "|", word = " "),
+            njobs = 4
+        )       # returns list[str]
+    except Exception as e:
+        print(f"Error during phonemization : {e}")
+
 
 if __name__ == "__main__":
     import uvicorn
