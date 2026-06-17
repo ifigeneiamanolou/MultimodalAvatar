@@ -1,13 +1,17 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Path
 from fastapi.middleware.cors import CORSMiddleware
-import numpy as np
 from faster_whisper import WhisperModel
 import os
+from pydantic import BaseModel
 from dotenv import load_dotenv
 from openai import OpenAI, RateLimitError
-import uuid
 
 app = FastAPI()
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+class UserInput(BaseModel):
+    input : str
+    session_id : str = "default"
 
 load_dotenv()
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
@@ -15,7 +19,7 @@ client = OpenAI(api_key = OPENAI_API_KEY)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins = ["http://localhost:8081", "http://127.0.0.1:8081"],       
+    allow_origins = ["http://localhost:8081"],          # Change in production    
     allow_headers = ["*"],
     allow_methods = ["*"],
     allow_credentials = True      
@@ -42,7 +46,19 @@ class ConnectionManager:        # Class to manage mutliple web socket clients
 manager = ConnectionManager()
 
 # Load the whisper model
-model = WhisperModel(model_size_or_path="small", compute_type = "float32")        # Connect to strong GPU
+model = WhisperModel(model_size_or_path="small", device="cpu", compute_type="int8")        # Connect to strong GPU
+
+# Finds the next available path using binary search
+def next_path(path_pattern):
+    i = 1
+    while os.path.exists(path_pattern % i):
+        i = i * 2
+    a, b = (i // 2, i)
+    while a + 1 < b:
+        c = (a + b) 
+        a, b = (c, b) if os.path.exists(path_pattern % c) else (a, c)
+
+    return path_pattern % b
 
 # Perform automatic speech recognition using Whisper
 @app.websocket("/asr")
@@ -52,23 +68,28 @@ async def speechRecognition(websocket : WebSocket):
     try:
         while True:
             # Receive data from the client
-            data = await websocket.receive_bytes()   
-            await manager.send_personal(websocket, "Received input audio, processing ...")   
-
+            data = await websocket.receive_bytes()  
+            
+            # Save raw audio into a webm file   
+            path = next_path(os.path.join(BASE_DIR, "../data/raw/audio-%s.webm"))
+            with open(path, "wb") as f:
+                f.write(data)
+            
             try:
-                # Convert from audio data to numpy integer array
-                audio_data = np.frombuffer(data, dtype = np.int16).astype(np.float32) / 32768.0
-
                 # Perform audio transcription
                 segments, _ = model.transcribe(
-                    audio_data, 
+                    path,                  # Absolute path to webm file stored locally
                     language = "en",
                     no_speech_threshold=0.4,  # default is 0.6
                     log_prob_threshold=-1.0,
-                    condition_on_previous_text=False,
-                    initial_prompt = "ignore noise, white space, musical background sounds, and transcribe the part that speaks. Don't transcribe empty audio"
+                    condition_on_previous_text=False
                 )
                 text = " ".join([segment.text for segment in segments])
+
+                # Save the transcription result
+                path = next_path(os.path.join(BASE_DIR, "../data/processed/transcription-%s.txt"))
+                with open(path, "w") as f:
+                    f.write(text)
 
                 # Send back the result of the transcription to the frontend
                 await manager.send_personal(websocket, text)
@@ -76,55 +97,45 @@ async def speechRecognition(websocket : WebSocket):
                 await manager.send_personal(websocket, f"Error {e}")
     except WebSocketDisconnect:
         print("Client disconnected")
+    except Exception as e:
+        print(f"Error : {e}")
     finally:
         await manager.disconnect(websocket)
 
-# Generate an NLP response given a text or audio user input
-@app.websocket("/response")
-async def generateTextResponse(websocket : WebSocket):
-    await manager.connect(websocket)
+# Generate an NLP response given the file with the user input
+@app.post("/response")
+async def generateTextResponse(user_input : UserInput):
+    # Retrieve file name to save the response
+    current_dir = os.getcwd()
+    path = next_path(os.path.join(BASE_DIR, "../data/raw/response-%s.txt"))
 
+    # Generate response from OpenAI
+    response = get_answer(user_input.input)
+
+    # Save the response to a file                               
+    with open(path, "w") as f:
+        f.write(response)
+
+    # Return the response to the frontend server
+    return {"response" : response}
+
+def get_answer(input, fallback = "No API credit"):
     try:
-        while True:
-            # Receive text from the client
-            user_input = await websocket.receive_text()  
-
-            # Download a text file with the response
-            filename = uuid.uuid4().hex + ".txt"
-            directory = "../data/processed"
-
-            # Generate response from OpenAI
-            response = get_answer(user_input)
-
-            # Save the response to a file                                   !! TO TRANSITION TO JSON
-            with open(os.path.join(directory, filename), "w") as f:
-                f.write(response)
-
-            # Send back via the web socket
-            await manager.send_personal(websocket, response)
-    except WebSocketDisconnect:
-        print("Client disconnected")
-    finally:
-        await manager.disconnect(websocket)
-
-def get_answer(input, fallback = "Default answer"):
-    try:
-        answer = client.responses.create(
-                    model = "gpt-5.4-mini",
-                    input = input
+        answer = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": input}]
         )
-        return answer.output_text
+        return answer.choices[0].message.content
     except RateLimitError as e:
         return fallback
+    except Exception as e:
+        return f"error: {e}"
 
 # Some way to control facial animation on the right of the screen
-@app.websocket("/avatar")
-async def generateAnimations(websocket : WebSocket):
-    await manager.connect(websocket)        # Connect the client to the websocket manager
+@app.post("/avatar")
+async def generateAnimations():
+    pass
 
-    try:
-        data = await websocket.receive_text()
-    except WebSocketDisconnect:
-        print("Client Disconnected")
-    finally:
-        await manager.disconnect(websocket)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host = "127.0.0.1", port = 8000, ws_ping_interval = 20, ws_ping_timeout = 60)

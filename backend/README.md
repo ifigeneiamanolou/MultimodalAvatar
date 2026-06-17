@@ -33,3 +33,9 @@ When first cloning the application, use the following command to download all ne
    ```
 
 All settings related to poetry can be found in file "pyproject.toml" along with "poetry.lock" (never changed by the developer).
+
+To activate the virtual environment created by Poetry run the following and then run the command provided :
+
+   ```bash
+   poetry env activate
+   ```

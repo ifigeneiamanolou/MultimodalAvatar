@@ -6,12 +6,10 @@ import '../../global.css';
 // Web sockets: https://medium.com/@suganthi2496/fastapi-websockets-react-real-time-features-for-your-modern-apps-b8042a10fd90
 
 export default function Index() {
-  // Web Socket connections
+  // Web Socket connection
   const ws = useRef<WebSocket | null>(null);  
-  const wsResponse = useRef<WebSocket | null>(null);
-  const wsAvatar = useRef<WebSocket | null>(null);
-  const open = useRef<boolean>(false);     // Dealing with web sockets open and closing mutliple times
-  
+  const open = useRef<boolean>(false);     // Dealing with web socket open and closing mutliple times
+
   const mediaStream = useRef<MediaStream | null>(null);        
   const mediaRecorder = useRef<MediaRecorder | null>(null);                         // Stream of media content (several tracks)
   const chunks = useRef<Blob[]>([]);                                                // Recorded audio
@@ -28,8 +26,6 @@ export default function Index() {
     
     // Use secure WebSocket in production
     const wsUrl = "ws://127.0.0.1:8000/asr";
-    const wsResponseUrl = "ws://127.0.0.1:8000/response";
-    const wsAvatarUrl= "ws://127.0.0.1:8000/avatar"
 
     // ASR WebSocket
     ws.current = new WebSocket(wsUrl);
@@ -37,40 +33,40 @@ export default function Index() {
     // Handle the event the web socket connection opens
     ws.current.onopen = () => {console.log("WS open");};
 
-    // Handle the event a message is sent
+    // Handle the event a message is sent (with the transcripted audio)
     ws.current.onmessage = (event) => {
       if(event.data == "Received input audio, processing ..."){
         displayTextGradual(event.data, "Attention : ");
-      } else {
+      } else{
         displayTextGradual(event.data, "You : ");
       }
 
+      getResponse(event.data);
     };
 
     // Handle the event the connection closes
     ws.current.onclose = () => {console.log("WS closed");};
-
-    // Response webSocket
-    wsResponse.current = new WebSocket(wsResponseUrl);
-    wsResponse.current.onopen = () => {console.log("WS response open");};
-    wsResponse.current.onmessage = (event) => {
-      displayTextGradual(event.data, "Bot : ");
-    };
-    wsResponse.current.onclose = () => {console.log("WS response closed");};
-
-    // Avatar webSocket
-    wsAvatar.current = new WebSocket(wsAvatarUrl);
-    wsAvatar.current.onopen = () => {console.log("WS avatar open");};
-    wsAvatar.current.onmessage = (event) => {};
-    wsAvatar.current.onclose = () => {console.log("WS avatar closed");};
   
     // Cleanup
     return () => {
       ws.current?.close(1000, "unmounted");
-      wsAvatar.current?.close(1000, "unmounted");
-      wsResponse.current?.close(1000, "unmounted");
     };
   }, []);
+
+  const getResponse = async (text : string) => {
+    try{
+      const res = await fetch("http://localhost:8000/response", {
+        method : "POST",
+        body : JSON.stringify({input : text, session_id : "default"}),
+        headers: {"Content-Type": "application/json"}
+      });
+      const data = await res.json();
+      console.log(data.response);
+      displayTextGradual(data["response"], "Bot : ");
+    } catch (error){
+      console.log(error);
+    }
+  };
 
   const startRecording = async () => {
     try {
@@ -88,8 +84,9 @@ export default function Index() {
       // Handle the ending of audio input
       mediaRecorder.current.onstop = async (e) => {
         const recordedBlob = new Blob(
-          chunks.current, {type : 'audio/webm'}
+          chunks.current, {type : 'audio/mp3'}
         )
+
         const data = await recordedBlob.arrayBuffer();
 
         if (ws.current?.readyState === WebSocket.OPEN){
@@ -124,10 +121,8 @@ export default function Index() {
     // Show the user input
     displayTextGradual(recordedText, "You : ");
 
-    // Send the user input to OpenAI to generate a response
-    if (wsResponse.current?.readyState === WebSocket.OPEN){
-      wsResponse.current.send(recordedText);
-    }
+    // Send the query to openai and display the answer
+    getResponse(recordedText);
 
     // Clear the input field
     setRecordedText('');
@@ -173,7 +168,7 @@ export default function Index() {
 
           {/* Input through text */}
           <div className = "flex flex-row gap-4 py-2">
-            <input value = {recordedText} id = "textInput" onChange = {handleText} type = "text" className = "grow focus:border-blue-300 border-gray-300 bg-gray-50 text-gray-500 text-sm p-2 border-2 rounded-lg outline-none"/>
+            <input value = {recordedText} placeholder= "Hello, let's start this interview" title = "User input" id = "textInput" onChange = {handleText} type = "text" className = "grow focus:border-blue-300 border-gray-300 bg-gray-50 text-gray-500 text-sm p-2 border-2 rounded-lg outline-none"/>
             <button className = "flex-none bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700" onClick = {sendText}> OK </button>
           </div>
 
@@ -195,7 +190,7 @@ export default function Index() {
         {/* Feedback generation */}
         <div className = "flex flex-1 flex-row basis-1/4 gap-4 shadow-md shadow-gray-300 m-4 p-4">
           {/* Feedback */}
-          <div className = "flex grow border-black border-2 rounded-md"> </div>
+          <div className = "flex grow bg-gray-50 border-gray-300 border-2 rounded-lg"> </div>
 
           {/* Buttons to generate feedback */}
           <div className = "grid grid-rows-2 gap-4 place-items-center">

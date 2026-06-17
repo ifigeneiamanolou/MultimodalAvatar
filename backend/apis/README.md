@@ -6,11 +6,15 @@ See : https://www.geeksforgeeks.org/web-tech/what-is-web-socket-and-how-it-is-di
 
 # Running the server
 
-To run the backend FastAPI server redirect to the "apis" folder and run:
+To run the backend FastAPI server in development mode (live changes) redirect to the "apis" folder and run:
 
 fastapi dev avatar.py
 
-This needs to run along with the application, so that it runs correctly.
+or run the python script directly, using (notice you need to re-run the server when making a change with this):
+
+py avatar.py
+
+This needs to run along with the application, so that the app runs correctly.
 
 # Port configuration information
 
