@@ -61,14 +61,23 @@ export default function Index() {
 
   const getResponse = async (text : string) => {
     try{
+      // Fetch a response from OpenAI
       const res = await fetch("http://localhost:8000/response", {
         method : "POST",
         body : JSON.stringify({input : text, session_id : "default"}),
         headers: {"Content-Type": "application/json"}
       });
+
+      // Display the response
       const data = await res.json();
-      console.log(data.response);
       displayTextGradual(data["response"], "Bot : ");
+
+      // Convert to speech and generate animations
+      await fetch("http://localhost:8000/tts", {
+        method : "POST",
+        body : JSON.stringify({input : data["response"], session_id : "default"}),
+        headers: {"Content-Type": "application/json"}
+      });
     } catch (error){
       console.log(error);
     }

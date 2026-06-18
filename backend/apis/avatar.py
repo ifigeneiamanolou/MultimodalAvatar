@@ -1,4 +1,5 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Path
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends
+from typing import Annotated
 from fastapi.middleware.cors import CORSMiddleware
 from faster_whisper import WhisperModel
 import os
@@ -7,10 +8,10 @@ from dotenv import load_dotenv
 from openai import OpenAI, RateLimitError
 from elevenlabs.client import ElevenLabs
 from elevenlabs.play import play
-from phonemizer import phonemize
 from phonemizer.separator import Separator
 from phonemizer.backend import EspeakBackend
 import pandas as pd
+import numpy as np
 
 # Constants
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -65,6 +66,38 @@ manager = ConnectionManager()
 
 # Load the whisper model
 model = WhisperModel(model_size_or_path="small", device="cpu", compute_type="int8")        # Connect to strong GPU
+
+# Generate artkit coefficients from input text
+async def generateAnimations(user_input : UserInput):
+    text = user_input.text
+    try:
+        result = backend.phonemize(
+            text, 
+            separator = Separator(phone = None, syllable = "|", word = " "),
+            njobs = 4
+        )       # returns list[str]
+    except Exception as e:
+        print(f"Error during phonemization : {e}")
+
+    # Load the dictionary of phonemes to blendhapes
+    db = pd.read_csv(os.path.join(BASE_DIR, "../data/PhoBlendDataset.csv"))
+    phoCol = db["Phoneme"]
+    _, c = db.shape
+    artkit = pd.DataFrame(dtype = float)
+
+    for pho in result:
+        # Row number for the given phoneme
+        index = np.where(phoCol ==  pho)
+
+        # Blendhsape coeffiecients
+        coeff = db.iloc[2 : c - 1, index]
+
+        # Add coefficients to the dataframe
+        artkit[pho] = coeff
+
+    # Save the blendshape coeffients
+    path = next_path(os.path.join(BASE_DIR, "../data/processed/blendshape-%s.csv"))
+    artkit.to_csv(path)
 
 # Finds the next available path using binary search
 def next_path(path_pattern):
@@ -149,7 +182,7 @@ def get_answer(input):
         return f"Other Error: {e}"
 
 @app.post("/tts")
-async def generateAudio(user_input : UserInput):
+async def generateAudio(user_input : Annotated[UserInput, Depends(generateAnimations)]):
     text = user_input.input
 
     audio = tts.text_to_speech.with_raw_response.convert(
@@ -168,18 +201,7 @@ async def generateAudio(user_input : UserInput):
     with open(path, "w") as f:
         f.write(audio.data)
 
-# Generate facial animations given input text
-@app.post("/avatar")
-async def generateAnimations(text : str):
-    try:
-        result = backend.phonemize(
-            text, 
-            separator = Separator(phone = None, syllable = "|", word = " "),
-            njobs = 4
-        )       # returns list[str]
-    except Exception as e:
-        print(f"Error during phonemization : {e}")
-
+# to look at https://dev.epicgames.com/documentation/unreal-engine/getting-started-with-pixel-streaming-in-unreal-engine?lang=en-US
 
 if __name__ == "__main__":
     import uvicorn
