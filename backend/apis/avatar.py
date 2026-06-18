@@ -12,6 +12,12 @@ from phonemizer.separator import Separator
 from phonemizer.backend import EspeakBackend
 import pandas as pd
 import numpy as np
+from phonemizer.backend.espeak.wrapper import EspeakWrapper
+
+# Espeak configuration for phoneme detection
+EspeakWrapper.set_library(
+    r"C:/Program Files/eSpeak NG/libespeak-ng.dll"
+)
 
 # Constants
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -27,9 +33,9 @@ tts = ElevenLabs(
     api_key=ELEVENLABS_API_KEY,
 )
 client = OpenAI(api_key = OPENAI_API_KEY)
-backend = EspeakBackend(language = 'en',
-                        preserve_punctuation = True, 
-                        with_stress = True)
+backend = EspeakBackend(preserve_punctuation = True, 
+                        with_stress = True,
+                        language = "en-us")
 
 # Pydantic models
 class UserInput(BaseModel):
@@ -69,7 +75,7 @@ model = WhisperModel(model_size_or_path="small", device="cpu", compute_type="int
 
 # Generate artkit coefficients from input text
 async def generateAnimations(user_input : UserInput):
-    text = user_input.text
+    text = user_input.input
     try:
         result = backend.phonemize(
             text, 

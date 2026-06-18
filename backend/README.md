@@ -4,7 +4,7 @@ The backend is built using Python and follows the file structure of most modern 
 
 Input audio from the user --> ASR (Whisper) --> Uploading txt file in backend --> NLP (OpenAI) --> TTS (Edge-TTS) --> Uploading txt file in backend --> Generation of facial animations (ArtKit) --> Avatar Rendering (MetaHumans)
 
-After the conversation betweent the avatar and the user ends, the conversation consisting of the files in the backend, is sent to a LLM to provide feedback to the user and rate his performance, through prompt engineering techniques.
+After the conversation betweent the avatar and the user ends, the conversation formatted into a JSON file, is sent to a LLM to provide feedback to the user and rate his performance, through prompt engineering techniques.
 
 # Poetry
 

@@ -13,7 +13,12 @@ venv/
 
 
 # Datasets
-backend/data/
+backend/data/Audio2Face-3D-Samples/
+backend/data/processed/
+backend/data/raw/
+backend/data/feedback/
+backend/data/processed/file.json
+backend/data/processed/file.txt
 
 # Notebooks
 notebooks/
