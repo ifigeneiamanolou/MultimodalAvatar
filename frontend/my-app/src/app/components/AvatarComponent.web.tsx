@@ -1,4 +1,4 @@
-import { Avatar } from '@readyplayerme/visage';
+
 
 interface Props{
     modelSrc : string;
@@ -6,6 +6,9 @@ interface Props{
 
 export default function AvatarComponent(props : Props){
     return(
-        <Avatar modelSrc={props.modelSrc}></Avatar>
+        // <Avatar modelSrc={props.modelSrc}></Avatar>
+        <div>
+            
+        </div>
     )
 };

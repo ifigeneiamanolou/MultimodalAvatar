@@ -1,6 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
 import '../../global.css';
-import AvatarComponent from './components/AvatarComponent'
 
 // Site used for audio recording: https://www.cybrosys.com/blog/how-to-implement-audio-recording-in-a-react-application
 // Connection to web sockets : https://websocket.org/guides/frameworks/react/
@@ -191,10 +190,8 @@ export default function Index() {
 
       <div className = "flex flex-col flex-1 h-full">
         {/* Avatar */}
-        <div className = "flex flex-1 basis-3/4">
-            <AvatarComponent modelSrc = {modelSrc}>
+        <div>
 
-            </AvatarComponent>
         </div>
 
         {/* Feedback generation */}
