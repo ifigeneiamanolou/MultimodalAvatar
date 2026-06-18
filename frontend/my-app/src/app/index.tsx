@@ -1,9 +1,11 @@
 import {useEffect, useRef, useState} from 'react';
 import '../../global.css';
+import AvatarComponent from './components/AvatarComponent'
 
 // Site used for audio recording: https://www.cybrosys.com/blog/how-to-implement-audio-recording-in-a-react-application
 // Connection to web sockets : https://websocket.org/guides/frameworks/react/
 // Web sockets: https://medium.com/@suganthi2496/fastapi-websockets-react-real-time-features-for-your-modern-apps-b8042a10fd90
+// UE5 integration : https://dev.to/imaijiro/how-to-implement-socket-communication-in-unreal-engine-and-nodejs-4m0j
 
 export default function Index() {
   // Web Socket connection
@@ -31,14 +33,8 @@ export default function Index() {
     
     // Use secure WebSocket in production
     const wsUrl = "ws://127.0.0.1:8000/asr";
-
-    // ASR WebSocket
     ws.current = new WebSocket(wsUrl);
-
-    // Handle the event the web socket connection opens
     ws.current.onopen = () => {console.log("WS open");};
-
-    // Handle the event a message is sent (with the transcripted audio)
     ws.current.onmessage = (event) => {
       if(event.data == "Received input audio, processing ..."){
         displayTextGradual(event.data, "Attention : ");
@@ -48,8 +44,6 @@ export default function Index() {
 
       getResponse(event.data);
     };
-
-    // Handle the event the connection closes
     ws.current.onclose = () => {console.log("WS closed");};
   
     // Cleanup
@@ -198,7 +192,9 @@ export default function Index() {
       <div className = "flex flex-col flex-1 h-full">
         {/* Avatar */}
         <div className = "flex flex-1 basis-3/4">
-            
+            <AvatarComponent modelSrc = {modelSrc}>
+
+            </AvatarComponent>
         </div>
 
         {/* Feedback generation */}

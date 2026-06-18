@@ -10,7 +10,7 @@ from elevenlabs.client import ElevenLabs
 from elevenlabs.play import play
 from phonemizer.separator import Separator
 from phonemizer.backend import EspeakBackend
-import pandas as pd
+from pandas import DataFrame, read_csv, concat
 import numpy as np
 from phonemizer.backend.espeak.wrapper import EspeakWrapper
 
@@ -74,8 +74,7 @@ manager = ConnectionManager()
 model = WhisperModel(model_size_or_path="small", device="cpu", compute_type="int8")        # Connect to strong GPU
 
 # Generate artkit coefficients from input text
-async def generateAnimations(user_input : UserInput):
-    text = user_input.input
+async def generateAnimations(text : str) -> DataFrame:
     try:
         result = backend.phonemize(
             text, 
@@ -86,24 +85,29 @@ async def generateAnimations(user_input : UserInput):
         print(f"Error during phonemization : {e}")
 
     # Load the dictionary of phonemes to blendhapes
-    db = pd.read_csv(os.path.join(BASE_DIR, "../data/PhoBlendDataset.csv"))
+    db = read_csv(os.path.join(BASE_DIR, "../data/PhoBlendDataset.csv"))
+
+    # Extract the list of phonemes
+    phonemes = result[0].replace("|", " ").split()
     phoCol = db["Phoneme"]
     _, c = db.shape
-    artkit = pd.DataFrame(dtype = float)
+    artkit = DataFrame(dtype = float)
 
-    for pho in result:
+    for pho in phonemes:
         # Row number for the given phoneme
-        index = np.where(phoCol ==  pho)
+        index = np.where(phoCol ==  pho)[0]
 
         # Blendhsape coeffiecients
-        coeff = db.iloc[2 : c - 1, index]
+        coeff = db.iloc[index, 2 : c - 1]
 
         # Add coefficients to the dataframe
-        artkit[pho] = coeff
+        artkit = concat([artkit, DataFrame([coeff])], ignore_index = True)
 
     # Save the blendshape coeffients
     path = next_path(os.path.join(BASE_DIR, "../data/processed/blendshape-%s.csv"))
     artkit.to_csv(path)
+
+    return artkit
 
 # Finds the next available path using binary search
 def next_path(path_pattern):
@@ -159,6 +163,12 @@ async def speechRecognition(websocket : WebSocket):
     finally:
         await manager.disconnect(websocket)
 
+@app.websocket("/blendshapes")
+# This websocket in case we choose to host a server of UE5 containing our current application to send the blendshapes 
+# generated after TTS to UE5.
+async def sendBlendshapes(websocket : WebSocket):
+    pass
+
 # Generate an NLP response given the file with the user input
 @app.post("/response")
 async def generateTextResponse(user_input : UserInput):
@@ -188,9 +198,12 @@ def get_answer(input):
         return f"Other Error: {e}"
 
 @app.post("/tts")
-async def generateAudio(user_input : Annotated[UserInput, Depends(generateAnimations)]):
+async def generateAudio(user_input : UserInput):
+    # Generate animations
     text = user_input.input
+    artkit = await generateAnimations(text)
 
+    # Generate audio
     audio = tts.text_to_speech.with_raw_response.convert(
         text = text,
         voice_id = "JBFqnCBsd6RMkjVDRZzb",  # "George" 
@@ -204,7 +217,7 @@ async def generateAudio(user_input : Annotated[UserInput, Depends(generateAnimat
 
     # Save the audio
     path = next_path(os.path.join(BASE_DIR, "../data/processed/tts-%s.txt"))
-    with open(path, "w") as f:
+    with open(path, "wb") as f:
         f.write(audio.data)
 
 # to look at https://dev.epicgames.com/documentation/unreal-engine/getting-started-with-pixel-streaming-in-unreal-engine?lang=en-US

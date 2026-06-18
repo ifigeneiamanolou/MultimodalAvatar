@@ -45,7 +45,7 @@ ElevenLabs 2.5 flash was chosen for TTS, with the following advantages (as seen 
 * comparable quality to other models for the level of latency achieved
 
 # ArtKit blendshape generation
-The following pipeline is used to generate ArtKit blendshape coefficients from the audio generated after TTS, which are then applied to a MetaHuman using UE5.
+The following pipeline is used to generate ArtKit blendshape coefficients from the audio generated after TTS, which are then applied to a MetaHuman using UE5. Whether, MetaHuman with UE5 can be integrated into an application using a standard computer with no GPU access needs to be investigated. An alternative is to use ReadyPlayerMe Visage, but this is only supported for web applications, creating configuration issues.
 
 1) text to phoneme conversion (using python library phonemizer)
 2) viseme to ArtKit conversion using a custom conversion table
