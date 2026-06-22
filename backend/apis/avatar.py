@@ -1,5 +1,8 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends
-from typing import Annotated
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, HTTPException
+from pathlib import Path
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from faster_whisper import WhisperModel
 import os
@@ -14,13 +17,15 @@ from pandas import DataFrame, read_csv, concat
 import numpy as np
 from phonemizer.backend.espeak.wrapper import EspeakWrapper
 
+# ================ Configuration ================
+
 # Espeak configuration for phoneme detection
 EspeakWrapper.set_library(
     r"C:/Program Files/eSpeak NG/libespeak-ng.dll"
 )
 
 # Constants
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
 
 # Environment variables
 load_dotenv()
@@ -36,11 +41,31 @@ client = OpenAI(api_key = OPENAI_API_KEY)
 backend = EspeakBackend(preserve_punctuation = True, 
                         with_stress = True,
                         language = "en-us")
+# Load the whisper model
+model = WhisperModel(model_size_or_path="small", device="cpu", compute_type="int8")        # Connect to strong GPU
 
-# Pydantic models
+# Request body pydantic models
 class UserInput(BaseModel):
     input : str
     session_id : str = "default"
+
+class UserInputWithType(UserInput):
+    interview_type : int               # 1 corresponds to user being the interviewer and 2 to user being the interviewee
+
+# Response Body pydantic models
+class ResponseModel(BaseModel):
+    success : bool
+    data : str
+    message : str
+    meta : dict = {}
+
+# Custom exception handlers
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code = 422,
+        content = jsonable_encoder({"detail": exc.errors(), "body" : exc.body}),
+    )
 
 app.add_middleware(
     CORSMiddleware,
@@ -50,6 +75,7 @@ app.add_middleware(
     allow_credentials = True      
 )
 
+# ================ Custom classes ================
 class ConnectionManager:        # Class to manage mutliple web socket clients
     def __init__(self):
         self.active_connections : list[WebSocket] = []
@@ -70,10 +96,27 @@ class ConnectionManager:        # Class to manage mutliple web socket clients
 
 manager = ConnectionManager()
 
-# Load the whisper model
-model = WhisperModel(model_size_or_path="small", device="cpu", compute_type="int8")        # Connect to strong GPU
+# ================ Helper functions ================
 
-# Generate artkit coefficients from input text
+# Generate an NL response given the user input and the template file
+def get_answer(input : str, template_path : Path) -> str:
+    # Read the template 
+    with open(template_path, "r") as f:
+        prompt = f.read()
+
+    try:
+        answer = client.chat.completions.create(
+            model="gpt-4o-mini",                    # To change during production
+            input = prompt + input,
+            prompt_cache_retention = "24h",         # extended prompt cache retention  
+        )
+        return answer.choices[0].message.content
+    except RateLimitError as e:
+        raise HTTPException(status_code = 429, detail = f"Rate limit exceeded: {e}")
+    except Exception as e:
+        raise HTTPException(status_code = 500, detail = f"Error when making an OpenAI call : {e}")
+
+# Generate artkit coefficients from input text using phonemization and the PhoBlendDataset
 async def generateAnimations(text : str) -> DataFrame:
     try:
         result = backend.phonemize(
@@ -82,10 +125,13 @@ async def generateAnimations(text : str) -> DataFrame:
             njobs = 4
         )       # returns list[str]
     except Exception as e:
-        print(f"Error during phonemization : {e}")
+        raise HTTPException(status_code = 500, detail = f"Error when phonemizing the text : {e}")
 
     # Load the dictionary of phonemes to blendhapes
-    db = read_csv(os.path.join(BASE_DIR, "../data/PhoBlendDataset.csv"))
+    try:
+        db = read_csv(os.path.join(BASE_DIR, "../data/PhoBlendDataset.csv"))
+    except Exception as e:
+        raise HTTPException(status_code = 500, detail = f"Error when loading the PhoBlendDataset : {e}")
 
     # Extract the list of phonemes
     phonemes = result[0].replace("|", " ").split()
@@ -105,12 +151,15 @@ async def generateAnimations(text : str) -> DataFrame:
 
     # Save the blendshape coeffients
     path = next_path(os.path.join(BASE_DIR, "../data/processed/blendshape-%s.csv"))
-    artkit.to_csv(path)
+    try:
+        artkit.to_csv(path, index=False)
+    except Exception as e:
+        raise HTTPException(status_code = 500, detail = f"Error when saving the blendshape coefficients : {e}")
 
     return artkit
 
 # Finds the next available path using binary search
-def next_path(path_pattern):
+def next_path(path_pattern : str) -> str:
     i = 1
     while os.path.exists(path_pattern % i):
         i = i * 2
@@ -120,6 +169,8 @@ def next_path(path_pattern):
         a, b = (c, b) if os.path.exists(path_pattern % c) else (a, c)
 
     return path_pattern % b
+
+# ================= Web sockets ================
 
 # Perform automatic speech recognition using Whisper
 @app.websocket("/asr")
@@ -159,44 +210,42 @@ async def speechRecognition(websocket : WebSocket):
     except WebSocketDisconnect:
         print("Client disconnected")
     except Exception as e:
-        print(f"Error : {e}")
+        raise HTTPException(status_code = 500, detail = f"Error when performing speech recognition : {e}")
     finally:
         await manager.disconnect(websocket)
 
+# Endpoint to connect to the remote server (pixel streaming) and send back the blendshape coefficients in real time
 @app.websocket("/blendshapes")
-# This websocket in case we choose to host a server of UE5 containing our current application to send the blendshapes 
-# generated after TTS to UE5.
 async def sendBlendshapes(websocket : WebSocket):
     pass
 
-# Generate an NLP response given the file with the user input
+# ================= API endpoints ================
+
+# Generate an NLP response as part of the interview
 @app.post("/response")
-async def generateTextResponse(user_input : UserInput):
+async def generateTextResponse(user_input : UserInputWithType):
     # Retrieve file name to save the response
     path = next_path(os.path.join(BASE_DIR, "../data/raw/response-%s.txt"))
 
+    # Retrieve template file for the prompt
+    interview_type = user_input.interview_type
+    template_path = os.path.join(BASE_DIR, f"../data/templates/interview{interview_type}.md")
+
     # Generate response from OpenAI
-    response = get_answer(user_input.input)
+    response = get_answer(user_input.input, template_path)
 
     # Save the response to a file                               
     with open(path, "w") as f:
         f.write(response)
 
     # Return the response to the frontend server
-    return {"response" : response}
-
-def get_answer(input):
-    try:
-        answer = client.chat.completions.create(
-            model="gpt-4o-mini",                    # To change during production
-            messages=[{"role": "user", "content": input}]
-        )
-        return answer.choices[0].message.content
-    except RateLimitError as e:
-        return "No API credit"
-    except Exception as e:
-        return f"Other Error: {e}"
-
+    return {
+        "success" : True,
+        "data" : response, 
+        "message" : "Successful answer generation"
+    }
+    
+# Generate audio from text using ElevanLabs TTS and generate blendshape coefficients from the text
 @app.post("/tts")
 async def generateAudio(user_input : UserInput):
     # Generate animations
@@ -204,23 +253,45 @@ async def generateAudio(user_input : UserInput):
     artkit = await generateAnimations(text)
 
     # Generate audio
-    audio = tts.text_to_speech.with_raw_response.convert(
-        text = text,
-        voice_id = "JBFqnCBsd6RMkjVDRZzb",  # "George" 
-        model_id = "eleven_flash_v2_5",            
-        output_format = "mp3_44100_128",
-        language_code = "en",
-    )
-
-    # Play the audio
-    play(audio)
+    try:
+        audio = tts.text_to_speech.with_raw_response.convert(
+            text = text,
+            voice_id = "JBFqnCBsd6RMkjVDRZzb",  # "George" 
+            model_id = "eleven_flash_v2_5",            
+            output_format = "mp3_44100_128",
+            language_code = "en",
+        )
+    except Exception as e:
+        raise HTTPException(status_code = 500, detail = f"Error during TTS : {e}")
 
     # Save the audio
-    path = next_path(os.path.join(BASE_DIR, "../data/processed/tts-%s.txt"))
+    path = next_path(os.path.join(BASE_DIR, "../data/processed/tts-%s.mp3"))
     with open(path, "wb") as f:
         f.write(audio.data)
 
-# to look at https://dev.epicgames.com/documentation/unreal-engine/getting-started-with-pixel-streaming-in-unreal-engine?lang=en-US
+    # Save the coefficients
+    pathArtKit = next_path(os.path.join(BASE_DIR, "../data/processed/blendshape-%s.csv"))
+    with open(pathArtKit, "w") as f:
+        f.write(artkit.to_csv(index = False))
+
+    return {
+        "success" : True,
+        "data" : "", 
+        "message" : "Audio and ArtKit coefficients generated successfully"
+    }
+
+# Generate an NLP response as feedback to the user after the interview and send it back to the frontend
+@app.post("/feedback")
+async def generateFeedback(user_input : UserInput) -> ResponseModel:         # User input is the whole conversation history in text form
+    conv = user_input.input
+    template_path = os.path.join(BASE_DIR, "../data/templates/feedback.md")
+    feedback = get_answer(conv, template_path)
+    return {
+        "success" : True,
+        "data" : feedback, 
+        "message" : "Successful feedback generation"
+    }
+
 
 if __name__ == "__main__":
     import uvicorn
