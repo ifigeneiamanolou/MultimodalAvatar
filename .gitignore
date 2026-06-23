@@ -5,12 +5,6 @@
 .venv/
 venv/
 
-# Input and output files
-.m4a
-.mp3
-.txt
-.json
-
 
 # Datasets
 backend/data/Audio2Face-3D-Samples/

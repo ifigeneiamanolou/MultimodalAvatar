@@ -31,6 +31,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv()
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 ELEVENLABS_API_KEY = os.environ["ELEVENLABS_API_KEY"]
+HF_TOKEN = os.environ["HF_TOKEN"]
 
 # Servers
 app = FastAPI()
@@ -50,7 +51,7 @@ class UserInput(BaseModel):
     session_id : str = "default"
 
 class UserInputWithType(UserInput):
-    interview_type : int               # 1 corresponds to user being the interviewer and 2 to user being the interviewee
+    interview_type : int            # 1 corresponds to user being the interviewer and 2 to user being the interviewee
 
 # Response Body pydantic models
 class ResponseModel(BaseModel):
@@ -59,21 +60,34 @@ class ResponseModel(BaseModel):
     message : str
     meta : dict = {}
 
-# Custom exception handlers
-@app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    return JSONResponse(
-        status_code = 422,
-        content = jsonable_encoder({"detail": exc.errors(), "body" : exc.body}),
-    )
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins = ["http://localhost:8081"],          # Change in production    
+    allow_origins = ["http://localhost:8081",
+                     "http://localhost:8082"],          # Change in production    
     allow_headers = ["*"],
     allow_methods = ["*"],
     allow_credentials = True      
 )
+
+# Templates
+template_path1 = os.path.join(BASE_DIR, "../data/templates/interview1.md")
+with open(template_path1, "r") as f:
+    prompt1 = f.read()
+
+template_path2= os.path.join(BASE_DIR, "../data/templates/interview2.md")
+with open(template_path2, "r") as f:
+    prompt2 = f.read()
+
+feedback_path = os.path.join(BASE_DIR, "../data/templates/feedback.md")
+with open(feedback_path, "r") as f:
+    feedback_prompt = f.read()
+
+# Dictionaries
+try:
+    db = read_csv(os.path.join(BASE_DIR, "../data/PhoBlendDataset.csv"))
+except Exception as e:
+    raise HTTPException(status_code = 500, detail = f"Error when loading the PhoBlendDataset : {e}")
+
 
 # ================ Custom classes ================
 class ConnectionManager:        # Class to manage mutliple web socket clients
@@ -99,63 +113,53 @@ manager = ConnectionManager()
 # ================ Helper functions ================
 
 # Generate an NL response given the user input and the template file
-def get_answer(input : str, template_path : Path) -> str:
-    # Read the template 
-    with open(template_path, "r") as f:
-        prompt = f.read()
+def get_answer(input : str, instructions : str) -> str:
 
     try:
-        answer = client.chat.completions.create(
-            model="gpt-4o-mini",                    # To change during production
-            input = prompt + input,
+        answer = client.responses.create(
+            model="gpt-4o-mini",                   # To change during production
+            instructions = instructions,
+            input = input,
             prompt_cache_retention = "24h",         # extended prompt cache retention  
         )
-        return answer.choices[0].message.content
+        return answer.output_text
     except RateLimitError as e:
-        raise HTTPException(status_code = 429, detail = f"Rate limit exceeded: {e}")
+        return "No API credit"
     except Exception as e:
-        raise HTTPException(status_code = 500, detail = f"Error when making an OpenAI call : {e}")
+        return f"Error when generating the response : {e}"
 
 # Generate artkit coefficients from input text using phonemization and the PhoBlendDataset
 async def generateAnimations(text : str) -> DataFrame:
+    print(f"Input to generate animation function is {text} with type {type(text)}")
     try:
         result = backend.phonemize(
-            text, 
-            separator = Separator(phone = None, syllable = "|", word = " "),
-            njobs = 4
+            text = list(text),
+            # n_jobs = 4
         )       # returns list[str]
+        print(f"Phonemization result is {result}")
     except Exception as e:
         raise HTTPException(status_code = 500, detail = f"Error when phonemizing the text : {e}")
 
-    # Load the dictionary of phonemes to blendhapes
-    try:
-        db = read_csv(os.path.join(BASE_DIR, "../data/PhoBlendDataset.csv"))
-    except Exception as e:
-        raise HTTPException(status_code = 500, detail = f"Error when loading the PhoBlendDataset : {e}")
-
     # Extract the list of phonemes
-    phonemes = result[0].replace("|", " ").split()
-    phoCol = db["Phoneme"]
+    phonemes = result[0].replace(" ", "").split(", ")
+    print(f"Phonemes extracted from the text are {phonemes}")
     _, c = db.shape
-    artkit = DataFrame(dtype = float)
+    artkit = DataFrame()       # Empty dataframe to store the coefficients
 
     for pho in phonemes:
+        print(f"Processing phoneme: {pho}")
         # Row number for the given phoneme
-        index = np.where(phoCol ==  pho)[0]
+        index = np.where(db ==  pho)[0]
+        print(f"Index for phoneme {pho}: {index}")
 
-        # Blendhsape coeffiecients
+        # Blendhsape coeffiecients for the given phoneme
         coeff = db.iloc[index, 2 : c - 1]
+        print(f"Coefficients for phoneme {pho}: {coeff}")
 
         # Add coefficients to the dataframe
-        artkit = concat([artkit, DataFrame([coeff])], ignore_index = True)
+        artkit = concat([artkit, DataFrame(coeff)], ignore_index = True)
 
-    # Save the blendshape coeffients
-    path = next_path(os.path.join(BASE_DIR, "../data/processed/blendshape-%s.csv"))
-    try:
-        artkit.to_csv(path, index=False)
-    except Exception as e:
-        raise HTTPException(status_code = 500, detail = f"Error when saving the blendshape coefficients : {e}")
-
+    # Return the blendshape coefficients
     return artkit
 
 # Finds the next available path using binary search
@@ -165,14 +169,14 @@ def next_path(path_pattern : str) -> str:
         i = i * 2
     a, b = (i // 2, i)
     while a + 1 < b:
-        c = (a + b) 
+        c = (a + b) // 2
         a, b = (c, b) if os.path.exists(path_pattern % c) else (a, c)
 
     return path_pattern % b
 
 # ================= Web sockets ================
 
-# Perform automatic speech recognition using Whisper
+# Perform automatic speech recognition using Whisper and generate a response from OpenAI
 @app.websocket("/asr")
 async def speechRecognition(websocket : WebSocket):
     await manager.connect(websocket)        # Connect the client to the websocket manager
@@ -198,6 +202,9 @@ async def speechRecognition(websocket : WebSocket):
                 )
                 text = " ".join([segment.text for segment in segments])
 
+                # Generate a response from OpenAI given the transcripted question
+                # response = get_answer(text, instructions)
+
                 # Save the transcription result
                 path = next_path(os.path.join(BASE_DIR, "../data/processed/transcription-%s.txt"))
                 with open(path, "w") as f:
@@ -210,7 +217,7 @@ async def speechRecognition(websocket : WebSocket):
     except WebSocketDisconnect:
         print("Client disconnected")
     except Exception as e:
-        raise HTTPException(status_code = 500, detail = f"Error when performing speech recognition : {e}")
+        print(f"Error during WebSocket connection : {e}")
     finally:
         await manager.disconnect(websocket)
 
@@ -221,22 +228,22 @@ async def sendBlendshapes(websocket : WebSocket):
 
 # ================= API endpoints ================
 
-# Generate an NLP response as part of the interview
+# Generate an NLP response as part of the interview and save it to a txt file
 @app.post("/response")
 async def generateTextResponse(user_input : UserInputWithType):
     # Retrieve file name to save the response
     path = next_path(os.path.join(BASE_DIR, "../data/raw/response-%s.txt"))
 
-    # Retrieve template file for the prompt
-    interview_type = user_input.interview_type
-    template_path = os.path.join(BASE_DIR, f"../data/templates/interview{interview_type}.md")
-
     # Generate response from OpenAI
-    response = get_answer(user_input.input, template_path)
+    response = get_answer(
+        user_input.input,
+        prompt1 if user_input.interview_type == 1 else prompt2
+    )
 
     # Save the response to a file                               
     with open(path, "w") as f:
         f.write(response)
+    print(response)
 
     # Return the response to the frontend server
     return {
@@ -248,9 +255,11 @@ async def generateTextResponse(user_input : UserInputWithType):
 # Generate audio from text using ElevanLabs TTS and generate blendshape coefficients from the text
 @app.post("/tts")
 async def generateAudio(user_input : UserInput):
-    # Generate animations
+    # Generate blendshape coeffiecients and store them in a csv file
     text = user_input.input
     artkit = await generateAnimations(text)
+    path = next_path(os.path.join(BASE_DIR, "../data/processed/blendshape-%s.csv"))
+    artkit.to_csv(path, index=False)
 
     # Generate audio
     try:
@@ -258,22 +267,21 @@ async def generateAudio(user_input : UserInput):
             text = text,
             voice_id = "JBFqnCBsd6RMkjVDRZzb",  # "George" 
             model_id = "eleven_flash_v2_5",            
-            output_format = "mp3_44100_128",
             language_code = "en",
         )
+
+        # Save audio as mp3 file 
+        path = next_path(os.path.join(BASE_DIR, "../data/processed/tts-%s.mp3"))
+        with open(path, "w") as f:
+            f.write(audio.data)
     except Exception as e:
-        raise HTTPException(status_code = 500, detail = f"Error during TTS : {e}")
+        print(f"Error when generating audio from text : {e}")
 
-    # Save the audio
-    path = next_path(os.path.join(BASE_DIR, "../data/processed/tts-%s.mp3"))
-    with open(path, "wb") as f:
-        f.write(audio.data)
-
-    # Save the coefficients
-    pathArtKit = next_path(os.path.join(BASE_DIR, "../data/processed/blendshape-%s.csv"))
-    with open(pathArtKit, "w") as f:
-        f.write(artkit.to_csv(index = False))
-
+        # Save audio as txt file with the error message
+        path = next_path(os.path.join(BASE_DIR, "../data/processed/tts-%s.txt"))
+        with open(path, "w") as f:
+            f.write(f"Error : {e}")
+    
     return {
         "success" : True,
         "data" : "", 
