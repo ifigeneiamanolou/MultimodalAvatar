@@ -17,7 +17,7 @@ from pandas import DataFrame, read_csv, concat
 import numpy as np
 from phonemizer.backend.espeak.wrapper import EspeakWrapper
 import pandas as pd
-import time
+# import time
 
 # ================ Configuration ================
 
@@ -45,21 +45,6 @@ backend = EspeakBackend(preserve_punctuation = True,
                         language = "en-us")
 # Load the whisper model
 model = WhisperModel(model_size_or_path="small", device="cpu", compute_type="int8")        # Connect to strong GPU
-
-# Request body pydantic models
-class UserInput(BaseModel):
-    input : str
-    session_id : str = "default"
-
-class UserInputWithType(UserInput):
-    interview_type : int            # 1 corresponds to user being the interviewer and 2 to user being the interviewee
-
-# Response Body pydantic models
-class ResponseModel(BaseModel):
-    success : bool
-    data : str
-    message : str
-    meta : dict = {}
 
 app.add_middleware(
     CORSMiddleware,
@@ -89,6 +74,22 @@ try:
 except Exception as e:
     raise HTTPException(status_code = 500, detail = f"Error when loading the PhoBlendDataset : {e}")
 
+# ================== Pydantic models ===================
+
+# Request body pydantic models
+class UserInput(BaseModel):
+    input : str
+    session_id : str = "default"
+
+class UserInputWithType(UserInput):
+    interview_type : int            # 1 corresponds to user being the interviewer and 2 to user being the interviewee
+
+# Response Body pydantic models
+class ResponseModel(BaseModel):
+    success : bool
+    data : str
+    message : str
+    meta : dict = {}
 
 # ================ Custom classes ================
 class ConnectionManager:        # Class to manage mutliple web socket clients
@@ -255,14 +256,22 @@ async def generateTextResponse(user_input : UserInputWithType):
     
 # Generate audio from text using ElevanLabs TTS and generate blendshape coefficients from the text
 @app.post("/tts")
-async def generateAudio(user_input : UserInput):
-    # Generate blendshape coeffiecients and store them in a csv file
+async def generateAudio(user_input : UserInput) -> ResponseModel:
     text = user_input.input
-    artkit = await generateAnimations(text)
-    path = next_path(os.path.join(BASE_DIR, "../data/processed/blendshape-%s.csv"))
-    artkit.to_csv(path, header = False)
 
-    # Generate audio
+    # ================= Blendshape generation ===============
+    try:
+        artkit = await generateAnimations(text)
+        path = next_path(os.path.join(BASE_DIR, "../data/processed/blendshape-%s.csv"))
+        artkit.to_csv(path, header = False)
+    except Exception as e:
+        return {
+            "success" : False,
+            "data" : "",
+            "message" : f"Error during coefficient generation : {e}"
+        }
+
+    # ================ TTS generation =================
     try:
         audio = tts.text_to_speech.with_raw_response.convert(
             text = text,
@@ -271,27 +280,27 @@ async def generateAudio(user_input : UserInput):
             language_code = "en",
         )
     except Exception as e:
-        print(f"Error when generating audio from text : {e}")
-
-        # Save audio as txt file with the error message
-        path = next_path(os.path.join(BASE_DIR, "../data/processed/tts-%s.txt"))
-        with open(path, "w") as f:
-            f.write(f"Error : {e}")
-
         return {
             "success" : False,
             "data" : "", 
-            "message" : f"Error during generation {e}"
+            "message" : f"Error during TTS conversion : {e}"
         }
-
-    # Save audio as mp3 file if transcription was successful
-    path = next_path(os.path.join(BASE_DIR, "../data/processed/tts-%s.mp3"))
-    with open(path, "w") as f:
-        f.write(audio.data)
+    
+    # ================ Audio upload ===================
+    try: 
+        pathAudio = next_path(os.path.join(BASE_DIR, "../data/processed/tts-%s.mp3"))
+        with open(pathAudio, "w") as f:
+            f.write(audio)
+    except Exception as e:
+        return{
+            "success" : False,
+            "data" : "",
+            "message" : f"Error during audio upload : {e}"
+        }
     
     return {
         "success" : True,
-        "data" : "", 
+        "data" : {"audio_path" : pathAudio, "blendshape_path" : path}, 
         "message" : "Audio and ArtKit coefficients generated successfully"
     }
 
