@@ -1,0 +1,38 @@
+import React, { useEffect, useRef } from "react";
+import { Int32 } from "react-native/Libraries/Types/CodegenTypes";
+
+interface Props{
+    showPopup : boolean,
+    closePopup : Function,
+    message : string
+}
+
+export default function Success({showPopup, closePopup, message} : Props){
+    const timerId = useRef<Int32>(null);
+    
+    useEffect(() => {
+        if (showPopup) {
+            //Creating a timeout
+            timerId.current = setTimeout(() => {
+                showPopup
+            }, 5000);       // Wait 5000 ms until closing the popup
+        }
+    
+        return () => {
+            //Clearing a timeout
+            clearTimeout(timerId.current);
+        };
+    }, [showPopup]);
+
+    if(!showPopup){return null}
+
+    return(
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="success">
+            <strong className="font-bold block">Success! </strong>
+            <span className="block sm:inline pr-8">{message}</span>
+            <span className="absolute top-0 right-0 px-4 py-3">
+                <svg className="fill-current h-8 w-8 text-green-500" role="button" onClick = {() => closePopup()} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+            </span>
+        </div>
+    );
+}

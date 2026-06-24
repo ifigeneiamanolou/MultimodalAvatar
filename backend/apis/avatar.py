@@ -5,6 +5,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from faster_whisper import WhisperModel
+import pyloudnorm as pyln
+import soundfile as sf
 import os
 import base64
 from pydantic import BaseModel
@@ -57,11 +59,11 @@ app.add_middleware(
 )
 
 # Templates
-template_path1 = os.path.join(BASE_DIR, "../data/templates/interview1.md")
+template_path1 = os.path.join(BASE_DIR, "../data/templates/interview1.md")      # Bot : interviewer
 with open(template_path1, "r") as f:
     prompt1 = f.read()
 
-template_path2= os.path.join(BASE_DIR, "../data/templates/interview2.md")
+template_path2= os.path.join(BASE_DIR, "../data/templates/interview2.md")       # Bot : interviewee
 with open(template_path2, "r") as f:
     prompt2 = f.read()
 
@@ -183,40 +185,48 @@ def next_path(path_pattern : str) -> str:
 @app.websocket("/asr")
 async def speechRecognition(websocket : WebSocket):
     await manager.connect(websocket)        # Connect the client to the websocket manager
+    path = next_path(os.path.join(BASE_DIR, "../data/raw/audio-%s.webm"))
+    chunks = []
 
     try:
-        while True:
-            # Receive data from the client
-            data = await websocket.receive_bytes()  
-            
-            # Save raw audio into a webm file   
-            path = next_path(os.path.join(BASE_DIR, "../data/raw/audio-%s.webm"))
-            with open(path, "wb") as f:
+        # Save raw audio into a webm file   
+        with open(path, "wb") as f:
+            while True:
+                # Receive data from the client
+                data = await websocket.receive_bytes()
+
+                # Write the data
                 f.write(data)
+
+            # data, rate = sf.read(path)                          # load audio 
+            # meter = pyln.Meter(rate)                            # BS.1770 meter (maximum peak level)
+            # loudness = meter.integrated_loudness(data)          # measure loudness
+
+            # if(loudness <= -70):
+            #     print("silent")
+            #     await manager.send_personal(websocket, "")
+            #     return
             
-            try:
-                # Perform audio transcription
-                segments, _ = model.transcribe(
-                    path,                     # Absolute path to webm file stored locally
-                    language = "en",
-                    no_speech_threshold=0.4,  # default is 0.6
-                    log_prob_threshold=-1.0,
-                    condition_on_previous_text=False
-                )
-                text = " ".join([segment.text for segment in segments])
+        try:
+            # Perform audio transcription
+            segments, _ = model.transcribe(
+                path,                     # Absolute path to webm file stored locally
+                language = "en",
+                no_speech_threshold=0.4,  # default is 0.6
+                log_prob_threshold=-1.0,
+                condition_on_previous_text=False
+            )
+            text = " ".join([segment.text for segment in segments])
 
-                # Generate a response from OpenAI given the transcripted question
-                # response = get_answer(text, instructions)
+            # Save the transcription result
+            path = next_path(os.path.join(BASE_DIR, "../data/processed/transcription-%s.txt"))
+            with open(path, "w") as f:
+                f.write(text)
 
-                # Save the transcription result
-                path = next_path(os.path.join(BASE_DIR, "../data/processed/transcription-%s.txt"))
-                with open(path, "w") as f:
-                    f.write(text)
-
-                # Send back the result of the transcription to the frontend
-                await manager.send_personal(websocket, text)
-            except Exception as e:
-                await manager.send_personal(websocket, f"Error {e}")
+            # Send back the result of the transcription to the frontend
+            await manager.send_personal(websocket, text)
+        except Exception as e:
+            await manager.send_personal(websocket, f"Error {e}")
     except WebSocketDisconnect:
         print("Client disconnected")
     except Exception as e:
@@ -246,7 +256,6 @@ async def generateTextResponse(user_input : UserInputWithType):
     # Save the response to a file                               
     with open(path, "w") as f:
         f.write(response)
-    print(response)
 
     # Return the response to the frontend server
     return {
@@ -288,16 +297,12 @@ async def generateAudio(user_input : UserInput) -> ResponseModel:
             "message" : f"Error during TTS conversion : {e}"
         }
     
-    print(type(audio))
-    print(dir(audio))
-    
     # ================ Audio upload ===================
     try:
         pathAudio = next_path(os.path.join(BASE_DIR, "../data/processed/tts-%s.mp3"))
         audio_chunks = b"".join(chunk for chunk in audio if chunk)
         with open(pathAudio, "wb") as f:
             f.write(audio_chunks)
-
     except Exception as e:
         return{
             "success" : False,
@@ -325,7 +330,6 @@ async def generateFeedback(user_input : UserInput) -> ResponseModel:         # U
         "data" : feedback, 
         "message" : "Successful feedback generation"
     }
-
 
 if __name__ == "__main__":
     import uvicorn
