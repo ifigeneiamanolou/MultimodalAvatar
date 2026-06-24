@@ -54,11 +54,22 @@ export default function Home() {
       displayTextGradual(response.data, "Bot : ");
 
       //Convert to speech and generate animations
-      await fetch("http://localhost:8000/tts", {
+      const responseTTS = await fetch("http://localhost:8000/tts", {
         method : "POST",
         body : JSON.stringify({input : response.data, session_id : "default"}),
         headers: {"Content-Type": "application/json"}
       });
+
+      const result = await responseTTS.json();
+      const base64string = result.data.audio;
+      var audio = new Audio("data:audio/wav;base64," + base64string);       // use of data URL prefix
+    
+      try{
+        audio.play();
+      } catch (e) {
+        console.log(e);
+      }
+
     } catch (error){
       console.log(error);
     }

@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from faster_whisper import WhisperModel
 import os
+import base64
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from openai import OpenAI, RateLimitError
@@ -293,10 +294,9 @@ async def generateAudio(user_input : UserInput) -> ResponseModel:
     # ================ Audio upload ===================
     try:
         pathAudio = next_path(os.path.join(BASE_DIR, "../data/processed/tts-%s.mp3"))
+        audio_chunks = b"".join(chunk for chunk in audio if chunk)
         with open(pathAudio, "wb") as f:
-            for chunk in audio:
-                if chunk:
-                    f.write(chunk)
+            f.write(audio_chunks)
 
     except Exception as e:
         return{
@@ -307,7 +307,10 @@ async def generateAudio(user_input : UserInput) -> ResponseModel:
     
     return {
         "success" : True,
-        "data" : {"audio_path" : pathAudio, "blendshape_path" : path}, 
+        "data" : {
+            "audio_path" : pathAudio, 
+            "blendshape_path" : path, 
+            "audio" : base64.b64encode(audio_chunks).decode("utf-8")}, 
         "message" : "Audio and ArtKit coefficients generated successfully"
     }
 
