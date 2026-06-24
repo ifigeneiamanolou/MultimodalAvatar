@@ -1,0 +1,1 @@
+Error : '_GeneratorContextManager' object has no attribute 'data'

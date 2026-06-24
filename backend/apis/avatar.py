@@ -16,6 +16,8 @@ from phonemizer.backend import EspeakBackend
 from pandas import DataFrame, read_csv, concat
 import numpy as np
 from phonemizer.backend.espeak.wrapper import EspeakWrapper
+import pandas as pd
+import time
 
 # ================ Configuration ================
 
@@ -40,7 +42,6 @@ tts = ElevenLabs(
 )
 client = OpenAI(api_key = OPENAI_API_KEY)
 backend = EspeakBackend(preserve_punctuation = True, 
-                        with_stress = True,
                         language = "en-us")
 # Load the whisper model
 model = WhisperModel(model_size_or_path="small", device="cpu", compute_type="int8")        # Connect to strong GPU
@@ -130,34 +131,34 @@ def get_answer(input : str, instructions : str) -> str:
 
 # Generate artkit coefficients from input text using phonemization and the PhoBlendDataset
 async def generateAnimations(text : str) -> DataFrame:
-    print(f"Input to generate animation function is {text} with type {type(text)}")
     try:
         result = backend.phonemize(
             text = list(text),
-            # n_jobs = 4
+            separator = Separator(phone = " ", syllable = "|", word = None),
         )       # returns list[str]
-        print(f"Phonemization result is {result}")
     except Exception as e:
         raise HTTPException(status_code = 500, detail = f"Error when phonemizing the text : {e}")
 
     # Extract the list of phonemes
-    phonemes = result[0].replace(" ", "").split(", ")
-    print(f"Phonemes extracted from the text are {phonemes}")
+    phonemes = [p.split(" ") for p in result]
+    phonemes = sum(phonemes, [])
+    phonemes = [p for p in phonemes if p != '']
     _, c = db.shape
     artkit = DataFrame()       # Empty dataframe to store the coefficients
 
     for pho in phonemes:
-        print(f"Processing phoneme: {pho}")
         # Row number for the given phoneme
-        index = np.where(db ==  pho)[0]
-        print(f"Index for phoneme {pho}: {index}")
+        index = np.where(db.iloc[:, 1] ==  pho)[0]
+
+        # Handle the case the phoneme is not found in the dictionary
+        if index.size <= 0:
+            coeff = pd.Series([0] * c)
 
         # Blendhsape coeffiecients for the given phoneme
-        coeff = db.iloc[index, 2 : c - 1]
-        print(f"Coefficients for phoneme {pho}: {coeff}")
+        coeff = db.iloc[index, 2 : c].reset_index(drop = True)
 
         # Add coefficients to the dataframe
-        artkit = concat([artkit, DataFrame(coeff)], ignore_index = True)
+        artkit = concat([artkit, coeff], ignore_index = True)
 
     # Return the blendshape coefficients
     return artkit
@@ -259,7 +260,7 @@ async def generateAudio(user_input : UserInput):
     text = user_input.input
     artkit = await generateAnimations(text)
     path = next_path(os.path.join(BASE_DIR, "../data/processed/blendshape-%s.csv"))
-    artkit.to_csv(path, index=False)
+    artkit.to_csv(path, header = False)
 
     # Generate audio
     try:
@@ -269,11 +270,6 @@ async def generateAudio(user_input : UserInput):
             model_id = "eleven_flash_v2_5",            
             language_code = "en",
         )
-
-        # Save audio as mp3 file 
-        path = next_path(os.path.join(BASE_DIR, "../data/processed/tts-%s.mp3"))
-        with open(path, "w") as f:
-            f.write(audio.data)
     except Exception as e:
         print(f"Error when generating audio from text : {e}")
 
@@ -281,6 +277,17 @@ async def generateAudio(user_input : UserInput):
         path = next_path(os.path.join(BASE_DIR, "../data/processed/tts-%s.txt"))
         with open(path, "w") as f:
             f.write(f"Error : {e}")
+
+        return {
+            "success" : False,
+            "data" : "", 
+            "message" : f"Error during generation {e}"
+        }
+
+    # Save audio as mp3 file if transcription was successful
+    path = next_path(os.path.join(BASE_DIR, "../data/processed/tts-%s.mp3"))
+    with open(path, "w") as f:
+        f.write(audio.data)
     
     return {
         "success" : True,

@@ -15,7 +15,7 @@ function App() {
     return (
         <Router>
             <Routes>
-                # Include here all pages of the application :
+                # Include here all pages of the application with the corresponding path :
                 <Route path="/" element={<Home />} />
                 <Route path = "/login" element = {<Login/>}/>
                 <Route path = "/signup" element = {<Signup/>}/>
