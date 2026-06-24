@@ -87,7 +87,7 @@ class UserInputWithType(UserInput):
 # Response Body pydantic models
 class ResponseModel(BaseModel):
     success : bool
-    data : str
+    data : str | dict
     message : str
     meta : dict = {}
 
@@ -273,11 +273,12 @@ async def generateAudio(user_input : UserInput) -> ResponseModel:
 
     # ================ TTS generation =================
     try:
-        audio = tts.text_to_speech.with_raw_response.convert(
+        audio = tts.text_to_speech.convert(
             text = text,
             voice_id = "JBFqnCBsd6RMkjVDRZzb",  # "George" 
             model_id = "eleven_flash_v2_5",            
             language_code = "en",
+            output_format = "mp3_22050_32",
         )
     except Exception as e:
         return {
@@ -286,11 +287,17 @@ async def generateAudio(user_input : UserInput) -> ResponseModel:
             "message" : f"Error during TTS conversion : {e}"
         }
     
+    print(type(audio))
+    print(dir(audio))
+    
     # ================ Audio upload ===================
-    try: 
+    try:
         pathAudio = next_path(os.path.join(BASE_DIR, "../data/processed/tts-%s.mp3"))
-        with open(pathAudio, "w") as f:
-            f.write(audio)
+        with open(pathAudio, "wb") as f:
+            for chunk in audio:
+                if chunk:
+                    f.write(chunk)
+
     except Exception as e:
         return{
             "success" : False,
