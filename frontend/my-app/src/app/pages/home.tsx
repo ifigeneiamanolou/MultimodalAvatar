@@ -28,6 +28,12 @@ export default function Home() {
   // Toggle
   const [interviewer, setInterviewer] = useState(true);
 
+  // Reset button
+  const [waiting, setWaiting] = useState(false);
+
+  // Feedback
+  const [feedback, setFeedback] = useState('');
+
   useEffect(() => {
     // Use secure WebSocket in production
     const wsUrl = "ws://127.0.0.1:8000/asr";
@@ -51,18 +57,19 @@ export default function Home() {
     };
   }, []);
 
-  const getResponse = async (text : string) => {
+  const getResponse = async (text : string, feedback : boolean = false) => {
     try{
       // Fetch a response from OpenAI
       const interview_type = interviewer ? 1 : 2;
+      setWaiting(true);           // Waiting for response from OpenAI
 
       const res = await fetch("http://localhost:8000/response", {
         method : "POST",
         body : JSON.stringify({input : text, session_id : "default", interview_type : interview_type}),
         headers: {"Content-Type": "application/json"}
       });
+      setWaiting(false);
 
-      // Display the response
       const response = await res.json();
       displayTextGradual(response.data, "Bot : ");
 
@@ -77,13 +84,11 @@ export default function Home() {
       const result = await responseTTS.json();
       const base64string = result.data.audio;
       var audio = new Audio("data:audio/wav;base64," + base64string);       // use of data URL prefix
-    
       try{
         audio.play();
       } catch (e) {
         console.log(e);
       }
-
     } catch (error){
       console.log(error);
     }
@@ -175,9 +180,47 @@ export default function Home() {
     }, 120);
   };
 
-  const newConversation = () => {
+  const newConversation = async () => {
+    // Ensure bot response has been received
+    if(waiting){
+      setErrorPopUp(true);
+      setMessagePopUp("Waiting for model response. Try again.");
+      return;
+    }
+
+    // Save messages as a JSON object
+    const type = interviewer ? "interviewer" : "interviewee";
+    await fetch("http://localhost:8000/reset", {
+        method : "POST",
+        body : JSON.stringify({"interviewer" : type, "data" : messages}),
+        headers: {"Content-Type": "application/json"}
+    });
+
     // Empty the display
     setMessages([]);
+  };
+
+  const generateFeedback = async () => {
+    // Ensure bot response has been received
+    if(waiting){
+      setErrorPopUp(true);
+      setMessagePopUp("Waiting for model response. Try again.");
+      return;
+    }
+
+    // Ensure the conversation has started
+
+    // Generate feedback
+    const type = interviewer ? "interviewer" : "interviewee";
+    const res = await fetch("http://localhost:8000/feedback", {
+        method : "POST",
+        body : JSON.stringify({"interviewer" : type, "data" : messages}),
+        headers: {"Content-Type": "application/json"}
+    });
+    
+    // Display the feedback
+    const response = await res.json();
+    setFeedback(response.data);
   };
 
   const handleText = (e : React.ChangeEvent<HTMLInputElement>) => setRecordedText(e.target.value);
@@ -229,7 +272,7 @@ export default function Home() {
                   <span className="select-none ms-3 text-sm font-medium text-heading">{interviewer ? "Interviewer (bot)" : "Interviewee (bot)"}</span>
                 </label>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6" onClick = {newConversation}>
-                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" />
+                    <path d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" />
                 </svg>
               </div>
           </div>
@@ -244,7 +287,11 @@ export default function Home() {
           {/* Feedback generation */}
           <div className = "flex flex-1 flex-row basis-1/4 shadow-md shadow-gray-300 mx-4 gap-4 p-4 ">
             {/* Feedback */}
-            <div className = "flex grow bg-gray-50 border-gray-300 border-2 rounded-lg"> </div>
+            <div className = "flex grow bg-gray-50 border-gray-300 border-2 rounded-lg p-2">
+               <p className = "text-gray-500 text-sm"> 
+                {feedback === "" ? "Press feedback button ..." : feedback} 
+               </p>
+            </div>
 
             {/* Buttons to generate feedback */}
             <div className = "grid grid-rows-2 gap-4 place-items-center">
@@ -252,7 +299,7 @@ export default function Home() {
                 <svg className = "fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/></svg>
                 <span> Download</span>
               </button>
-              <button className = "bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700">
+              <button onClick = {generateFeedback} className = "bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700">
                 <span> Feedback </span>
               </button> 
             </div>

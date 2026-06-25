@@ -1,3 +1,4 @@
+import json
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, HTTPException
 from pathlib import Path
 from fastapi.encoders import jsonable_encoder
@@ -9,7 +10,6 @@ import pyloudnorm as pyln
 import soundfile as sf
 import os
 import base64
-from pydantic import BaseModel
 from dotenv import load_dotenv
 from openai import OpenAI, RateLimitError
 from elevenlabs.client import ElevenLabs
@@ -20,6 +20,7 @@ from pandas import DataFrame, read_csv, concat
 import numpy as np
 from phonemizer.backend.espeak.wrapper import EspeakWrapper
 import pandas as pd
+from .models import Messages, ResponseModel, UserInput, UserInputWithType
 # import time
 
 # ================ Configuration ================
@@ -36,7 +37,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv()
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 ELEVENLABS_API_KEY = os.environ["ELEVENLABS_API_KEY"]
-HF_TOKEN = os.environ["HF_TOKEN"]
+HF_TOKEN = os.environ["HF_TOKEN"]       # For Whisper
 
 # Servers
 app = FastAPI()
@@ -67,32 +68,19 @@ template_path2= os.path.join(BASE_DIR, "../data/templates/interview2.md")       
 with open(template_path2, "r") as f:
     prompt2 = f.read()
 
-feedback_path = os.path.join(BASE_DIR, "../data/templates/feedback.md")
-with open(feedback_path, "r") as f:
-    feedback_prompt = f.read()
+feedback_path1 = os.path.join(BASE_DIR, "../data/templates/feedback1.md")         # Bot : interviewer
+with open(feedback_path1, "r") as f:
+    feedback_prompt1 = f.read()
+
+feedback_path2 = os.path.join(BASE_DIR, "../data/templates/feedback2.md")         # Bot : interviewee
+with open(feedback_path2, "r") as f:
+    feedback_prompt2 = f.read()
 
 # Dictionaries
 try:
     db = read_csv(os.path.join(BASE_DIR, "../data/PhoBlendDataset.csv"))
 except Exception as e:
     raise HTTPException(status_code = 500, detail = f"Error when loading the PhoBlendDataset : {e}")
-
-# ================== Pydantic models ===================
-
-# Request body pydantic models
-class UserInput(BaseModel):
-    input : str
-    session_id : str = "default"
-
-class UserInputWithType(UserInput):
-    interview_type : int            # 1 corresponds to user being the interviewer and 2 to user being the interviewee
-
-# Response Body pydantic models
-class ResponseModel(BaseModel):
-    success : bool
-    data : str | dict
-    message : str
-    meta : dict = {}
 
 # ================ Custom classes ================
 class ConnectionManager:        # Class to manage mutliple web socket clients
@@ -319,17 +307,62 @@ async def generateAudio(user_input : UserInput) -> ResponseModel:
         "message" : "Audio and ArtKit coefficients generated successfully"
     }
 
+# Save the whole conversation
+@app.post("/reset")
+async def resetConversation(messages : Messages):
+    path = next_path(os.path.join(BASE_DIR, "../data/feedback/conversation-%s.json"))
+    try:
+        with open(path, "w", encoding = "utf-8") as json_file:
+            json.dump(messages.dict(), json_file, indent = 4)
+        print(f"Data successfully uploaded to {path}")
+    except Exception as e:
+        raise HTTPException(status_code = 500, detail = f"Failed to upload: {e}")
+
 # Generate an NLP response as feedback to the user after the interview and send it back to the frontend
 @app.post("/feedback")
-async def generateFeedback(user_input : UserInput) -> ResponseModel:         # User input is the whole conversation history in text form
-    conv = user_input.input
-    template_path = os.path.join(BASE_DIR, "../data/templates/feedback.md")
-    feedback = get_answer(conv, template_path)
+async def generateFeedback(messages : Messages) -> ResponseModel:         
+    path = next_path(os.path.join(BASE_DIR, "../data/feedback/conversation-%s.json"))
+    
+    # Save the conversation in local storage
+    try:
+        with open(path, "w", encoding = "utf-8") as json_file:
+            json.dump(messages.dict(), json_file, indent = 4)
+        print(f"Data successfully uploaded to {path}")
+    except Exception as e:
+        raise HTTPException(status_code = 500, detail = f"Failed to upload: {e}")
+    
+    # Retrieve file name to save the response and instructions depending on the user role
+    pathResponse = next_path(os.path.join(BASE_DIR, "../data/feedback/feedback-%s.txt"))
+    feedback_prompt = feedback_prompt1 if messages.interviewer == "interviewer" else feedback_prompt2
+
+    # Generate feedback using OpenAI
+    response = get_answer(
+        input = [
+            {
+                "role" : "user",
+                "content" : [
+                    {
+                        "type": "input_text",
+                        "text": json.dumps(messages.data)
+                    }
+                ]
+            }
+        ],
+        instructions = feedback_prompt
+    )
+
+    # Save the response to a file                               
+    with open(pathResponse, "w") as f:
+        f.write(response)
+
+    # Return the response to the frontend server to be displayed to the feedback box
     return {
         "success" : True,
-        "data" : feedback, 
-        "message" : "Successful feedback generation"
+        "data" : response, 
+        "message" : "Successful answer generation"
     }
+    
+    
 
 if __name__ == "__main__":
     import uvicorn

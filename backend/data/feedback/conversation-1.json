@@ -1,0 +1,13 @@
+{
+    "interviewer": "interviewer",
+    "data": [
+        {
+            "sender": "You : ",
+            "message": "hello"
+        },
+        {
+            "sender": "Bot : ",
+            "message": "No API credit"
+        }
+    ]
+}
