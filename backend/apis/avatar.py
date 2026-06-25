@@ -119,7 +119,7 @@ def get_answer(input : str, instructions : str) -> str:
     except RateLimitError as e:
         return "No API credit"
     except Exception as e:
-        return f"Error when generating the response : {e}"
+        raise HTTPException(status_code = 500, detail = {e})
 
 # Generate artkit coefficients from input text using phonemization and the PhoBlendDataset
 async def generateAnimations(text : str) -> DataFrame:
@@ -218,19 +218,33 @@ async def sendBlendshapes(websocket : WebSocket):
 
 # Generate an NLP response as part of the interview and save it to a txt file
 @app.post("/response")
-async def generateTextResponse(user_input : UserInputWithType):
+async def generateTextResponse(user_input : UserInputWithType) -> ResponseModel:
     # Retrieve file name to save the response
     path = next_path(os.path.join(BASE_DIR, "../data/raw/response-%s.txt"))
 
     # Generate response from OpenAI
-    response = get_answer(
-        user_input.input,
-        prompt1 if user_input.interview_type == 1 else prompt2
-    )
-
-    # Save the response to a file                               
-    with open(path, "w") as f:
-        f.write(response)
+    try:
+        response = get_answer(
+            user_input.input,
+            prompt1 if user_input.interview_type == 1 else prompt2
+        )
+    except Exception as e:
+        return{
+            "success" : False,
+            "data" : "",
+            "message" : f"Error during response generation : {e}"
+        }
+    
+    # Save the response to a file 
+    try:                              
+        with open(path, "w") as f:
+            f.write(response)
+    except Exception as e:
+        return{
+            "success" : False,
+            "data" : "",
+            "message" : f"Error during response upload : {e}"
+        }
 
     # Return the response to the frontend server
     return {
@@ -253,7 +267,7 @@ async def generateAudio(user_input : UserInput) -> ResponseModel:
         return {
             "success" : False,
             "data" : "",
-            "message" : f"Error during coefficient generation : {e}"
+            "message" : f"Error during coefficient generation and upload : {e}"
         }
 
     # ================ TTS generation =================
@@ -296,14 +310,22 @@ async def generateAudio(user_input : UserInput) -> ResponseModel:
 
 # Save the whole conversation
 @app.post("/reset")
-async def resetConversation(messages : Messages):
+async def resetConversation(messages : Messages) -> ResponseModel:
     path = next_path(os.path.join(BASE_DIR, "../data/feedback/conversation-%s.json"))
     try:
         with open(path, "w", encoding = "utf-8") as json_file:
             json.dump(messages.dict(), json_file, indent = 4)
-        print(f"Data successfully uploaded to {path}")
+        return{
+            "success" : True,
+            "data" : "",
+            "message" : "Successful reset and upload of conversation"
+        }
     except Exception as e:
-        raise HTTPException(status_code = 500, detail = f"Failed to upload: {e}")
+        return{
+            "success" : False,
+            "data" : "",
+            "message" : f"Error during conversation upload : {e}"
+        }
 
 # Generate an NLP response as feedback to the user after the interview and send it back to the frontend
 @app.post("/feedback")
@@ -316,31 +338,49 @@ async def generateFeedback(messages : Messages) -> ResponseModel:
             json.dump(messages.dict(), json_file, indent = 4)
         print(f"Data successfully uploaded to {path}")
     except Exception as e:
-        raise HTTPException(status_code = 500, detail = f"Failed to upload: {e}")
+        return{
+            "success" : False,
+            "data" : "",
+            "message" : f"Error during conversation upload : {e}"
+        }
     
     # Retrieve file name to save the response and instructions depending on the user role
     pathResponse = next_path(os.path.join(BASE_DIR, "../data/feedback/feedback-%s.txt"))
     feedback_prompt = feedback_prompt1 if messages.interviewer == "interviewer" else feedback_prompt2
 
     # Generate feedback using OpenAI
-    response = get_answer(
-        input = [
-            {
-                "role" : "user",
-                "content" : [
-                    {
-                        "type": "input_text",
-                        "text": json.dumps(messages.data)
-                    }
-                ]
-            }
-        ],
-        instructions = feedback_prompt
-    )
+    try:
+        response = get_answer(
+            input = [
+                {
+                    "role" : "user",
+                    "content" : [
+                        {
+                            "type": "input_text",
+                            "text": json.dumps(messages.data)
+                        }
+                    ]
+                }
+            ],
+            instructions = feedback_prompt
+        )
+    except Exception as e:
+        return{
+            "success" : False,
+            "data" : "",
+            "message" : f"Error during feedback generation : {e}"
+        }
 
-    # Save the response to a file                               
-    with open(pathResponse, "w") as f:
-        f.write(response)
+    # Save the response to a file  
+    try:                             
+        with open(pathResponse, "w") as f:
+            f.write(response)
+    except Exception as e:
+        return{
+            "success" : False,
+            "data" : "",
+            "message" : f"Error during feedback upload : {e}"
+        }
 
     # Return the response to the frontend server to be displayed to the feedback box
     return {
@@ -348,8 +388,6 @@ async def generateFeedback(messages : Messages) -> ResponseModel:
         "data" : response, 
         "message" : "Successful answer generation"
     }
-    
-    
 
 if __name__ == "__main__":
     import uvicorn

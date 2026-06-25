@@ -42,7 +42,7 @@ export default function Home() {
   const [waitingNLP, setWaitingNLP] = useState(false);
   const [waitingASR, setWaitingASR] = useState(false);
   const [waitingFeedback, setWaitingFeedback] = useState(false);
-  
+
   useEffect(() => {
     // Use secure WebSocket in production
     const wsUrl = "ws://127.0.0.1:8000/asr";
@@ -74,7 +74,7 @@ export default function Home() {
 
       const res = await fetch("http://localhost:8000/response", {
         method : "POST",
-        body : JSON.stringify({input : text, session_id : "default", interview_type : interview_type}),
+        body : JSON.stringify({input : text, interview_type : interview_type}),
         headers: {"Content-Type": "application/json"}
       });
       setWaiting(false);
@@ -85,7 +85,7 @@ export default function Home() {
       //Convert to speech and generate blendshape coefficients
       const responseTTS = await fetch("http://localhost:8000/tts", {
         method : "POST",
-        body : JSON.stringify({input : response.data, session_id : "default"}),
+        body : JSON.stringify({input : response.data}),
         headers: {"Content-Type": "application/json"}
       });
 
