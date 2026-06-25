@@ -225,6 +225,16 @@ export default function Home() {
 
   const handleText = (e : React.ChangeEvent<HTMLInputElement>) => setRecordedText(e.target.value);
 
+  const downloadFeedback = () => {
+    // Create a blob object of mime type text and attach to a temporary anchor element, triggered programmatically
+    const element = document.createElement("a");
+    const file = new Blob([feedback === "" ? "No feedback generated" : feedback], {type: 'text/plain'});
+    element.href = URL.createObjectURL(file);
+    element.download = "myFeedback.txt";
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+  };
+
   return (
     <div>
       {/* Pop ups */}
@@ -295,7 +305,7 @@ export default function Home() {
 
             {/* Buttons to generate feedback */}
             <div className = "grid grid-rows-2 gap-4 place-items-center">
-              <button className = "flex items-center bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700">
+              <button className = "flex items-center bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700" onClick = {downloadFeedback}>
                 <svg className = "fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/></svg>
                 <span> Download</span>
               </button>
