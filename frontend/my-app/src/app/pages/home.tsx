@@ -38,6 +38,11 @@ export default function Home() {
   // Changing pages
   const navigate = useNavigate();
 
+  // Loaders
+  const [waitingNLP, setWaitingNLP] = useState(false);
+  const [waitingASR, setWaitingASR] = useState(false);
+  const [waitingFeedback, setWaitingFeedback] = useState(false);
+  
   useEffect(() => {
     // Use secure WebSocket in production
     const wsUrl = "ws://127.0.0.1:8000/asr";
@@ -46,7 +51,7 @@ export default function Home() {
     ws.current = socket;
     ws.current.onopen = () => {console.log("WS open");};
     ws.current.onmessage = (event) => {
-      console.log(event.data);
+      console.log("WS message received:", event.data); // how often does this fire?
       // Display the transcripted audio input
       displayTextGradual(event.data, "You : ");
 

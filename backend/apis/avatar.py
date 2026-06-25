@@ -105,7 +105,7 @@ manager = ConnectionManager()
 
 # ================ Helper functions ================
 
-# Generate an NL response given the user input and the template file
+# Generate an NLP response given the user input and the template file
 def get_answer(input : str, instructions : str) -> str:
 
     try:
@@ -179,46 +179,33 @@ async def speechRecognition(websocket : WebSocket):
     try:
         # Save raw audio into a webm file   
         with open(path, "wb") as f:
-            while True:
-                # Receive data from the client
-                data = await websocket.receive_bytes()
+            # Receive data from the client
+            data = await websocket.receive_bytes()
+            # Write the data
+            f.write(data)
 
-                # Write the data
-                f.write(data)
+        # Perform audio transcription
+        segments, _ = model.transcribe(
+            path,                     # Absolute path to webm file stored locally
+            language = "en",
+            no_speech_threshold=0.4,  # default is 0.6
+            log_prob_threshold=-1.0,
+            condition_on_previous_text=False
+        )
+        text = " ".join([segment.text for segment in segments])
 
-            # data, rate = sf.read(path)                          # load audio 
-            # meter = pyln.Meter(rate)                            # BS.1770 meter (maximum peak level)
-            # loudness = meter.integrated_loudness(data)          # measure loudness
+        # Save the transcription result
+        path = next_path(os.path.join(BASE_DIR, "../data/processed/transcription-%s.txt"))
+        with open(path, "w") as f:
+            f.write(text)
 
-            # if(loudness <= -70):
-            #     print("silent")
-            #     await manager.send_personal(websocket, "")
-            #     return
-            
-        try:
-            # Perform audio transcription
-            segments, _ = model.transcribe(
-                path,                     # Absolute path to webm file stored locally
-                language = "en",
-                no_speech_threshold=0.4,  # default is 0.6
-                log_prob_threshold=-1.0,
-                condition_on_previous_text=False
-            )
-            text = " ".join([segment.text for segment in segments])
-
-            # Save the transcription result
-            path = next_path(os.path.join(BASE_DIR, "../data/processed/transcription-%s.txt"))
-            with open(path, "w") as f:
-                f.write(text)
-
-            # Send back the result of the transcription to the frontend
-            await manager.send_personal(websocket, text)
-        except Exception as e:
-            await manager.send_personal(websocket, f"Error {e}")
+        # Send back the result of the transcription to the frontend
+        await manager.send_personal(websocket, text)
     except WebSocketDisconnect:
         print("Client disconnected")
     except Exception as e:
         print(f"Error during WebSocket connection : {e}")
+        await manager.send_personal(websocket, f"Error {e}")
     finally:
         await manager.disconnect(websocket)
 

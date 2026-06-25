@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+
 # ================== Pydantic models ===================
 
 # Request body pydantic models
