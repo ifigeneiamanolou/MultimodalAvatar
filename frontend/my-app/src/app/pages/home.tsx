@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
+import { useNavigate } from 'react-router-dom';
 import Alert from '../components/AlertMessage';
 import Success from '../components/SuccessMessage';
 
@@ -33,6 +34,9 @@ export default function Home() {
 
   // Feedback
   const [feedback, setFeedback] = useState('');
+
+  // Changing pages
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Use secure WebSocket in production
@@ -235,12 +239,22 @@ export default function Home() {
     element.click();
   };
 
+  const navigateMenu = () => { navigate('/menu'); };
+
   return (
-    <div>
+    <>
       {/* Pop ups */}
       <div className = "fixed right-0 left-0 top-4 flex justify-center z-50">
         <Alert showPopup={errorPopUp} closePopup={()=>setErrorPopUp(false)} message = {messagePopUp}/>
         <Success showPopup={successPopUp} closePopup={()=>setSuccessPopUp(false)} message = {messagePopUp}/>
+      </div>
+
+      {/* Home button */}
+      <div className = "fixed top-4 right-4 z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" onClick = {navigateMenu} viewBox="0 0 24 24" fill="currentColor" className="size-6 cursor-pointer">
+          <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" />
+          <path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z" />
+        </svg>
       </div>
 
       {/* Main page */}
@@ -249,45 +263,45 @@ export default function Home() {
         <div className = "flex flex-col place-content-end items-start gap-4 p-6 h-full w-80 shadow-md shadow-gray-300 m-4 overflow-hidden">
           {/* Text conversation */}
           <div className = "flex-1 overflow-auto mb-4">
-              {messages.length === 0 ? <p> Your conversation will appear here </p> : messages.map((msg, i) => (
-                  <div className = "" key = {i}>
-                    <span className = "">
-                      <strong> {msg.sender} </strong> {msg.message}
-                    </span>
-                  </div>
-                ))
-              }
+            {messages.length === 0 ? <p> Your conversation will appear here </p> : messages.map((msg, i) => (
+              <div className = "" key = {i}>
+                <span className = "">
+                  <strong> {msg.sender} </strong> {msg.message}
+                </span>
+              </div>
+            ))}
           </div>
             
-            <div className = "flex flex-col flex-shrink-0">
-              {/* Input through text */}
-              <div className = "flex flex-row gap-4 py-4">
-                <input value = {recordedText} placeholder= "Hello, let's start this interview" title = "User input" id = "textInput" onChange = {handleText} type = "text" className = "grow focus:border-blue-300 border-gray-300 bg-gray-50 text-gray-500 text-sm p-2 border-2 rounded-lg outline-none"/>
-                <button className = "flex-none bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700" onClick = {sendText}> OK </button>
-              </div>
+          <div className = "flex flex-col flex-shrink-0">
+            {/* Input through text */}
+            <div className = "flex flex-row gap-4 py-4">
+              <input value = {recordedText} placeholder= "Hello, let's start this interview" title = "User input" id = "textInput" onChange = {handleText} type = "text" className = "grow focus:border-blue-300 border-gray-300 bg-gray-50 text-gray-500 text-sm p-2 border-2 rounded-lg outline-none"/>
+              <button className = "flex-none bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700" onClick = {sendText}> OK </button>
+            </div>
 
-              {/* Input through speech and ASR*/}
-              <audio className = "w-full" controls src = {recordedUrl}/>
-              <div className = "flex flex-row items-center py-4 gap-4">
-                <button className = "bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700" onClick = {startRecording}> Start Recording </button>
-                <button className = "bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700" onClick= {stopRecording}> Stop recording </button>
-              </div>
+            {/* Input through speech and ASR*/}
+            <audio className = "w-full" controls src = {recordedUrl}/>
+            <div className = "flex flex-row items-center py-4 gap-4">
+              <button className = "bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700" onClick = {startRecording}> Start Recording </button>
+              <button className = "bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700" onClick= {stopRecording}> Stop recording </button>
+            </div>
 
-              {/* Control buttons */}
-              {/* Source: https://flowbite.com/docs/forms/toggle/ */}
-              <div className = "flex flex-row justify-between">
-                <label className="inline-flex items-center cursor-pointer">
-                <input type="checkbox" value="" className="sr-only peer" onChange={() => {setInterviewer(!interviewer);}}/>
-                <div className="relative w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-black after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-200"></div>
-                  <span className="select-none ms-3 text-sm font-medium text-heading">{interviewer ? "Interviewer (bot)" : "Interviewee (bot)"}</span>
-                </label>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6" onClick = {newConversation}>
-                    <path d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" />
-                </svg>
-              </div>
+            {/* Control buttons */}
+            {/* Source: https://flowbite.com/docs/forms/toggle/ */}
+            <div className = "flex flex-row justify-between">
+              <label className="inline-flex items-center cursor-pointer">
+              <input type="checkbox" value="" className="sr-only peer" onChange={() => {setInterviewer(!interviewer);}}/>
+              <div className="relative w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-black after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-200"></div>
+                <span className="select-none ms-3 text-sm font-medium text-heading">{interviewer ? "Interviewer (bot)" : "Interviewee (bot)"}</span>
+              </label>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6 cursor-pointer" onClick = {newConversation}>
+                  <path d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" />
+              </svg>
+            </div>
           </div>
         </div>
 
+        {/* Right part of the main page */}
         <div className = "flex flex-col flex-1 h-full">
           {/* Avatar */}
           <div className = "flex flex-1 basis-3/4">
@@ -313,9 +327,9 @@ export default function Home() {
                 <span> Feedback </span>
               </button> 
             </div>
-         </div>
-       </div> 
+          </div>
+        </div> 
       </div>
-    </div>
+    </>
   );
 }
