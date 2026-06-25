@@ -21,7 +21,9 @@ import numpy as np
 from phonemizer.backend.espeak.wrapper import EspeakWrapper
 import pandas as pd
 from .models import Messages, ResponseModel, UserInput, UserInputWithType
-# import time
+from .dependancies import router as DepRouter
+from .database import router as DbRouter
+from .databaseConnection import router as DbConnRouter
 
 # ================ Configuration ================
 
@@ -81,6 +83,11 @@ try:
     db = read_csv(os.path.join(BASE_DIR, "../data/PhoBlendDataset.csv"))
 except Exception as e:
     raise HTTPException(status_code = 500, detail = f"Error when loading the PhoBlendDataset : {e}")
+
+# Connected FastAPI routers
+app.include_router(DbConnRouter)
+app.include_router(DbRouter)
+app.include_router(DepRouter)
 
 # ================ Custom classes ================
 class ConnectionManager:        # Class to manage mutliple web socket clients
