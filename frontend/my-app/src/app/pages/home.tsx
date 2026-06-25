@@ -51,12 +51,11 @@ export default function Home() {
     ws.current = socket;
     ws.current.onopen = () => {console.log("WS open");};
     ws.current.onmessage = (event) => {
-      console.log("WS message received:", event.data); // how often does this fire?
       // Display the transcripted audio input
       displayTextGradual(event.data, "You : ");
 
       // Generate a response and its coefficients and play the audio
-      getResponse(event.data);
+      getResponse(messages.at(messages.length - 1) ? event.data : "No input sound");
     };
     ws.current.onclose = () => {console.log("WS closed");};
   

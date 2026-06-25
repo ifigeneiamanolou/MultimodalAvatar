@@ -5,7 +5,6 @@ from pydantic import BaseModel
 # Request body pydantic models
 class UserInput(BaseModel):
     input : str
-    session_id : str = "default"
 
 class UserInputWithType(UserInput):
     interview_type : int            # 1 corresponds to user being the interviewer and 2 to user being the interviewee

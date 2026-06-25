@@ -1,0 +1,1 @@
+# All methods used to fetch, update, add or delete data from MongoDB database

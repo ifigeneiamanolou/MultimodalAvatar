@@ -174,38 +174,41 @@ def next_path(path_pattern : str) -> str:
 async def speechRecognition(websocket : WebSocket):
     await manager.connect(websocket)        # Connect the client to the websocket manager
     path = next_path(os.path.join(BASE_DIR, "../data/raw/audio-%s.webm"))
-    chunks = []
 
     try:
-        # Save raw audio into a webm file   
-        with open(path, "wb") as f:
+        while True:
             # Receive data from the client
-            data = await websocket.receive_bytes()
-            # Write the data
-            f.write(data)
+            data = await websocket.receive_bytes()  
+            
+            # Save raw audio into a webm file   
+            path = next_path(os.path.join(BASE_DIR, "../data/raw/audio-%s.webm"))
+            with open(path, "wb") as f:
+                f.write(data)
 
-        # Perform audio transcription
-        segments, _ = model.transcribe(
-            path,                     # Absolute path to webm file stored locally
-            language = "en",
-            no_speech_threshold=0.4,  # default is 0.6
-            log_prob_threshold=-1.0,
-            condition_on_previous_text=False
-        )
-        text = " ".join([segment.text for segment in segments])
+            try:
+                # Perform audio transcription
+                segments, _ = model.transcribe(
+                    path,                     # Absolute path to webm file stored locally
+                    language = "en",
+                    no_speech_threshold=0.4,  # default is 0.6
+                    log_prob_threshold=-1.0,
+                    condition_on_previous_text=False
+                )
+                text = " ".join([segment.text for segment in segments])
 
-        # Save the transcription result
-        path = next_path(os.path.join(BASE_DIR, "../data/processed/transcription-%s.txt"))
-        with open(path, "w") as f:
-            f.write(text)
+                # Save the transcription result
+                path = next_path(os.path.join(BASE_DIR, "../data/processed/transcription-%s.txt"))
+                with open(path, "w") as f:
+                    f.write(text)
 
-        # Send back the result of the transcription to the frontend
-        await manager.send_personal(websocket, text)
+                # Send back the result of the transcription to the frontend
+                await manager.send_personal(websocket, text)
+            except Exception as e:
+                await manager.send_personal(websocket, f"Error {e}")
     except WebSocketDisconnect:
         print("Client disconnected")
     except Exception as e:
-        print(f"Error during WebSocket connection : {e}")
-        await manager.send_personal(websocket, f"Error {e}")
+        raise HTTPException(status_code = 500, detail = f"Error when performing speech recognition : {e}")
     finally:
         await manager.disconnect(websocket)
 
@@ -225,8 +228,18 @@ async def generateTextResponse(user_input : UserInputWithType) -> ResponseModel:
     # Generate response from OpenAI
     try:
         response = get_answer(
-            user_input.input,
-            prompt1 if user_input.interview_type == 1 else prompt2
+            input = [
+                {
+                    "role" : "user",
+                    "content" : [
+                        {
+                            "type": "input_text",
+                            "text": user_input.input
+                        }
+                    ]
+                }
+            ],
+            instructions = prompt1 if user_input.interview_type == 1 else prompt2
         )
     except Exception as e:
         return{
