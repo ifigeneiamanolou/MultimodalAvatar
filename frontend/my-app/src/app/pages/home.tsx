@@ -125,6 +125,15 @@ export default function Home() {
         )
         const data = await recordedBlob.bytes()
 
+        // const responseTTS = await fetch("http://localhost:8000/asrChunks", {
+        //   method : "POST",
+        //   body : data
+        // });
+        // const text = responseTTS.toString();
+
+        // displayTextGradual(text, "You : ");
+        // getResponse(text);
+
         if (ws.current?.readyState === WebSocket.CLOSED){
           setMessagePopUp("No web socket connection found");
           setErrorPopUp(true);
