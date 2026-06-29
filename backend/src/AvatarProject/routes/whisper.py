@@ -1,10 +1,10 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, HTTPException
 import whisperx
-from src.models.textSpeech import modelAlign, metadata
-from src.models.ConnectionManager import ConnectionManager
-from src.service.fileServices import save, save_audio
-from whisper import WhisperModel
-from src.services.fileServices import next_path
+from backend.src.AvatarProject.models.textSpeech import modelAlign, metadata
+from backend.src.AvatarProject.models.ConnectionManager import ConnectionManager
+from backend.src.AvatarProject.services.fileServices import save, save_audio
+from backend.src.AvatarProject.routes.whisper import WhisperModel
+from backend.src.AvatarProject.services.fileServices import next_path
 import os
 from dotenv import load_dotenv
 

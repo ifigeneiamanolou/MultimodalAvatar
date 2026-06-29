@@ -1,8 +1,8 @@
-from src.models.textSpeech import sagemaker_runtime
+from backend.src.AvatarProject.models.textSpeech import sagemaker_runtime
 from fastapi import APIRouter
 from fastapi.exceptions import HTTPException
-from src.services.fileServices import save_audio, save
-from src.models.pydantic import ResponseModel
+from backend.src.AvatarProject.services.fileServices import save_audio, save
+from backend.src.AvatarProject.models.pydantic import ResponseModel
 
 router = APIRouter()
 whisper_endpoint = "WRITE AN ENDPOINT HERE AFTER CREATING IN AWS SAGEMAKER"
