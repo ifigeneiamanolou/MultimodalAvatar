@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 import os
-from src.AvatarProject.services.nlp import get_answer
+from src.AvatarProject.services.nlp import get_answer, get_answer_stream
 from src.AvatarProject.models.pydantic import UserInput, ResponseModel
 from src.AvatarProject.services.fileServices import save
 
@@ -48,3 +48,18 @@ async def generateTextResponse(user_input : UserInput) -> ResponseModel:
         "data" : response, 
         "message" : "Successful answer generation"
     }
+
+@router.post("/response/stream")
+async def generateTextResponse(user_input : UserInput):
+    """ Generates a response from the LLM and streams it in a continuous manner
+    Args:
+        user_input (UserInput): Contains the user text query and the type of the interviewee
+    """
+
+    # Generate response from OpenAI
+    return await get_answer_stream(
+        user_input.input,
+        prompt1 if user_input.interview_type == 1 else prompt2
+    )
+ 
+    

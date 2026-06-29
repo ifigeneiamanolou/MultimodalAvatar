@@ -54,7 +54,7 @@ def save(input : str, path : str):
     """ Saves the input text to the next available path in the specified location
 
     Args:
-        input (str): input audio bytes from MediaRecorder API
+        input (str): input text
         path (str): relative path to the current directory to save the audio
     """
 

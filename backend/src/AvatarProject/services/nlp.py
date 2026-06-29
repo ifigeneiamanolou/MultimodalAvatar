@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from fastapi.responses import StreamingResponse
 from openai import OpenAI, RateLimitError, AsyncOpenAI
 import os
+from src.AvatarProject.services.fileServices import save
 from fastapi import HTTPException
 import logging
 
@@ -48,7 +49,7 @@ def get_answer(input : str, instructions : str) -> str:
     except Exception as e:
         raise HTTPException(status_code = 500, detail = {e})
     
-async def get_answer_stream(input : str, instructions : str) -> str:
+async def get_answer_stream(input : str, instructions : str) -> StreamingResponse:
     """ Stream the model's response as it is generated using Server-Sent Events(SSE)
 
     Args:
@@ -59,7 +60,7 @@ async def get_answer_stream(input : str, instructions : str) -> str:
         HTTPException: if the response generation fails
 
     Returns:
-        str: the bot response
+        StreamingResponse : continuous response of the LLM
     """
 
     try:
@@ -84,10 +85,12 @@ async def get_answer_stream(input : str, instructions : str) -> str:
     
         # Continuously return the response to the frontend
         async def async_generator():
+            full_text = ""
             async for event in response:
                 if event.type == "response.output_text.delta":
-                    text = event.delta
+                    full_text += event.delta
                 if event.type == "response.completed":
+                    save(full_text, "../data/raw/response-%s.txt")
                     total_tokens = event.response.usage.total_tokens
                     logging.info(f"Used tokens: {total_tokens}")
     
