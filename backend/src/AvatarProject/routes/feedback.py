@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from backend.src.AvatarProject.models.pydantic import Messages, ResponseModel
-from backend.src.AvatarProject.services.fileServices import save, saveFeedback
+from src.AvatarProject.models.pydantic import Messages, ResponseModel
+from src.AvatarProject.services.fileServices import save, saveFeedback
 import os
 import json
 from backend.src.AvatarProject.services.nlp import get_answer

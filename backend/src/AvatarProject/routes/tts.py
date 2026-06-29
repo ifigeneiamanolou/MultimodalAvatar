@@ -1,8 +1,8 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, HTTPException
-from backend.src.AvatarProject.models.pydantic import UserInput, ResponseModel
-from backend.src.AvatarProject.services.animations import generateAnimations
-from backend.src.AvatarProject.services.fileServices import next_path, save_audio
-from backend.src.AvatarProject.models.ConnectionManager import ConnectionManager
+from src.AvatarProject.models.pydantic import UserInput, ResponseModel
+from src.AvatarProject.services.animations import generateAnimations
+from src.AvatarProject.services.fileServices import next_path, save_audio
+from src.AvatarProject.models.ConnectionManager import ConnectionManager
 import os
 from elevenlabs.client import ElevenLabs
 from dotenv import load_dotenv

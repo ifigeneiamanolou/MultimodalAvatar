@@ -1,10 +1,10 @@
 from fastapi import FastAPI
-from backend.src.AvatarProject.routes.whisper import router as whisper
-from backend.src.AvatarProject.routes.whisperAWS import router as whisperAWS
-from backend.src.AvatarProject.routes.avatar import router as avatar
-from backend.src.AvatarProject.routes.feedback import router as feedback
-from backend.src.AvatarProject.routes.tts import router as tts
-from backend.src.AvatarProject.routes.response import router as response
+from src.AvatarProject.routes.whisper import router as whisper
+from src.AvatarProject.routes.whisperAWS import router as whisperAWS
+from src.AvatarProject.routes.avatar import router as avatar
+from src.AvatarProject.routes.feedback import router as feedback
+from src.AvatarProject.routes.tts import router as tts
+from src.AvatarProject.routes.response import router as response
 
 app = FastAPI()
 app.include_router(whisper)
