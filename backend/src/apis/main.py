@@ -466,7 +466,3 @@ async def generateFeedback(messages : Messages) -> ResponseModel:
         "data" : response, 
         "message" : "Successful answer generation"
     }
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host = "127.0.0.1", port = 8000, ws_ping_interval = 20, ws_ping_timeout = 60)
