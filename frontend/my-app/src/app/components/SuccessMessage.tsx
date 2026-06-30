@@ -14,8 +14,8 @@ export default function Success({showPopup, closePopup, message} : Props){
         if (showPopup) {
             //Creating a timeout
             timerId.current = setTimeout(() => {
-                showPopup
-            }, 5000);       // Wait 5000 ms until closing the popup
+               closePopup()
+            }, 2000);       // Wait 5000 ms until closing the popup
         }
     
         return () => {

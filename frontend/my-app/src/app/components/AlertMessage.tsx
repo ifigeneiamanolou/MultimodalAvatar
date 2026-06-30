@@ -8,7 +8,6 @@ interface Props{
 }
 
 export default function Alert({showPopup, closePopup, message} : Props){
-    const popupRef = useRef(null);
     const timerId = useRef<number>(null);
 
     useEffect(() => {
@@ -16,7 +15,7 @@ export default function Alert({showPopup, closePopup, message} : Props){
             //Creating a timeout
             timerId.current = setTimeout(() => {
                 closePopup()
-            }, 5000);       // Wait 5000 ms until closing the popup
+            }, 2000);       // Wait 2000 ms until closing the popup
         }
 
         return () => {
