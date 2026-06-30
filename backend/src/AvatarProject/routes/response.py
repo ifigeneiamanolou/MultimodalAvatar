@@ -1,5 +1,7 @@
 from fastapi import APIRouter
 import os
+
+from fastapi.responses import StreamingResponse
 from src.AvatarProject.services.nlp import get_answer, get_answer_stream
 from src.AvatarProject.models.pydantic import UserInput, ResponseModel
 from src.AvatarProject.services.fileServices import save
@@ -8,11 +10,11 @@ router = APIRouter()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))     
 
 # Templates
-template_path1 = os.path.join(BASE_DIR, "../../data/templates/interview1.md")      # Bot : interviewer
+template_path1 = os.path.join(BASE_DIR, "../../../data/templates/interview1.md")      # Bot : interviewer
 with open(template_path1, "r") as f:
     prompt1 = f.read()
 
-template_path2= os.path.join(BASE_DIR, "../../data/templates/interview2.md")       # Bot : interviewee
+template_path2= os.path.join(BASE_DIR, "../../../data/templates/interview2.md")       # Bot : interviewee
 with open(template_path2, "r") as f:
     prompt2 = f.read()
     
@@ -40,7 +42,7 @@ async def generateTextResponse(user_input : UserInput) -> ResponseModel:
         }
     
     # Save the response to a file                              
-    save(response["text"], "../data/raw/response-%s.txt")
+    save(response["text"], "../../../data/raw/response-%s.txt")
 
     # Return the response to the frontend server
     return {
@@ -49,7 +51,7 @@ async def generateTextResponse(user_input : UserInput) -> ResponseModel:
         "message" : "Successful answer generation"
     }
 
-@router.post("/response/stream")
+@router.post("/response/stream", response_class = StreamingResponse)
 async def generateTextResponse(user_input : UserInput):
     """ Generates a response from the LLM and streams it in a continuous manner
     Args:

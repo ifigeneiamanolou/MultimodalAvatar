@@ -1,12 +1,14 @@
-from backend.src.AvatarProject.models.textSpeech import sagemaker_runtime
 from fastapi import APIRouter
 from fastapi.exceptions import HTTPException
 from src.AvatarProject.services.fileServices import save_audio, save
 from src.AvatarProject.models.pydantic import ResponseModel
+import boto3
 
 router = APIRouter()
 whisper_endpoint = "WRITE AN ENDPOINT HERE AFTER CREATING IN AWS SAGEMAKER"
 whisperx_endpoint = "WRITE AN ENDPOINT HERE AFTER CREATING IN AWS SAGEMAKER"
+
+sagemaker_runtime = boto3.client("sagemaker-runtime")
 
 async def align(audio_bytes : bytes, text : str) -> str:
     """ Returns the aligned text using the original audio through WhisperX

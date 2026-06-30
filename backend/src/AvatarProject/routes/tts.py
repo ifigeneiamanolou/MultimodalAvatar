@@ -5,6 +5,7 @@ from src.AvatarProject.services.fileServices import next_path, save_audio
 from src.AvatarProject.models.ConnectionManager import ConnectionManager
 import os
 from elevenlabs.client import ElevenLabs
+from elevenlabs import stream
 from dotenv import load_dotenv
 import base64
 from orpheus_cpp import OrpheusCpp
@@ -16,8 +17,8 @@ ELEVENLABS_API_KEY = os.environ["ELEVENLABS_API_KEY"]
 tts = ElevenLabs(
     api_key=ELEVENLABS_API_KEY,
 )
-orpheus = OrpheusCpp(verbose = False, lang = "en")
-managerOrpheus = ConnectionManager()           
+# orpheus = OrpheusCpp(verbose = False, lang = "en")
+managerTTS = ConnectionManager()           
 
 router = APIRouter()
 
@@ -37,7 +38,7 @@ async def generateAudio(user_input : UserInput) -> ResponseModel:
     # ================= Blendshape generation ===============
     try:
         artkit = await generateAnimations(text)
-        path = next_path(os.path.join(BASE_DIR, "../../data/processed/blendshape-%s.csv"))
+        path = next_path(os.path.join(BASE_DIR, "../../../data/processed/blendshape-%s.csv"))
         artkit.to_csv(path, header = False)
     except Exception as e:
         return {
@@ -64,7 +65,7 @@ async def generateAudio(user_input : UserInput) -> ResponseModel:
     
     # ================ Audio upload ===================
     audio_chunks = b"".join(chunk for chunk in audio if chunk)
-    save_audio(audio_chunks, "../data/processed/tts-%s.mp3")
+    save_audio(audio_chunks, "../../../data/processed/tts-%s.mp3")
     
     return {
         "success" : True,
@@ -74,41 +75,83 @@ async def generateAudio(user_input : UserInput) -> ResponseModel:
         "message" : "Audio and ArtKit coefficients generated successfully"
     }
 
-
-@router.websocket("/ttsOrpheus")
-async def generateAudio(websocket : WebSocket):
-    """ Generates and uploads artkit coefficients using Orpheus3B to adress data proprietry issues in a continuous manner
+@router.websocket("/tts/stream")
+async def generateAudio(webSocket : WebSocket):
+    """ Generates and uploads artkit coefficients using ElevenLabs as a stream
 
     Args:
         websocket (WebSocket): incomming web socket connection
     """
-
-    await managerOrpheus.connect(websocket)
-
-    try:    
+    await managerTTS.connect(webSocket)
+    
+    try:
         while True:
-            # Receive data from the client
-            data = await websocket.receive_text()  
+            text = await webSocket.receive_text()
 
-            # Generate blendshapes
-            artkit = await generateAnimations(data)
-            path = next_path(os.path.join(BASE_DIR, "../../data/processed/blendshape-%s.csv"))
+            # ================= Blendshape generation ===============
+            artkit = await generateAnimations(text)
+            path = next_path(os.path.join(BASE_DIR, "../../../data/processed/blendshape-%s.csv"))
             artkit.to_csv(path, header = False)
 
-            # Text to Speech
-            buffer = []
-            for i, (_, chunk) in enumerate(orpheus.stream_tts_sync(data, options={"voice_id": "tara"})):
-                buffer.append(chunk)
-                await managerOrpheus.send_personal(websocket, chunk)
+            # ================ TTS generation =================
+   
+            audio = tts.text_to_speech.stream(
+                text = text,
+                voice_id = "JBFqnCBsd6RMkjVDRZzb",  # "George" 
+                model_id = "eleven_flash_v2_5",            
+                language_code = "en",
+                output_format = "mp3_22050_32",
+            )
 
-            # Audio upload in a wav file
-            buffer = np.concatenate(buffer, axis=1)
-            save_audio(buffer, "../data/processed/tts-%s.wav")
+            audio_chunks = bytearray()
+            for chunk in audio:
+                if isinstance(chunk, bytes):
+                    await managerTTS.send_personal(webSocket, chunk)
+                    audio_chunks.extend(chunk)
+
+            # ================ Audio upload ==================
+            save_audio(bytes(audio_chunks), "../../../data/processed/tts-%s.mp3")
+
     except WebSocketDisconnect:
         print("Client disconnected")
-    except Exception as e:
-        raise HTTPException(status_code = 500, detail = f"Error when performing text transcription : {e}")
     finally:
-        await managerOrpheus.disconnect(websocket)
+        await managerTTS.disconnect(webSocket)
+    
+    
+# @router.websocket("/ttsOrpheus")
+# async def generateAudio(websocket : WebSocket):
+#     """ Generates and uploads artkit coefficients using Orpheus3B to adress data proprietry issues in a continuous manner
+
+#     Args:
+#         websocket (WebSocket): incomming web socket connection
+#     """
+
+#     await managerTTS.connect(websocket)
+
+#     try:    
+#         while True:
+#             # Receive data from the client
+#             data = await websocket.receive_text()  
+
+#             # Generate blendshapes
+#             artkit = await generateAnimations(data)
+#             path = next_path(os.path.join(BASE_DIR, "../../../data/processed/blendshape-%s.csv"))
+#             artkit.to_csv(path, header = False)
+
+#             # Text to Speech
+#             buffer = []
+#             for i, (_, chunk) in enumerate(orpheus.stream_tts_sync(data, options={"voice_id": "tara"})):
+#                 buffer.append(chunk)
+#                 await managerOrpheus.send_personal(websocket, chunk)
+
+#             # Audio upload in a wav file
+#             buffer = np.concatenate(buffer, axis=1)
+#             save_audio(buffer, "../../../data/processed/tts-%s.wav")
+#     except WebSocketDisconnect:
+#         print("Client disconnected")
+#     except Exception as e:
+#         raise HTTPException(status_code = 500, detail = f"Error when performing text transcription : {e}")
+#     finally:
+#         await managerOrpheus.disconnect(websocket)
 
 

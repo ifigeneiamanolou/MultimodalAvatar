@@ -3,16 +3,16 @@ from src.AvatarProject.models.pydantic import Messages, ResponseModel
 from src.AvatarProject.services.fileServices import save, saveFeedback
 import os
 import json
-from backend.src.AvatarProject.services.nlp import get_answer
+from src.AvatarProject.services.nlp import get_answer
 
 router = APIRouter()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
 
-feedback_path1 = os.path.join(BASE_DIR, "../../data/templates/feedback1.md")         # Bot : interviewer
+feedback_path1 = os.path.join(BASE_DIR, "../../../data/templates/feedback1.md")         # Bot : interviewer
 with open(feedback_path1, "r") as f:
     feedback_prompt1 = f.read()
 
-feedback_path2 = os.path.join(BASE_DIR, "../../data/templates/feedback2.md")         # Bot : interviewee
+feedback_path2 = os.path.join(BASE_DIR, "../../../data/templates/feedback2.md")         # Bot : interviewee
 with open(feedback_path2, "r") as f:
     feedback_prompt2 = f.read()
 
@@ -27,7 +27,7 @@ async def resetConversation(messages : Messages) -> ResponseModel:
         ResponseModel: Pydantic model with information on the completion of the upload
     """
 
-    saveFeedback(messages.dict(), "../data/feedback/conversation-%s.json")
+    saveFeedback(messages.dict(), "../../../data/feedback/conversation-%s.json")
     return{
         "success" : True,
         "data" : "",
@@ -45,7 +45,7 @@ async def generateFeedback(messages : Messages) -> ResponseModel:
         ResponseModel: Pydantic model with information on the completion of the upload and the feedback response
     
     """   
-    saveFeedback(messages.dict(), "../data/feedback/conversation-%s.json")
+    saveFeedback(messages.dict(), "../../../data/feedback/conversation-%s.json")
     
     # Retrieve file name to save the response and instructions depending on the user role
     feedback_prompt = feedback_prompt1 if messages.interviewer == "interviewer" else feedback_prompt2
@@ -64,7 +64,7 @@ async def generateFeedback(messages : Messages) -> ResponseModel:
         }
 
     # Save the response to a file  
-    save(response, "../feedback/feedback-%s.txt")
+    save(response, "../../../feedback/feedback-%s.txt")
 
     # Return the response to the frontend server to be displayed to the feedback box
     return {

@@ -1,17 +1,17 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, HTTPException
 import whisperx
-from src.AvatarProject.models.textSpeech import modelAlign, metadata
 from src.AvatarProject.models.ConnectionManager import ConnectionManager
 from src.AvatarProject.services.fileServices import save, save_audio
-from src.AvatarProject.routes.whisper import WhisperModel
 from src.AvatarProject.services.fileServices import next_path
+from faster_whisper import WhisperModel
 import os
 from dotenv import load_dotenv
+import numpy as np
 
 device = "cpu"
 compute_type = "int8"
 manager = ConnectionManager()
-model = WhisperModel(model_size_or_path = "small", device = device, compute_type = compute_type, batch_size = 4)  
+model = WhisperModel(model_size_or_path = "small", device = device, compute_type = compute_type)  
 model_align, metadata = whisperx.load_align_model(language_code = "en", device = device)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
 load_dotenv()  
@@ -36,10 +36,13 @@ async def speechRecognition(websocket : WebSocket):
         while True:
             # Receive data from the client
             data = await websocket.receive_bytes()  
+
+            # Convert into a suitable format
+            audio_data = np.frombuffer(data, dtype=np.int16).astype(np.float32) / 32768.0
             
             # Save raw audio into a webm file  
-            path = next_path(os.path.join(BASE_DIR, "../data/raw/audio-%s.mp3")) 
-            save_audio(data, "../data/raw/audio-%s.mp3")
+            path = next_path(os.path.join(BASE_DIR, "../../../data/raw/audio-%s.mp3")) 
+            save_audio(audio_data, "../../../data/raw/audio-%s.mp3")
 
             try:
                 # Perform audio transcription
@@ -62,7 +65,7 @@ async def speechRecognition(websocket : WebSocket):
                 aligned_text = " ".join([segment.text for segment in segments])
 
                 # Save the transcription result
-                save(aligned_text, "../data/processed/transcription-%s.txt")
+                save(aligned_text, "../../../data/processed/transcription-%s.txt")
 
                 # Send back the result of the transcription to the frontend
                 await manager.send_personal(websocket, aligned_text)

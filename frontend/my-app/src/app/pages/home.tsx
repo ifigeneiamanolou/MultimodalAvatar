@@ -3,13 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import Alert from '../components/AlertMessage';
 import Success from '../components/SuccessMessage';
 
+
 // Site used for audio recording: https://www.cybrosys.com/blog/how-to-implement-audio-recording-in-a-react-application
 // Connection to web sockets : https://websocket.org/guides/frameworks/react/
 // Web sockets: https://medium.com/@suganthi2496/fastapi-websockets-react-real-time-features-for-your-modern-apps-b8042a10fd90
 
 export default function Home() {
-  // Web Socket connection
-  const ws = useRef<WebSocket | null>(null);  
+  // ====================== Constants ========================
+  // Web sockets
+  const ws = useRef<WebSocket | null>(null);
+  const wsTTS = useRef<WebSocket | null>(null);                                     // Allows continuous streaming
 
   // Microphone recording
   const mediaStream = useRef<MediaStream | null>(null);        
@@ -43,65 +46,132 @@ export default function Home() {
   const [waitingASR, setWaitingASR] = useState(false);
   const [waitingFeedback, setWaitingFeedback] = useState(false);
 
+  // ======================= Web Socket ======================
   useEffect(() => {
-    // Use secure WebSocket in production
-    const wsUrl = "ws://127.0.0.1:8000/asr";
+    let reconnectTimer: ReturnType<typeof setTimeout>;
+    let reconnectTimerTTS: ReturnType<typeof setTimeout>;
 
-    const socket = new WebSocket(wsUrl);
-    ws.current = socket;
-    ws.current.onopen = () => {console.log("WS open");};
-    ws.current.onmessage = (event) => {
-      // Display the transcripted audio input
-      displayTextGradual(event.data, "You : ");
-
-      // Generate a response and its coefficients and play the audio
-      getResponse(messages.at(messages.length - 1) ? event.data : "No input sound");
+    const connectASR = () => {
+      const socket = new WebSocket("ws://127.0.0.1:8000/asr");
+      ws.current = socket;
+      ws.current.onopen = () => {console.log("ASR socket open");}
+      ws.current.onmessage = (e) => {
+        console.log("message from ASR socket: ", e);
+        
+      }
+      ws.current.onclose = () => {
+        console.log("ASR socket closed");
+        ws.current = null;
+        reconnectTimer = setTimeout(connectASR, 5000);   // Open again the web socket after 5sec
+      }
     };
-    ws.current.onclose = () => {console.log("WS closed");};
-  
-    // Cleanup
+
+    const connectTTS = () => {
+      const socket = new WebSocket("ws://127.0.0.1:8000/tts/stream");
+      wsTTS.current = socket;
+      wsTTS.current.onopen = () => {console.log("TTS socket open");}
+      wsTTS.current.onmessage = (e) => {
+        console.log("message from TTS socket : ", e);
+        if(e.data instanceof Blob){
+          const url = URL.createObjectURL(e.data);
+          const audio = new Audio(url);
+          audio.play();
+        }
+      }
+      wsTTS.current.onclose = () => {
+        console.log("TTS socket closed");
+        wsTTS.current = null;
+        reconnectTimerTTS = setTimeout(connectASR, 5000);   // Open again the web socket after 5sec
+      }
+    };
+
+    connectASR();
+    connectTTS();
+
     return () => {
-      socket.close(1000, "unmounted");
+      clearTimeout(reconnectTimer);  
+      clearTimeout(reconnectTimerTTS);
+      ws.current?.close(1000, "unmounted");
+      wsTTS.current?.close(1000, "unmounted");
     };
   }, []);
 
+  // Used to generate a response from an LLM and perform TTS
   const getResponse = async (text : string, feedback : boolean = false) => {
     try{
       // Fetch a response from OpenAI
-      const interview_type = interviewer ? 1 : 2;
-      setWaiting(true);           // Waiting for response from OpenAI
-
-      const res = await fetch("http://localhost:8000/response", {
+      const interview_type = interviewer ? 1 : 2;   
+      const res = await fetch("http://localhost:8000/response/stream", {
         method : "POST",
         body : JSON.stringify({input : text, interview_type : interview_type}),
         headers: {"Content-Type": "application/json"}
       });
-      setWaiting(false);
 
-      const response = await res.json();
-      displayTextGradual(response.data, "Bot : ");
+      if(res.status == 429){
+        setMessagePopUp("No API credit remaining — please try again later.");
+        setErrorPopUp(true);
+        return;
+      }
 
-      //Convert to speech and generate blendshape coefficients
-      const responseTTS = await fetch("http://localhost:8000/tts", {
-        method : "POST",
-        body : JSON.stringify({input : response.data}),
-        headers: {"Content-Type": "application/json"}
-      });
+      // Get a reader to read the response as a stream
+      const reader = res.body?.getReader();
 
-      // Play the audio
-      const result = await responseTTS.json();
-      const base64string = result.data.audio;
-      var audio = new Audio("data:audio/wav;base64," + base64string);       // use of data URL prefix
-      try{
-        audio.play();
-      } catch (e) {
-        console.log(e);
+      if(reader === undefined){
+        throw new Error("no meesage passed");
+      }
+      
+      // Create a decoder to decode the data into a string
+      const decoder = new TextDecoder('utf-8');
+
+      // Continuousy read from the stream until it's done
+      let done = false;
+      while(!done){
+        // Read a chunk from the stream
+        const { value, done : readerDone } = await reader.read();
+
+        // Update the done flag
+        done = readerDone
+
+        if(value){
+          // Decode the binary data chunk
+          const chunkValue = decoder.decode(value, {stream : true})
+
+          if(chunkValue.includes("[[NO-CREDIT]]")){
+            setMessagePopUp("No API credit remaining — please try again later.");
+            setErrorPopUp(true);
+            return;
+          }
+
+          // Display the chunk of data
+          displayTextGradual(chunkValue, "You : Bot")
+
+          // Convert to speech and generate blendshape coeffiecients
+          if (ws.current?.readyState === WebSocket.CLOSED){
+            setMessagePopUp("No web socket connection found");
+            setErrorPopUp(true);
+          } else {
+            ws.current?.send(chunkValue);
+            setMessagePopUp("Audio sent");
+            setSuccessPopUp(true);
+          }
+
+          // Play the audio
+          // const result = await responseTTS.json();
+          // const base64string = result.data.audio;
+          // var audio = new Audio("data:audio/wav;base64," + base64string);       // use of data URL prefix
+          // try{
+          //   audio.play();
+          // } catch (e) {
+          //   console.log(e);
+          // }
+        }   
       }
     } catch (error){
       console.log(error);
     }
   };
 
+  // Handles the press of "Start recording" button
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({audio : true});      // Prompt the user for permission
@@ -125,15 +195,6 @@ export default function Home() {
         )
         const data = await recordedBlob.bytes()
 
-        // const responseTTS = await fetch("http://localhost:8000/asrChunks", {
-        //   method : "POST",
-        //   body : data
-        // });
-        // const text = responseTTS.toString();
-
-        // displayTextGradual(text, "You : ");
-        // getResponse(text);
-
         if (ws.current?.readyState === WebSocket.CLOSED){
           setMessagePopUp("No web socket connection found");
           setErrorPopUp(true);
@@ -156,6 +217,7 @@ export default function Home() {
     }
   };
 
+  // Handles the press of "Stop recording" button
   const stopRecording = async () => {
     if(mediaRecorder.current && mediaRecorder.current.state == 'recording'){
       mediaRecorder.current.stop();   // Stop media capture
@@ -167,6 +229,7 @@ export default function Home() {
     }
   };
 
+  // Handling incoming text queries
   const sendText = () => {
     // Show the user input
     displayTextGradual(recordedText, "You : ");
@@ -178,6 +241,7 @@ export default function Home() {
     setRecordedText('');
   };
 
+  // Displays incoming text gradually
   const displayTextGradual = (text : string = "", sender : string = "") => {
     setMessages(prev => [...prev, {sender : sender, message : ''}])
     var index = 0;
@@ -197,6 +261,7 @@ export default function Home() {
     }, 120);
   };
 
+  // Resets the conversation
   const newConversation = async () => {
     // Ensure bot response has been received
     if(waiting){

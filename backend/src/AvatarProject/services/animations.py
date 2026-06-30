@@ -17,7 +17,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Dictionaries
 try:
-    db = read_csv(os.path.join(BASE_DIR, "../../data/PhoBlendDataset.csv"))
+    db = read_csv(os.path.join(BASE_DIR, "../../../data/PhoBlendDataset.csv"))
 except Exception as e:
     raise HTTPException(status_code = 500, detail = f"Error when loading the PhoBlendDataset : {e}")
 

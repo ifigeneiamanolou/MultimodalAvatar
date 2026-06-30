@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from fastapi.responses import StreamingResponse
-from openai import OpenAI, RateLimitError, AsyncOpenAI
+from openai import OpenAI, RateLimitError, AsyncOpenAI, APIError
 import os
 from src.AvatarProject.services.fileServices import save
 from fastapi import HTTPException
@@ -60,7 +60,7 @@ async def get_answer_stream(input : str, instructions : str) -> StreamingRespons
         HTTPException: if the response generation fails
 
     Returns:
-        StreamingResponse : continuous response of the LLM
+        StreamingResponse : continuous response of the LLM 
     """
 
     try:
@@ -82,27 +82,34 @@ async def get_answer_stream(input : str, instructions : str) -> StreamingRespons
             stream = True,                          # Stream continuous output
             prompt_cache_retention = "24h",         # extended prompt cache retention 
         ) 
+    except RateLimitError:
+        raise HTTPException(status_code = 429, detail = "No API credit")
     
-        # Continuously return the response to the frontend
-        async def async_generator():
-            full_text = ""
+    # Continuously return the response to the frontend (10 tokens at a time)
+    async def async_generator():
+        full_text = ""
+        partial_text = ""
+        count = 0
+        try:
             async for event in response:
                 if event.type == "response.output_text.delta":
                     full_text += event.delta
-                if event.type == "response.completed":
-                    save(full_text, "../data/raw/response-%s.txt")
+                    partial_text += event.delta
+                    count = count + 1
+
+                    if(count == 10):
+                        yield partial_text
+                        count = 0
+                        partial_text = ""
+                if event.type == "response.completed":     
                     total_tokens = event.response.usage.total_tokens
                     logging.info(f"Used tokens: {total_tokens}")
+        except (RateLimitError, APIError) as e:
+            logging.error(f"OpenAI quota/API error mid-stream: {e}")
+            yield "[[NO-CREDIT]]"
     
-        return StreamingResponse(
-            async_generator(),
-            media_type = "text/event-stream",
-        )
-    except RateLimitError as e:
-        return "No API credit"
-    except Exception as e:
-        raise HTTPException(
-            detail = f"Error : {e}",
-            status_code = 500,
-        )
+    return StreamingResponse(
+        async_generator(),
+        media_type = "text/event-stream",
+    )
     

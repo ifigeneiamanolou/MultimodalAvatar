@@ -1,6 +1,7 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from src.AvatarProject.routes.whisper import router as whisper
-from src.AvatarProject.routes.whisperAWS import router as whisperAWS
+# from src.AvatarProject.routes.whisperAWS import router as whisperAWS
 from src.AvatarProject.routes.avatar import router as avatar
 from src.AvatarProject.routes.feedback import router as feedback
 from src.AvatarProject.routes.tts import router as tts
@@ -8,11 +9,20 @@ from src.AvatarProject.routes.response import router as response
 
 app = FastAPI()
 app.include_router(whisper)
-app.include_router(whisperAWS)
+# app.include_router(whisperAWS)
 app.include_router(feedback)
 app.include_router(tts)
 app.include_router(response)
 app.include_router(avatar)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins = ["http://localhost:8081",
+                     "http://localhost:8082"],          # Change in production    
+    allow_headers = ["*"],
+    allow_methods = ["*"],
+    allow_credentials = True      
+)
 
 if __name__ == "__main__":
     import uvicorn

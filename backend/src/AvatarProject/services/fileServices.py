@@ -37,7 +37,7 @@ def saveFeedback(messages : dict, path : str):
     with open(path, "w", encoding = "utf-8") as json_file:
             json.dump(messages, json_file, indent = 4)
 
-def saveAudio(audio_bytes : bytes, path : str):
+def save_audio(audio_bytes : bytes, path : str):
     """ Saves the input audio bytes to the next available path in the specified location
 
     Args:
