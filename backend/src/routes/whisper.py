@@ -76,7 +76,7 @@ async def speechRecognition(websocket : WebSocket):
                 # Save the transcription result
                 save(aligned_text, "../../data/processed/transcription-%s.txt")
 
-                # Send back the result of the transcription to the frontend
+                # Send back the result of the transcription to the frontend to display
                 await manager.send_personal(websocket, aligned_text)
             except Exception as e:
                 await manager.send_personal(websocket, f"Error {e}")
