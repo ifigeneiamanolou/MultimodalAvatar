@@ -3,8 +3,13 @@ from pydantic import BaseModel
 # ================== Pydantic models ===================
 
 # Request body pydantic models
+
+class Message(BaseModel):
+    role: str
+    content: str
+
 class UserInput(BaseModel):
-    input : str
+    input : list[Message]
     interview_type : int             # 1 corresponds to user being the interviewer and 2 to user being the interviewee    
 
 
@@ -14,7 +19,3 @@ class ResponseModel(BaseModel):
     data : str | dict
     message : str
     meta : dict = {}
-
-class Messages(BaseModel):
-    interviewer : str
-    data : list[dict]

@@ -99,11 +99,11 @@ async def get_answer_deepseek(input : str, instructions : str) -> str:
 
     return response.choices[0].message.content
 
-def get_answer_router(input : str, instructions : str) -> str:
+def get_answer_router(input : list, instructions : str) -> str:
     """ Stream the model's response through OpenRouter API (gpt-4o-mini)
 
     Args:
-        input (str): Input of the user
+        input (list): Input of the user
         instructions (str): Default instructions used in every prompt
 
     Raises:
@@ -112,20 +112,20 @@ def get_answer_router(input : str, instructions : str) -> str:
     Returns:
         str : response of the LLM 
     """
+
+    # Formatting the input to append general instructions
+    input.append(
+        {
+            "role" : "developer",
+            "content" : instructions
+        }
+    )
+
     try:
         with OpenRouter(api_key=os.getenv("OPENROUTER_API_KEY", ""),) as client:
             response = client.chat.send(
-                model="openai/gpt-4o-mini",
-                messages=[
-                    {
-                        "role" : "user",
-                        "content" : input
-                    },
-                    {
-                        "role" : "developer",
-                        "content" : instructions
-                    }
-                ]
+                model = "openai/gpt-4o-mini",
+                messages = input
             )
         return response.choices[0].message.content
     except RateLimitError as e:

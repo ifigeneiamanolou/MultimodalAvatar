@@ -5,8 +5,8 @@ type resetProps = {
     setMessagePopUp : (message : string) => void;
     setErrorPopUp : (show : boolean) => void;
     interviewer : boolean;
-    messages : {sender : string, message : string}[];
-    setMessages : Dispatch<SetStateAction<{ sender: string; message: string; }[]>>;
+    messages : {role : string, content : string}[];
+    setMessages : Dispatch<SetStateAction<{ role: string; content: string; }[]>>;
 }
 
 export async function newConversation ({waiting, setMessagePopUp, setErrorPopUp, interviewer, messages, setMessages} : resetProps) {

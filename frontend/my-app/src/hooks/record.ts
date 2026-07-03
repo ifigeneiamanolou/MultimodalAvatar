@@ -40,6 +40,7 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
         const response = await fetch(audioRecorder.uri!);       // Extract audio from file
         const audio = await response.blob();                    // Extract raw binary audio data 
 
+        // Send the recording audio for ASR through a WebSocket
         if (ws.current?.readyState !== WebSocket.OPEN){
           setMessagePopUp("No web socket connection found");
           setErrorPopUp(true);
@@ -48,6 +49,8 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
           setMessagePopUp("Audio sent");
           setSuccessPopUp(true);
         }
+
+        // Detect emotion in audio through emotion2vec
     };
 
     const record = async () => {

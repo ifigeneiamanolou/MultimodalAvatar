@@ -1,9 +1,9 @@
 from fastapi import APIRouter
-from src.models.pydantic import Messages, ResponseModel
+from src.models.pydantic import UserInput, ResponseModel
 from src.services.fileServices import save, saveFeedback, next_path
 import os
 import json
-from src.services.nlp import get_answer
+from src.services.nlp import get_answer_router
 
 router = APIRouter()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
@@ -17,7 +17,7 @@ with open(feedback_path2, "r") as f:
     feedback_prompt2 = f.read()
 
 @router.post("/reset", response_model = ResponseModel)
-async def resetConversation(messages : Messages):
+async def resetConversation(user_input : UserInput):
     """ Saves the whole conversation in local storage
 
     Args:
@@ -27,7 +27,8 @@ async def resetConversation(messages : Messages):
         ResponseModel: Pydantic model with information on the completion of the upload
     """
     try:
-        saveFeedback(messages.model_dump(), "../../data/feedback/conversation-%s.json")
+        input_list = [m.model_dump for m in user_input.input]
+        saveFeedback(input_list, "../../data/feedback/conversation-%s.json")
     except Exception as e:
         return{
             "success" : False, 
@@ -42,7 +43,7 @@ async def resetConversation(messages : Messages):
     }
 
 @router.post("/feedback", response_model = ResponseModel)
-async def generateFeedback(messages : Messages):    
+async def generateFeedback(user_input : UserInput):    
     """ Generate an NLP response as feedback to the user after the interview and send it back to the frontend
     
     Args:
@@ -52,15 +53,16 @@ async def generateFeedback(messages : Messages):
         ResponseModel: Pydantic model with information on the completion of the upload and the feedback response
     
     """   
-    saveFeedback(messages.model_dump(), "../../data/feedback/conversation-%s.json")
+    input_list = [m.model_dump() for m in user_input.input]
+    saveFeedback(input_list, "../../data/feedback/conversation-%s.json")
     
     # Retrieve file name to save the response and instructions depending on the user role
-    feedback_prompt = feedback_prompt1 if messages.interviewer == "interviewer" else feedback_prompt2
+    feedback_prompt = feedback_prompt1 if user_input.interview_type == 1 else feedback_prompt2
 
-    # Generate feedback using OpenAI
+    # Generate feedback using OpenAI Router
     try:
-        response = get_answer(
-            input = json.dumps(messages.data),
+        response = get_answer_router(
+            input = input_list,
             instructions = feedback_prompt
         )
     except Exception as e:

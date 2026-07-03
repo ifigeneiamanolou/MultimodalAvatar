@@ -36,11 +36,11 @@ async def detectAudioEmotion(audio : bytes):
     # Input can be a numpy array, raw binary audio bytes, a path or a URL
     path = next_path(os.path.join(BASE_DIR, "../../data/processed/emotion-%s.txt"))
     pathLabel = next_path(os.path.join(BASE_DIR, "../../data/processed/emotionLabel-%s.txt"))
-    result = AutoModel.generate(
+    result = model.generate(
         input = audio, 
         extract_embedding = False, 
         output_dir = path, 
-        granularity = "frame"
+        granularity = "frame"     
     )
     save(input = result.labels, path = pathLabel)
 

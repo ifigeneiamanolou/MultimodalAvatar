@@ -30,7 +30,7 @@ async def generateTextResponse(user_input : UserInput):
     # Generate response from OpenAI
     try:
         response = get_answer_router(
-            input = user_input.input,
+            input = [m.model_dump() for m in user_input.input],
             instructions = prompt1 if user_input.interview_type == 1 else prompt2
         )
     except Exception as e:

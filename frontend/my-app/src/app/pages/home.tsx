@@ -16,7 +16,7 @@ export default function Home() {
 
   // Displayed chat
   const [recordedText, setRecordedText] = useState('');
-  const [messages, setMessages] = useState<{sender : string, message : string}[]>([]);
+  const [messages, setMessages] = useState<{role : string, content : string}[]>([]);
 
   // Popups
   const [successPopUp, setSuccessPopUp] = useState(false);
@@ -58,7 +58,7 @@ export default function Home() {
       const socket = new WebSocket("ws://127.0.0.1:8000/asr");
       ws.current = socket;
       ws.current.onopen = () => {console.log("ASR socket open");}
-      ws.current.onmessage = (e) => {
+      ws.current.onmessage = (e) => {    // Results of ASR
         console.log("message from ASR socket: ", e);
         
       }
@@ -104,16 +104,18 @@ export default function Home() {
   // Handling incoming text queries
   const sendText = async () => {
     // Show the user input
-    displayTextGradual({text : recordedText, sender : "You : ", setMessages : setMessages});
+    const userMessage =  {role : "user", content : recordedText};
+    displayTextGradual({text : recordedText, sender : "user", setMessages});
 
     // Send the query to openai and display the answer
     await getResponse({
-      text : recordedText,
-      interviewer : interviewer,
-      setMessagePopUp : setMessagePopUp,
-      setErrorPopUp : setErrorPopUp,
-      displayTextGradual : displayTextGradual
-    });
+      messages : [...messages, userMessage],
+      interviewer,
+      setMessagePopUp,
+      setErrorPopUp,
+      displayTextGradual,
+      setMessages
+    })
 
     // Clear the input field
     setRecordedText('');
@@ -122,7 +124,9 @@ export default function Home() {
   const handleText = (e : React.ChangeEvent<HTMLInputElement>) => setRecordedText(e.target.value);
 
   const handleFeedback = async () => {
-    generateFeedback({waiting, interviewer, messages, setMessagePopUp, setErrorPopUp})
+    setFeedback(
+      await generateFeedback({waiting, interviewer, messages, setMessagePopUp, setErrorPopUp})
+    );
   }
 
   const handleNew = async () => {
@@ -166,7 +170,7 @@ export default function Home() {
             {messages.length === 0 ? <p> Your conversation will appear here </p> : messages.map((msg, i) => (
               <div className = "" key = {i}>
                 <span className = "">
-                  <strong> {msg.sender} </strong> {msg.message}
+                  <strong> {msg.role} </strong> {msg.content}
                 </span>
               </div>
             ))}
