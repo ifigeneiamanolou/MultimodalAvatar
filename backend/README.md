@@ -14,7 +14,14 @@ The src folder is structured into the following folders:
 
 # Poetry
 
-To enable easier dependancy management, Poetry is used. When first cloning the application, use the following command to download all necessary commands to run the app:
+To enable easier dependancy management, Poetry is used. When first cloning the application, first ensure that pip is installed in your local environment and poetry is also installed. If not, install using poetry using pip, through:
+
+   ```bash
+   pip install poetry
+   ```
+
+
+Then, use the following command to download all necessary dependancies to run the app after navigating to the backend folder:
 
    ```bash
    poetry install

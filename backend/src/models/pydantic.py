@@ -5,7 +5,8 @@ from pydantic import BaseModel
 # Request body pydantic models
 class UserInput(BaseModel):
     input : str
-    interview_type : int             # 1 corresponds to user being the interviewer and 2 to user being the interviewee        
+    interview_type : int             # 1 corresponds to user being the interviewer and 2 to user being the interviewee    
+
 
 # Response Body pydantic models
 class ResponseModel(BaseModel):

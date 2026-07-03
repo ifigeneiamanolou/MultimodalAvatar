@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from src.models.pydantic import Messages, ResponseModel
-from src.services.fileServices import save, saveFeedback
+from src.services.fileServices import save, saveFeedback, next_path
 import os
 import json
 from src.services.nlp import get_answer
@@ -26,8 +26,15 @@ async def resetConversation(messages : Messages):
     Returns:
         ResponseModel: Pydantic model with information on the completion of the upload
     """
-
-    saveFeedback(messages.model_dump(), "../../data/feedback/conversation-%s.json")
+    try:
+        saveFeedback(messages.model_dump(), "../../data/feedback/conversation-%s.json")
+    except Exception as e:
+        return{
+            "success" : False, 
+            "data" : "",
+            "message" : f"Error when uploading conversation : {e}"
+        }
+    
     return{
         "success" : True,
         "data" : "",
@@ -72,3 +79,9 @@ async def generateFeedback(messages : Messages):
         "data" : response, 
         "message" : "Successful answer generation"
     }
+
+    
+
+
+
+

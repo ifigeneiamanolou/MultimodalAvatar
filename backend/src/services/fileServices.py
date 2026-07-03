@@ -35,7 +35,7 @@ def saveFeedback(messages : dict, path : str):
     path = next_path(os.path.join(BASE_DIR, path))
 
     with open(path, "w", encoding = "utf-8") as json_file:
-            json.dump(messages, json_file, indent = 4)
+        json.dump(messages, json_file, indent = 4, )
 
 def save_audio(audio_bytes : bytes, path : str):
     """ Saves the input audio bytes to the next available path in the specified location
@@ -73,3 +73,5 @@ def save_wav(buffer : list, path : str):
     """
     new_path = next_path(os.path.join(BASE_DIR, path))
     write(new_path, 24_000, np.concatenate(buffer))
+
+
