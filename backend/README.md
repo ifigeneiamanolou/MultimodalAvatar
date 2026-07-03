@@ -1,14 +1,26 @@
 # General
 
-The backend is built using Python and follows the file structure of most modern ML projects. The looping pipeline of the application is the following:
+The backend is built using Python and follows the file structure of most modern ML projects, divided in 3 main folders:
+* data : stored datasets, dictionaries, and data created while running the application
+* src : source code
+* notebooks : contains jupyter notebooks
 
-Input audio from the user --> ASR (Whisper) --> Uploading txt file in backend --> NLP (OpenAI) --> TTS (Edge-TTS) --> Uploading txt file in backend --> Generation of facial animations (ArtKit) --> Avatar Rendering (MetaHumans)
-
-After the conversation betweent the avatar and the user ends, the conversation formatted into a JSON file, is sent to a LLM to provide feedback to the user and rate his performance, through prompt engineering techniques.
+The src folder is structured into the following folders:
+1) models : custom classes and pydantic models
+2) routes : FastAPI application, endpoints and web socket connectins
+3) services : business logic used in the routes
+4) tests : test scripts to evaluate the performance of specific parts of the app
+5) utils : utilities such as hashing and authentication
 
 # Poetry
 
-To enable easier dependancy management, Poetry is used. To add dependancies navigate to the backend folder and use:
+To enable easier dependancy management, Poetry is used. When first cloning the application, use the following command to download all necessary commands to run the app:
+
+   ```bash
+   poetry install
+   ```
+   
+To add dependancies navigate to the backend folder and use:
 
    ```bash
    poetry add [package]
@@ -26,12 +38,6 @@ To update a dependacy use:
    poetry update [package]
    ```
 
-When first cloning the application, use the following command to download all necessary commands to run the app:
-
-   ```bash
-   poetry install
-   ```
-
 All settings related to poetry can be found in file "pyproject.toml" along with "poetry.lock" (never changed by the developer).
 
 To activate the virtual environment created by Poetry run the following and then run the command provided :
@@ -40,8 +46,8 @@ To activate the virtual environment created by Poetry run the following and then
    poetry env activate
    ```
 
-To update the dependancies managed by Poetry, run:
+For information on running the FastAPI backend server, go to the README in the "backend/src/routes" folder.
 
-   ```bash
-   poetry update
-   ```
+# Additional installations needed
+Currently, to generate ArtKit coefficients, phonemization is used, planning to migrate to Audio2Face in the future. The backend used for this is "espeak" and needs to be installed. To do this, we need to download "msi" file through this github page :
+https://github.com/espeak-ng/espeak-ng/releases, and run the installer following the default options.

@@ -2,23 +2,17 @@ import React, {useEffect, useRef, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import Alert from '../components/AlertMessage';
 import Success from '../components/SuccessMessage';
-
-
-// Site used for audio recording: https://www.cybrosys.com/blog/how-to-implement-audio-recording-in-a-react-application
-// Connection to web sockets : https://websocket.org/guides/frameworks/react/
-// Web sockets: https://medium.com/@suganthi2496/fastapi-websockets-react-real-time-features-for-your-modern-apps-b8042a10fd90
+import useRecorder from '../../hooks/record';
+import displayTextGradual from '../../hooks/displayGradual';
+import {generateFeedback} from '../../hooks/feedback';
+import {newConversation} from '../../hooks/reset';
+import {getResponse} from '../../hooks/response';
 
 export default function Home() {
   // ====================== Constants ========================
   // Web sockets
   const ws = useRef<WebSocket | null>(null);
   const wsTTS = useRef<WebSocket | null>(null);                                     // Allows continuous streaming
-
-  // Microphone recording
-  const mediaStream = useRef<MediaStream | null>(null);        
-  const mediaRecorder = useRef<MediaRecorder | null>(null);                         // Stream of media content (several tracks)
-  const chunks = useRef<Blob[]>([]);                                                // Recorded audio
-  const [recordedUrl, setRecordedUrl] = useState<string | undefined>(undefined);
 
   // Displayed chat
   const [recordedText, setRecordedText] = useState('');
@@ -32,10 +26,10 @@ export default function Home() {
   // Toggle
   const [interviewer, setInterviewer] = useState(true);
 
-  // Reset button
+  // Waiting for feedback
   const [waiting, setWaiting] = useState(false);
 
-  // Feedback
+  // Text displayed in the feedback box
   const [feedback, setFeedback] = useState('');
 
   // Changing pages
@@ -45,6 +39,15 @@ export default function Home() {
   const [waitingNLP, setWaitingNLP] = useState(false);
   const [waitingASR, setWaitingASR] = useState(false);
   const [waitingFeedback, setWaitingFeedback] = useState(false);
+
+  // ======================= Imports =========================
+  // Microphone recording
+  const {
+    stopRecording,
+    record,
+    recorderState,
+  } = useRecorder({setMessagePopUp, setErrorPopUp, setSuccessPopUp, ws});
+
 
   // ======================= Web Socket ======================
   useEffect(() => {
@@ -59,10 +62,11 @@ export default function Home() {
         console.log("message from ASR socket: ", e);
         
       }
+      ws.current.onerror = (e) => {console.log("ASR socket error : ", e.target);}
       ws.current.onclose = () => {
         console.log("ASR socket closed");
         ws.current = null;
-        reconnectTimer = setTimeout(connectASR, 5000);   // Open again the web socket after 5sec
+        reconnectTimer = setTimeout(connectASR, 1000);   // Open again the web socket after 1sec
       }
     };
 
@@ -70,6 +74,7 @@ export default function Home() {
       const socket = new WebSocket("ws://127.0.0.1:8000/tts/stream");
       wsTTS.current = socket;
       wsTTS.current.onopen = () => {console.log("TTS socket open");}
+      wsTTS.current.onerror = (e) => {console.log("TTS socket error : ", e.target);}
       wsTTS.current.onmessage = (e) => {
         console.log("message from TTS socket : ", e);
         if(e.data instanceof Blob){
@@ -96,216 +101,33 @@ export default function Home() {
     };
   }, []);
 
-  // Used to generate a response from an LLM and perform TTS
-  const getResponse = async (text : string, feedback : boolean = false) => {
-    try{
-      // Fetch a response from OpenAI
-      const interview_type = interviewer ? 1 : 2;   
-      const res = await fetch("http://localhost:8000/response/stream", {
-        method : "POST",
-        body : JSON.stringify({input : text, interview_type : interview_type}),
-        headers: {"Content-Type": "application/json"}
-      });
-
-      if(res.status == 429){
-        setMessagePopUp("No API credit remaining — please try again later.");
-        setErrorPopUp(true);
-        return;
-      }
-
-      // Get a reader to read the response as a stream
-      const reader = res.body?.getReader();
-
-      if(reader === undefined){
-        throw new Error("no meesage passed");
-      }
-      
-      // Create a decoder to decode the data into a string
-      const decoder = new TextDecoder('utf-8');
-
-      // Continuousy read from the stream until it's done
-      let done = false;
-      while(!done){
-        // Read a chunk from the stream
-        const { value, done : readerDone } = await reader.read();
-
-        // Update the done flag
-        done = readerDone
-
-        if(value){
-          // Decode the binary data chunk
-          const chunkValue = decoder.decode(value, {stream : true})
-
-          if(chunkValue.includes("[[NO-CREDIT]]")){
-            setMessagePopUp("No API credit remaining — please try again later.");
-            setErrorPopUp(true);
-            return;
-          }
-
-          // Display the chunk of data
-          displayTextGradual(chunkValue, "You : Bot")
-
-          // Convert to speech and generate blendshape coeffiecients
-          if (ws.current?.readyState === WebSocket.CLOSED){
-            setMessagePopUp("No web socket connection found");
-            setErrorPopUp(true);
-          } else {
-            ws.current?.send(chunkValue);
-            setMessagePopUp("Audio sent");
-            setSuccessPopUp(true);
-          }
-
-          // Play the audio
-          // const result = await responseTTS.json();
-          // const base64string = result.data.audio;
-          // var audio = new Audio("data:audio/wav;base64," + base64string);       // use of data URL prefix
-          // try{
-          //   audio.play();
-          // } catch (e) {
-          //   console.log(e);
-          // }
-        }   
-      }
-    } catch (error){
-      console.log(error);
-    }
-  };
-
-  // Handles the press of "Start recording" button
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({audio : true});      // Prompt the user for permission
-      mediaStream.current = stream;                                                  // Interface to easily record media (ie audio)
-      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
-        ? 'audio/webm;codecs=opus'
-        : 'audio/ogg;codecs=opus';
-      mediaRecorder.current = new MediaRecorder(stream, {mimeType : mimeType});  
-       
-      // Input audio from the user
-      mediaRecorder.current.ondataavailable = (e) => {
-        if(e.data.size > 0){
-          chunks.current.push(e.data);
-        }
-      };
-
-      // Handle the ending of audio input
-      mediaRecorder.current.onstop = async (e) => {
-        const recordedBlob = new Blob(
-          chunks.current, {type : mimeType}
-        )
-        const data = await recordedBlob.bytes()
-
-        if (ws.current?.readyState === WebSocket.CLOSED){
-          setMessagePopUp("No web socket connection found");
-          setErrorPopUp(true);
-        } else {
-          ws.current?.send(data);
-          setMessagePopUp("Audio sent");
-          setSuccessPopUp(true);
-        }
-
-        // Render the audio element in the frontend
-        const url = URL.createObjectURL(recordedBlob);
-        setRecordedUrl(url);
-        chunks.current = [];
-      };
-
-      // Begins recording data into audio blobs
-      mediaRecorder.current.start();
-    } catch (error){
-      console.log('Error accessing the microphone', error);
-    }
-  };
-
-  // Handles the press of "Stop recording" button
-  const stopRecording = async () => {
-    if(mediaRecorder.current && mediaRecorder.current.state == 'recording'){
-      mediaRecorder.current.stop();   // Stop media capture
-    }
-    if(mediaStream.current){
-      mediaStream.current.getTracks().forEach((track) =>{
-        track.stop();                 // Stop the track
-      });
-    }
-  };
-
   // Handling incoming text queries
-  const sendText = () => {
+  const sendText = async () => {
     // Show the user input
-    displayTextGradual(recordedText, "You : ");
+    displayTextGradual({text : recordedText, sender : "You : ", setMessages : setMessages});
 
     // Send the query to openai and display the answer
-    getResponse(recordedText);
+    await getResponse({
+      text : recordedText,
+      interviewer : interviewer,
+      setMessagePopUp : setMessagePopUp,
+      setErrorPopUp : setErrorPopUp,
+      displayTextGradual : displayTextGradual
+    });
 
     // Clear the input field
     setRecordedText('');
   };
 
-  // Displays incoming text gradually
-  const displayTextGradual = (text : string = "", sender : string = "") => {
-    setMessages(prev => [...prev, {sender : sender, message : ''}])
-    var index = 0;
-    const displayText = setInterval(() => {
-        setMessages(prev => {
-          const updated = [...prev];
-          updated[updated.length - 1] = {
-            sender,
-            message : text.slice(0, index + 1)
-          };
-          return updated;
-        });
-        index = index + 1;
-        if (index >= text.length - 1){
-          clearInterval(displayText);
-        }
-    }, 120);
-  };
-
-  // Resets the conversation
-  const newConversation = async () => {
-    // Ensure bot response has been received
-    if(waiting){
-      setErrorPopUp(true);
-      setMessagePopUp("Waiting for model response. Try again.");
-      return;
-    }
-
-    // Save messages as a JSON object
-    const type = interviewer ? "interviewer" : "interviewee";
-    await fetch("http://localhost:8000/reset", {
-        method : "POST",
-        body : JSON.stringify({"interviewer" : type, "data" : messages}),
-        headers: {"Content-Type": "application/json"}
-    });
-
-    // Empty the display
-    setMessages([]);
-  };
-
-  const generateFeedback = async () => {
-    // Ensure bot response has been received
-    if(waiting){
-      setErrorPopUp(true);
-      setMessagePopUp("Waiting for model response. Try again.");
-      return;
-    }
-
-    // Ensure the conversation has started
-
-    // Generate feedback
-    const type = interviewer ? "interviewer" : "interviewee";
-    const res = await fetch("http://localhost:8000/feedback", {
-        method : "POST",
-        body : JSON.stringify({"interviewer" : type, "data" : messages}),
-        headers: {"Content-Type": "application/json"}
-    });
-    
-    // Display the feedback
-    const response = await res.json();
-    setFeedback(response.data);
-  };
-
   const handleText = (e : React.ChangeEvent<HTMLInputElement>) => setRecordedText(e.target.value);
+
+  const handleFeedback = async () => {
+    generateFeedback({waiting, interviewer, messages, setMessagePopUp, setErrorPopUp})
+  }
+
+  const handleNew = async () => {
+    newConversation({waiting, setMessagePopUp, setErrorPopUp, interviewer, messages, setMessages})
+  }
 
   const downloadFeedback = () => {
     // Create a blob object of mime type text and attach to a temporary anchor element, triggered programmatically
@@ -358,11 +180,9 @@ export default function Home() {
             </div>
 
             {/* Input through speech and ASR*/}
-            <audio className = "w-full" controls src = {recordedUrl}/>
-            <div className = "flex flex-row items-center py-4 gap-4">
-              <button className = "bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700" onClick = {startRecording}> Start Recording </button>
-              <button className = "bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700" onClick= {stopRecording}> Stop recording </button>
-            </div>
+            <button onClick = {recorderState.isRecording ? stopRecording : record} className = "bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700">
+              {recorderState.isRecording ? 'Stop Recording' : 'Start Recording'}
+            </button>
 
             {/* Control buttons */}
             {/* Source: https://flowbite.com/docs/forms/toggle/ */}
@@ -372,7 +192,7 @@ export default function Home() {
               <div className="relative w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-black after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-200"></div>
                 <span className="select-none ms-3 text-sm font-medium text-heading">{interviewer ? "Interviewer (bot)" : "Interviewee (bot)"}</span>
               </label>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="size-6 cursor-pointer" onClick = {newConversation}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="size-6 cursor-pointer" onClick = {handleNew}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
               </svg>
             </div>
@@ -401,7 +221,7 @@ export default function Home() {
                 <svg className = "fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/></svg>
                 <span> Download</span>
               </button>
-              <button onClick = {generateFeedback} className = "bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700">
+              <button onClick = {handleFeedback} className = "bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700">
                 <span> Feedback </span>
               </button> 
             </div>

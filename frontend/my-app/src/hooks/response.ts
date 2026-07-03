@@ -1,0 +1,41 @@
+type responseProps = {
+    text : string;
+    interviewer : boolean;          // True : 1, False : 2
+    setMessagePopUp : (message : string) => void;
+    setErrorPopUp : (show : boolean) => void;
+    displayTextGradual : Function;
+}
+
+export async function getResponse({text, interviewer, setMessagePopUp, setErrorPopUp, displayTextGradual} : responseProps){
+    try{
+      // Fetch a response from OpenAI
+      const interview_type = interviewer ? 1 : 2;   
+      const res = await fetch("http://localhost:8000/response", {
+        method : "POST",
+        body : JSON.stringify({input : text, interview_type : interview_type}),
+        headers: {"Content-Type": "application/json"}
+      });
+
+      // Handle the case no credit is left
+      if(res.status == 429){
+        setMessagePopUp("No API credit remaining — please try again later.");
+        setErrorPopUp(true);
+        return;
+      }
+
+      // Display the bot response
+      const body = await res.json()
+      const data = body.data;
+      displayTextGradual(data, "Bot : ")
+
+      // Perform TTS 
+
+      // Perform emotion recognition
+
+      // Generate artkit coefficients
+    } catch (error){
+      console.log(error);
+    }
+
+};  
+

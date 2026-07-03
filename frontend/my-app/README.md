@@ -2,59 +2,45 @@
 
 The app is build using the Expo framework in order to enable both Android/ios installation and web applications. It is based on Typescript, along with React, tailwind css and nativewind to accomodate for mobile apps' appearance.
 
-# Why React and Typescript
-
-React is a popular Javascript library used to create reusable components for web applications, enabling interactive and dynamic websites. TypeScript that builds on Javascript by adding static data types, helping to catch mistakes early and maintain and understand code. Advantages of this setup include:
-
-1. Enhanced type safety and early error detection
-2. Improved code readability
-3. Scalability for large codebases
-4. Enhanced collaboration in teams
-5. Known ecosystem with a lot of ressources
-6. Improved maintainability (easy refactoring)
-
-For more detail see : https://www.geeksforgeeks.org/typescript/compelling-reasons-to-use-typescript-with-react-a-developers-guide/
-
-# Why Expo
-
-Ecosystem of tools built around React Native, designed to help built applications both for Android/ios and the Web. It helps in initializing a project, developing up to deploying and monitoring the final application. The two main services are:
-
-1. Expo Open-Source tools : Expo CLI for managing and creating projects, Expo Router (routing library that simplifies app navigaiton) and Expo CDK (a collection of over 75 pre-made APIs that provide access to devices like camera)
-
-2. Expo Application Services (EAS) : helps in shipping an application (build your application, submit on Apple Store or Google Play Store and update the application with OTA updates)
-
-See : https://www.metacto.com/blogs/what-is-expo-a-comprehensive-guide-for-mobile-app-development
-
-# Why tailwind / nativewind
-
-The key reasons for using tailwind are:
-1. rapid prototyping through inline CSS
-2. high customability
-3. active community
-4. easier adaptive design (various size screens, dark mode)
-
-See : https://dev.to/codedthemes/why-is-tailwind-css-so-popular-and-is-it-worth-using-1pmf
-
 # Get started
 
-1. Install dependencies
+1. Redirect to the folder "my-app" after cloning the repository
+
+   ```bash
+   cd frontend/my-app
+   ```
+
+2. Ensure NodeJS and npm are installed through:
+
+   ```bash
+   node --version
+   npm --version
+   ```
+
+Make sure the NodeJS version is at least v18.0.0
+
+3. Install expo
+
+   ```bash
+   npm install expo
+   ```
+
+4. Install dependencies specific to the project
 
    ```bash
    npm install
    ```
 
-2. Start the app
+4. If you wish to start the frontend server in development mode, run the following:
 
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+This will also provide a QR to view the app in Android or iOS but the Expo app needs to be downloaded on the phone on 
+which the mobile application is intended to be viewed. For the application to run properly, the backend server needs to be 
+simultaneously running, as described in the README of the backend folder.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+# Frontend structure
+The source code is located into the "src" folder, which is divided into the "app" folder and the "hooks" folder. The first one contains all the pages ("pages" folder) and the components used in them ("components" folder), like pop ups. The second one contains importable functions, that do not render content, but are used from the pages and the components, to improve readability.
 
