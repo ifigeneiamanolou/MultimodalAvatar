@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from fastapi.responses import StreamingResponse
 from openai import OpenAI, RateLimitError, AsyncOpenAI, APIError
 import os
-from src.services.fileServices import save
+from src.services.fileServices import save_stream
 from fastapi import HTTPException
 import logging
 from openrouter import OpenRouter
@@ -107,9 +107,6 @@ def get_answer_router(input : list, instructions : str) -> str:
         input (list): Input of the user
         instructions (str): Default instructions used in every prompt
 
-    Raises:
-        HTTPException: if the response generation fails
-
     Returns:
         str : response of the LLM 
     """
@@ -142,9 +139,6 @@ def get_answer_router_stream(input : list, instructions : str):
     Args:
         input (str): Input of the user
         instructions (str): Default instructions used in every prompt
-
-    Raises:
-        HTTPException: if the response generation fails
     """
     url = "https://openrouter.ai/api/v1/chat/completions"
 
@@ -189,7 +183,10 @@ def get_answer_router_stream(input : list, instructions : str):
                         data_obj = json.loads(data)
                         content = data_obj["choices"][0]["delta"].get("content")
                         if content:
-                            yield "data: " + content + "\n\n"
+                            # Save the data for logging
+                            save_stream(content, "../../data/raw/response-%s.txt")
+                            # Return the data 
+                            yield content
                     except json.JSONDecodeError:
                         pass
                 except Exception:

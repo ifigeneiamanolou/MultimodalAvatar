@@ -37,6 +37,21 @@ def saveFeedback(messages : dict, path : str):
     with open(path, "w", encoding = "utf-8") as json_file:
         json.dump(messages, json_file, indent = 4, )
 
+def save_stream(input : str, path : str):
+    """ Saves the input text to the next available path in the specified location
+
+    Args:
+        input (str): input text
+        path (str): relative path to the current directory to save the audio
+    """
+
+    path = next_path(os.path.join(BASE_DIR, path))
+
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+
+    with open(path, "a") as f:      # Avoid overwriting
+        f.write(input)
+
 def save_audio(audio_bytes : bytes, path : str):
     """ Saves the input audio bytes to the next available path in the specified location
 

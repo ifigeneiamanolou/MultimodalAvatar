@@ -1,4 +1,4 @@
-
+{/* Generate a response at once */}
 
 type responseProps = {
     messages : {role : string, content : string}[];
@@ -19,13 +19,6 @@ export async function getResponse({messages, interviewer, setMessagePopUp, setEr
         body : JSON.stringify({input : messages, interview_type : interview_type}),
         headers: {"Content-Type": "application/json"}
       });
-
-      // Handle the case no credit is left
-      if(res.status == 429){
-        setMessagePopUp("No API credit remaining — please try again later.");
-        setErrorPopUp(true);
-        return;
-      }
 
       // Display the bot response
       const body = await res.json()

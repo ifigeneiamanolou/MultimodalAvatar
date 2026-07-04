@@ -6,10 +6,9 @@ import useRecorder from '../../hooks/record';
 import displayTextGradual from '../../hooks/displayGradual';
 import {generateFeedback} from '../../hooks/feedback';
 import {newConversation} from '../../hooks/reset';
-import {getResponse} from '../../hooks/response';
+import {getResponse} from '../../hooks/response2';
 import MarkDown from 'react-markdown';
 import '../../../global.css';
-import fetchEventSource from '@microsoft/fetch-event-source';
 
 export default function Home() {
   // ====================== Constants ========================
