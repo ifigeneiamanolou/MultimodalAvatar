@@ -13,8 +13,11 @@ import { fetchEventSource } from '@microsoft/fetch-event-source';
 
 export async function getResponse({messages, interviewer, setMessagePopUp, setErrorPopUp, displayTextGradual, setMessages} : responseProps){
   try{
+      const interview_type = interviewer ? 1 : 2;  
+      var count = 0;          // Count the number of chunks
+      var partial_text = "";  // Text of 10 chunks to perform post-processing
+
       // Fetch a response from OpenAI
-      const interview_type = interviewer ? 1 : 2;   
       await fetchEventSource("http://localhost/response/stream", {
         method: 'POST',
         headers: {
@@ -36,6 +39,15 @@ export async function getResponse({messages, interviewer, setMessagePopUp, setEr
         onmessage(event) {      // Data received from NLP
           const parsedData = JSON.parse(event.data);
           displayTextGradual({text : parsedData, setMessages});
+
+          // Conditionally perform post-processing
+          count += 1;
+          partial_text += parsedData;
+          if(count >= 10 && partial_text.trim() in ["!", ".", ";", ":"]){
+            console.log(parsedData);    // post-processing
+            count = 0;
+            partial_text = "";
+          }
         },
         onclose() {
           console.log("Connection closed by the server");
@@ -47,7 +59,6 @@ export async function getResponse({messages, interviewer, setMessagePopUp, setEr
     } catch (error){
       console.log(error);
     }
-
 };  
 
 
