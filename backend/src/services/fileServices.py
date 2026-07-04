@@ -41,13 +41,20 @@ def save_audio(audio_bytes : bytes, path : str):
     """ Saves the input audio bytes to the next available path in the specified location
 
     Args:
-        audio_bytes (bytes): input audio bytes from MediaRecorder API
+        audio_bytes (bytes): input audio bytes 
         path (str): relative path to the current directory to save the audio
+
+    Returns:
+        path (str) : absolute path where audio was saved
     """
+
+    path = next_path(os.path.join(BASE_DIR, path))
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
     with open(path, "wb") as f:
         f.write(audio_bytes)
+
+    return path
 
 def save(input : str, path : str):
     """ Saves the input text to the next available path in the specified location

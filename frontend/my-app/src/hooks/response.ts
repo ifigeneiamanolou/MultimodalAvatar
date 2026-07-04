@@ -1,3 +1,5 @@
+
+
 type responseProps = {
     messages : {role : string, content : string}[];
     interviewer : boolean;          // True : 1, False : 2
@@ -8,7 +10,8 @@ type responseProps = {
 }
 
 export async function getResponse({messages, interviewer, setMessagePopUp, setErrorPopUp, displayTextGradual, setMessages} : responseProps){
-    try{
+    
+  try{
       // Fetch a response from OpenAI
       const interview_type = interviewer ? 1 : 2;   
       const res = await fetch("http://localhost:8000/response", {
@@ -30,6 +33,14 @@ export async function getResponse({messages, interviewer, setMessagePopUp, setEr
       displayTextGradual({text : data, sender : "assistant", setMessages})
 
       // Perform TTS 
+      const resTTS = await fetch("http://localhost:8000/tts", {
+        method : "POST",
+        body : JSON.stringify({input : messages, interview_type : interview_type}),
+        headers: {"Content-Type": "application/json"}
+      });
+
+      const bodyTTS = await resTTS.json()
+      const audio = body.data.audio;
 
       // Perform emotion recognition
 

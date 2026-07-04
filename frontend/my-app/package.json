@@ -6,6 +6,7 @@
     "@breezystack/lamejs": "^1.2.7",
     "@expo/ui": "~56.0.18",
     "@heroicons/react": "^2.2.0",
+    "@microsoft/fetch-event-source": "^2.0.1",
     "babel-preset-expo": "^56.0.15",
     "expo": "^57.0.2",
     "expo-audio": "~56.0.12",

@@ -7,6 +7,7 @@ from fastapi import HTTPException
 import logging
 from openrouter import OpenRouter
 import requests
+import json
 
 # Environment variables
 load_dotenv()
@@ -112,8 +113,13 @@ def get_answer_router(input : list, instructions : str) -> str:
     Returns:
         str : response of the LLM 
     """
+    url = "https://openrouter.ai/api/v1/chat/completions"
 
-    # Formatting the input to append general instructions
+    headers = {
+        "Authorization": f"Bearer {os.getenv("OPENROUTER_API_KEY")}",
+        "Content-Type": "application/json"
+    }
+
     input.append(
         {
             "role" : "developer",
@@ -121,19 +127,16 @@ def get_answer_router(input : list, instructions : str) -> str:
         }
     )
 
-    try:
-        with OpenRouter(api_key=os.getenv("OPENROUTER_API_KEY", ""),) as client:
-            response = client.chat.send(
-                model = "openai/gpt-4o-mini",
-                messages = input
-            )
+    payload = {
+        "model": "openai/gpt-4o",
+        "messages": input,
+        "stream": False
+    }
+
+    with requests.post(url, headers=headers, json=payload, stream=True) as response:
         return response.choices[0].message.content
-    except RateLimitError as e:
-        return "[[NO-CREDIT]]"
-    except Exception as e:
-        raise HTTPException(status_code = 500, detail = {e})
     
-def get_answer_router_stream(input : str, instructions : str) -> StreamingResponse:
+def get_answer_router_stream(input : list, instructions : str):
     """ Stream the model's streaming response through OpenRouter API through SSEs
 
     Args:
@@ -142,7 +145,52 @@ def get_answer_router_stream(input : str, instructions : str) -> StreamingRespon
 
     Raises:
         HTTPException: if the response generation fails
-
-    Returns:
-        StreamingResponse : continuous response of the LLM 
     """
+    url = "https://openrouter.ai/api/v1/chat/completions"
+
+    headers = {
+        "Authorization": f"Bearer {os.getenv("OPENROUTER_API_KEY")}",
+        "Content-Type": "application/json"
+    }
+
+    input.append(
+        {
+            "role" : "developer",
+            "content" : instructions
+        }
+    )
+
+    payload = {
+        "model": "openai/gpt-4o",
+        "messages": input,
+        "stream": False
+    }
+
+    buffer = ""
+    with requests.post(url, headers=headers, json=payload, stream=True) as r:
+        for chunk in r.iter_content(chunk_size=1024, decode_unicode=True):
+            buffer += chunk
+            while True:
+                try:
+                    # Find the next complete SSE line
+                    line_end = buffer.find('\n')
+                    if line_end == -1:
+                        break
+
+                    line = buffer[:line_end].strip()
+                    buffer = buffer[line_end + 1:]
+
+                    if line.startswith('data: '):
+                        data = line[6:]
+                    if data == '[DONE]':
+                        break
+
+                    try:
+                        data_obj = json.loads(data)
+                        content = data_obj["choices"][0]["delta"].get("content")
+                        if content:
+                            yield "data: " + content + "\n\n"
+                    except json.JSONDecodeError:
+                        pass
+                except Exception:
+                    break

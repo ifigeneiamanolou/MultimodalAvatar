@@ -20,7 +20,8 @@ app.include_router(emotion)
 app.add_middleware(
     CORSMiddleware,
     allow_origins = ["http://localhost:8081",
-                     "http://localhost:8082"],          # Change in production    
+                     "http://localhost:8082",
+                     "http://localhost:8000"],          # Change in production    
     allow_headers = ["*"],
     allow_methods = ["*"],
     allow_credentials = True      

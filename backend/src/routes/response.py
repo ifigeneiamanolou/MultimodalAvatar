@@ -58,10 +58,10 @@ async def generateTextResponse(user_input : UserInput) -> StreamingResponse:
     """
 
     # Generate response from OpenAI
-    return get_answer_router_stream(
-        user_input.input,
-        prompt1 if user_input.interview_type == 1 else prompt2
+    prompt = prompt1 if user_input.interview_type == 1 else prompt2
+    return StreamingResponse(
+        get_answer_router_stream([m.model_dump() for m in user_input.input], prompt), 
+        media_type='text/event-stream'
     )
-
  
     

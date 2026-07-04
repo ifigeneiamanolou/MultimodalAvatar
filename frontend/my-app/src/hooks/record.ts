@@ -6,7 +6,7 @@ import {
   setAudioModeAsync,
   useAudioRecorderState,
 } from 'expo-audio';
-import { Button, View, Alert } from 'react-native';
+import { Alert } from 'react-native';
 import React from 'react';
 
 type useRecorderProps = {
@@ -36,9 +36,10 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
     }, []);
 
     const stopRecording = async () => {
-        const uri = await audioRecorder.stop();
+        await audioRecorder.stop();
         const response = await fetch(audioRecorder.uri!);       // Extract audio from file
         const audio = await response.blob();                    // Extract raw binary audio data 
+        const url = URL.createObjectURL(audio);
 
         // Send the recording audio for ASR through a WebSocket
         if (ws.current?.readyState !== WebSocket.OPEN){
@@ -49,8 +50,6 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
           setMessagePopUp("Audio sent");
           setSuccessPopUp(true);
         }
-
-        // Detect emotion in audio through emotion2vec
     };
 
     const record = async () => {
@@ -62,6 +61,6 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
     return {
         stopRecording,
         record,
-        recorderState
+        recorderState,
     };
 };

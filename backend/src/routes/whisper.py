@@ -5,7 +5,6 @@
 
 """
 
-import tempfile
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 import whisperx
 from src.models.ConnectionManager import ConnectionManager
@@ -57,11 +56,9 @@ async def speechRecognition(websocket : WebSocket):
             # Receive data from the client
             data = await websocket.receive_bytes()  
             
-            # Save raw audio into a temporary webm file  
-            with tempfile.NamedTemporaryFile(suffix=".webm", delete=True) as tmp:
-                tmp.write(data)
-                tmp.flush()
-                audio = whisperx.load_audio(tmp.name)   
+            # Save raw audio into a webm file  
+            path = save_audio(data, "../../data/raw/audio-%s.webm")  
+            audio = whisperx.load_audio(path)
 
             try:
                 # Perform audio transcription
@@ -70,23 +67,23 @@ async def speechRecognition(websocket : WebSocket):
                     language = "en",
                     batch_size = 4,
                 )
-
+            
                 # Perform force alignment
                 aligned = whisperx.align(result["segments"], model_align, metadata, audio, device, return_char_alignments = False)
                 aligned_text = " ".join(
                     segment["text"] for segment in aligned["segments"]
                 )   
-
+            
                 # Save the transcription result
                 save(aligned_text, "../../data/processed/transcription-%s.txt")
 
                 # Send back the result of the transcription to the frontend to display
-                await manager.send_personal(websocket, aligned_text)
+                await manager.send_personal(connection = websocket, data = aligned_text)
             except Exception as e:
-                await manager.send_personal(websocket, f"Error {e}")
+                print(e)
     except WebSocketDisconnect:
         print("Client disconnected")
     except Exception as e:
-        await manager.send_personal(f"Error {e}")
+        await manager.send_personal(connection = websocket, data = f"Error {e}")
     finally:
         await manager.disconnect(websocket)

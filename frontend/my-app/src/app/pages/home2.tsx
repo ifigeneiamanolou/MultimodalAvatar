@@ -1,3 +1,9 @@
+{/*
+    Second version of the home page with continuous streaming of the LLM response which is displayed it using microsoft/fetch-event-
+    source to handle the incoming SSE messages
+    
+*/}
+
 import React, {useEffect, useRef, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import Alert from '../components/AlertMessage';
@@ -222,7 +228,7 @@ export default function Home() {
 
         {/* Right part of the main page */}
         <div className = "flex flex-col flex-1 h-full">
-          {/* Avatar (pixel streaming)*/}
+          {/* Avatar */}
           <div className = "flex flex-1 basis-3/4">
 
           </div>
