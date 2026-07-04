@@ -13,7 +13,6 @@ from src.services.fileServices import next_path, save
 router = APIRouter()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
 
-
 @router.post("/emotion2vec", response_model = ResponseModel)
 async def detectAudioEmotion(audio : bytes):
     """_summary_

@@ -59,4 +59,4 @@ For information on running the FastAPI backend server, go to the README in the "
 Currently, to generate ArtKit coefficients, phonemization is used, planning to migrate to Audio2Face in the future. The backend used for this is "espeak" and needs to be installed. To do this, we need to download "msi" file through this github page :
 https://github.com/espeak-ng/espeak-ng/releases, and run the installer following the default options.
 
-Also, ffmpeg needs to installed through the official site: https://www.gyan.dev/ffmpeg/builds/. Afterwards, the zip needs to be extracted and the directory to the bin folder added to PATH (for Whipser to work properly).
+Also, ffmpeg needs to installed through the official site: https://www.gyan.dev/ffmpeg/builds/ or the githu releases page. Make sure the installed version is 4, 5, 6 or 7 for litorchcodec to work properly and that the "shared" zip is downloaded. Afterwards, the zip needs to be extracted and the directory to the bin folder added to "whisper.py" in the location shown.

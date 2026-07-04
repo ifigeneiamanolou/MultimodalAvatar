@@ -7518,20 +7518,20 @@ files = [
 
 [[package]]
 name = "whisperx"
-version = "3.8.6"
+version = "3.8.7rc1"
 description = "Time-Accurate Automatic Speech Recognition using Whisper."
 optional = false
 python-versions = "<3.14,>=3.10"
 groups = ["main"]
 files = [
-    {file = "whisperx-3.8.6-py3-none-any.whl", hash = "sha256:cb6d4fcd3fb6c42305cb8b222a33a0b78f6b657e9db3b714345fe43dc0a69c1f"},
-    {file = "whisperx-3.8.6.tar.gz", hash = "sha256:d647aecaa6c2f413bb924d722d925878ef300c99093ca49cd6cb7840bdbffe0e"},
+    {file = "whisperx-3.8.7rc1-py3-none-any.whl", hash = "sha256:7e9b2b405cad4030107cf5f9c7c35033bfb41b0aeff17277652f14de9e52d23d"},
+    {file = "whisperx-3.8.7rc1.tar.gz", hash = "sha256:cc9e5b0cf67a5c250691ccca82f9a85e9ccfeb17b376a530a3c6e539ef0428ee"},
 ]
 
 [package.dependencies]
 ctranslate2 = ">=4.5.0"
 faster-whisper = ">=1.2.0"
-huggingface-hub = "<1.0.0"
+huggingface-hub = ">=0.28.1"
 nltk = ">=3.9.1"
 numpy = ">=2.1.0"
 omegaconf = ">=2.3.0"
@@ -7669,4 +7669,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.14"
-content-hash = "4557b2f602be1f79db94302665ea33c2141f628f927675a4c41cc999e12b63af"
+content-hash = "cd6343a3a9b879d3ed7222c08106a60bdf5fabc8f9ca26835e4b8bb7e29a53a3"

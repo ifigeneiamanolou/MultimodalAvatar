@@ -21,6 +21,10 @@ compute_type = "int8"
 # Websocket manager
 manager = ConnectionManager()
 
+# ffmpeg configuration
+if os.name == "nt":
+    os.add_dll_directory(r"C:/ffmpeg-n7.1-latest-win64-gpl-shared-7.1/bin")     # ADD YOUR FFMPEG HERE
+
 # Whisper models
 model = whisperx.load_model("tiny", device = device, compute_type = compute_type)
 model_align, metadata = whisperx.load_align_model(language_code = "en", device = device)
@@ -62,7 +66,7 @@ async def speechRecognition(websocket : WebSocket):
             try:
                 # Perform audio transcription
                 result = model.transcribe(
-                    audio      ,            
+                    audio,            
                     language = "en",
                     batch_size = 4,
                 )
