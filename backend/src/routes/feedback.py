@@ -2,7 +2,6 @@ from fastapi import APIRouter
 from src.models.pydantic import UserInput, ResponseModel
 from src.services.fileServices import save, saveFeedback, next_path
 import os
-import json
 from src.services.nlp import get_answer_router
 
 router = APIRouter()
@@ -73,7 +72,7 @@ async def generateFeedback(user_input : UserInput):
         }
 
     # Save the response to a file  
-    save(response, "../../feedback/feedback-%s.txt")
+    save(response, "../../processed/feedback-%s.txt")
 
     # Return the response to the frontend server to be displayed to the feedback box
     return {

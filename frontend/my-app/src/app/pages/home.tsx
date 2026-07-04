@@ -7,6 +7,7 @@ import displayTextGradual from '../../hooks/displayGradual';
 import {generateFeedback} from '../../hooks/feedback';
 import {newConversation} from '../../hooks/reset';
 import {getResponse} from '../../hooks/response';
+import MarkDown from 'react-markdown';
 
 export default function Home() {
   // ====================== Constants ========================
@@ -213,10 +214,8 @@ export default function Home() {
           {/* Feedback generation */}
           <div className = "flex flex-1 flex-row basis-1/4 shadow-md shadow-gray-300 mx-4 gap-4 p-4 ">
             {/* Feedback */}
-            <div className = "flex grow bg-gray-50 border-gray-300 border-2 rounded-lg p-2">
-               <p className = "text-gray-500 text-sm"> 
-                {feedback === "" ? "Press feedback button ..." : feedback} 
-               </p>
+            <div className = "flex grow bg-gray-50 text-gray-500 test-sm border-gray-300 border-2 rounded-lg p-2 overflow-auto">
+              {feedback ? <MarkDown children= {feedback} rehypePlugins = {[]} remarkPlugins = {[]}/> : <p> Feedback will appear here </p>}   
             </div>
 
             {/* Buttons to generate feedback */}
