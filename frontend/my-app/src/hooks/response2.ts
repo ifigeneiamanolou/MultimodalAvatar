@@ -63,7 +63,7 @@ export async function getResponse({messages, interviewer, setMessagePopUp, setEr
           // Conditionally perform post-processing
           count += 1;
           partial_text += parsedData;
-          if(count >= 10 && parsedData.trim() in ["!", ".", ";", ":"]){  // Context retention
+          if(count >= 10 && parsedData.trim() in ["!", ".", ";", ":", "?"]){  // Context retention
             console.log(partial_text);    
             postProcessing(partial_text);
             count = 0;

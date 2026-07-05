@@ -15,11 +15,13 @@ app.include_router(tts)
 app.include_router(response)
 app.include_router(avatar)
 
+origins = ["http://localhost:8081",
+            "http://localhost:8082",
+            "http://localhost:8000"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins = ["http://localhost:8081",
-                     "http://localhost:8082",
-                     "http://localhost:8000"],          # Change in production    
+    allow_origins = origins,          # Change in production    
     allow_headers = ["*"],
     allow_methods = ["*"],
     allow_credentials = True      
