@@ -9,9 +9,6 @@ venv/
 # Datasets
 backend/data/Audio2Face-3D-Samples/
 
-# Notebooks
-notebooks/
-
 # Additional files
 .vscode/*
 
