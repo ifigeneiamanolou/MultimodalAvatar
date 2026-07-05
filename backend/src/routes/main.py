@@ -6,7 +6,6 @@ from src.routes.avatar import router as avatar
 from src.routes.feedback import router as feedback
 from src.routes.tts import router as tts
 from src.routes.response import router as response
-from src.routes.emotion import router as emotion
 
 app = FastAPI()
 app.include_router(whisper)
@@ -15,7 +14,6 @@ app.include_router(feedback)
 app.include_router(tts)
 app.include_router(response)
 app.include_router(avatar)
-app.include_router(emotion)
 
 app.add_middleware(
     CORSMiddleware,

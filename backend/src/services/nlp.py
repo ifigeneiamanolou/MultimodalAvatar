@@ -65,7 +65,6 @@ async def get_answer_stream(input : str, instructions : str) -> StreamingRespons
     Returns:
         StreamingResponse : continuous response of the LLM 
     """
-
     
 
 async def get_answer_deepseek(input : str, instructions : str) -> str:
@@ -100,7 +99,7 @@ async def get_answer_deepseek(input : str, instructions : str) -> str:
 
     return response.choices[0].message.content
 
-def get_answer_router(input : list, instructions : str) -> str:
+async def get_answer_router(input : list, instructions : str) -> str:
     """ Stream the model's response through OpenRouter API (gpt-4o-mini)
 
     Args:
@@ -133,7 +132,7 @@ def get_answer_router(input : list, instructions : str) -> str:
     with requests.post(url, headers=headers, json=payload, stream=True) as response:
         return response.choices[0].message.content
     
-def get_answer_router_stream(input : list, instructions : str):
+async def get_answer_router_stream(input : list, instructions : str):
     """ Stream the model's streaming response through OpenRouter API through SSEs
 
     Args:

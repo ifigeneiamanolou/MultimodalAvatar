@@ -60,6 +60,8 @@ async def speechRecognition(websocket : WebSocket):
             path = save_audio(data, "../../data/raw/audio-%s.webm")  
             audio = whisperx.load_audio(path)
 
+            # Perform emotion recognition 
+
             try:
                 # Perform audio transcription
                 result = model.transcribe(

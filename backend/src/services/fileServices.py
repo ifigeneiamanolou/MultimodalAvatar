@@ -52,6 +52,21 @@ def save_stream(input : str, path : str):
     with open(path, "a") as f:      # Avoid overwriting
         f.write(input)
 
+def save_audio_stream(audio_bytes : bytes, path : str):
+    """ Write audio encoded in base64 as an mp3 file
+
+    Args:
+        audio_bytes (bytes): base64 encoded bytes
+        path (str): file path to save the audio
+    """
+
+    path = next_path(os.path.join(BASE_DIR, path))
+
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+
+    with open(path, "ab") as f:     # Avoid overwriting
+        f.write(audio_bytes)
+
 def save_audio(audio_bytes : bytes, path : str):
     """ Saves the input audio bytes to the next available path in the specified location
 

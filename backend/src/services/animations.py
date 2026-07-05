@@ -1,10 +1,15 @@
 from pandas import DataFrame, read_csv, Series, concat
 import numpy as np
-from fastapi import HTTPException
+from fastapi import HTTPException, WebSocket
+from src.services.fileServices import save_audio_stream
 from phonemizer.backend.espeak.wrapper import EspeakWrapper
 from phonemizer.separator import Separator
 from phonemizer.backend import EspeakBackend
 import os
+import websockets
+import json
+from dotenv import load_dotenv
+import base64
 
 # Espeak configuration for phoneme detection
 EspeakWrapper.set_library(
@@ -14,6 +19,7 @@ backend = EspeakBackend(preserve_punctuation = True,
                         language = "en-us")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
+ELEVENLABS_API_KEY = os.environ["ELEVENLABS_API_KEY"]
 
 # Dictionaries
 try:
@@ -67,3 +73,43 @@ async def generateAnimations(text : str) -> DataFrame:
 
     # Return the blendshape coefficients
     return artkit
+
+async def textToSpeechStreaming(text : str, voice_id : str, model_id : str):
+    """ Initiate a connection to the ElevenLabs streaming API and send data
+
+    Args:
+        text (str): ipput text
+        voice_id (str): ElevenLabs voice ID
+        model_id (str): ElevenLabs model ID
+    """
+
+    uri = f"wss://api.elevenlabs.io/v1/text-to-speech/{voice_id}/stream-input?model_id={model_id}"
+    with websockets.connect(uri) as WebSocket:
+        WebSocket.send(json.dumps({
+            "text" : text.encode("utf-8"),
+            "xi_api_key": ELEVENLABS_API_KEY,
+        }))
+
+        await listen(WebSocket)
+
+
+async def listen(websocket : WebSocket):
+    """
+        Listen to the websocket for audio data and stream it.
+
+        Args:
+            websocket (WebSocket): ElevenLabs websocket connection
+    """
+
+    while True:
+        try:
+            message = await websocket.recv()
+            data = json.loads(message)
+            if data.get("audio"):
+                save_audio_stream(base64.b64decode(data["audio"]), "../../data/processed/tts-%s.mp3")
+                yield base64.b64decode(data["audio"])
+            elif data.get('isFinal'):
+                break
+        except websockets.exceptions.ConnectionClosed:
+            print("Connection closed")
+            break

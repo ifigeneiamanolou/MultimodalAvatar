@@ -1,15 +1,18 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, HTTPException
-from src.models.pydantic import UserInput, ResponseModel
-from src.services.animations import generateAnimations
+from fastapi import APIRouter
+from typer import prompt
+from src.models.pydantic import TTSInput, ResponseModel
+from src.services.animations import generateAnimations, textToSpeechStreaming
 from src.services.fileServices import next_path, save_audio
 from src.models.ConnectionManager import ConnectionManager
 import os
 from elevenlabs.client import ElevenLabs
-from elevenlabs import stream
+from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 import base64
 from orpheus_cpp import OrpheusCpp
 import numpy as np
+import wave
+import time
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
 load_dotenv()
@@ -23,8 +26,9 @@ managerTTS = ConnectionManager()
 router = APIRouter()
 
 @router.post("/tts", response_model = ResponseModel)
-async def generateAudio(user_input : UserInput):
-    """ Generates and uploads artkit coefficients using ElevenLabs
+async def generateAudio(input : TTSInput):
+    """ Transcribes the input audio using ElevenLabs and generates artkit coefficients as a less
+    ressource intensive alternative to using Audio2Face through AWS
 
     Args:
         user_input (UserInput): Contains the text and the type of the interview
@@ -33,12 +37,12 @@ async def generateAudio(user_input : UserInput):
         ResponseModel: Pydantic model containing fields meta, success, data and message
     """
 
-    text = user_input.input
+    text = input.text
+    path = input.path if input.path else next_path(os.path.join(BASE_DIR, "../../data/processed/blendshape-%s.csv"))
 
     # ================= Blendshape generation ===============
     try:
         artkit = await generateAnimations(text)
-        path = next_path(os.path.join(BASE_DIR, "../../data/processed/blendshape-%s.csv"))
         artkit.to_csv(path, header = False)
     except Exception as e:
         return {
@@ -76,48 +80,76 @@ async def generateAudio(user_input : UserInput):
     }
 
 @router.websocket("/tts/stream")
-async def generateAudio(webSocket : WebSocket):
-    """ Generates and uploads artkit coefficients using ElevenLabs as a stream
+async def generateAudio(input : TTSInput):
+    """ Transcribes the input audio using ElevenLabs and web sockets and generates artkit coefficients as a less
+    ressource intensive alternative to using Audio2Face through AWS
 
     Args:
         websocket (WebSocket): incomming web socket connection
     """
-    await managerTTS.connect(webSocket)
+
+    text = input.text
+    path = input.path if input.path else next_path(os.path.join(BASE_DIR, "../../data/processed/blendshape-%s.csv"))
     
+    # ================= Blendshape generation ===============
     try:
-        while True:
-            text = await webSocket.receive_text()
+        artkit = await generateAnimations(text)
+        artkit.to_csv(path, header = False)
+    except Exception as e:
+        return {
+            "success" : False,
+            "data" : "",
+            "message" : f"Error during coefficient generation and upload : {e}"
+        }
+    # ================ TTS generation =================
+    voice_id = "JBFqnCBsd6RMkjVDRZzb"  # "George"
+    model_id = "eleven_flash_v2_5"
+    return StreamingResponse(
+        textToSpeechStreaming(text, voice_id, model_id),
+        media_type='audio/mpeg'
+    )
 
-            # ================= Blendshape generation ===============
-            artkit = await generateAnimations(text)
-            path = next_path(os.path.join(BASE_DIR, "../../data/processed/blendshape-%s.csv"))
-            artkit.to_csv(path, header = False)
-
-            # ================ TTS generation =================
-   
-            audio = tts.text_to_speech.stream(
-                text = text,
-                voice_id = "JBFqnCBsd6RMkjVDRZzb",  # "George" 
-                model_id = "eleven_flash_v2_5",            
-                language_code = "en",
-                output_format = "mp3_22050_32",
-            )
-
-            audio_chunks = bytearray()
-            for chunk in audio:
-                if isinstance(chunk, bytes):
-                    await managerTTS.send_personal(webSocket, chunk)
-                    audio_chunks.extend(chunk)
-
-            # ================ Audio upload ==================
-            save_audio(bytes(audio_chunks), "../../data/processed/tts-%s.mp3")
-
-    except WebSocketDisconnect:
-        print("Client disconnected")
-    finally:
-        await managerTTS.disconnect(webSocket)
+# @router.post("/tts/Orpheus", response_model = ResponseModel)
+# async def generateAudio(input : TTSInput):
+#     text = input.text
+#     path = input.path if input.path else next_path(os.path.join(BASE_DIR, "../../data/processed/blendshape-%s.csv"))
     
+#     # ================= Blendshape generation ===============
+#     try:
+#         artkit = await generateAnimations(text)
+#         artkit.to_csv(path, header = False)
+#     except Exception as e:
+#         return {
+#             "success" : False,
+#             "data" : "",
+#             "message" : f"Error during coefficient generation and upload : {e}"
+#         }
     
+#     model = orpheus(model_name ="canopylabs/orpheus-tts-0.1-finetune-prod", max_model_len=2048)
+
+#     start_time = time.monotonic()
+#     syn_tokens = model.generate_speech(
+#         prompt=prompt,
+#         voice="tara",
+#     )
+
+#     with wave.open("output.wav", "wb") as wf:
+#         wf.setnchannels(1)
+#         wf.setsampwidth(2)
+#         wf.setframerate(24000)
+
+#         total_frames = 0
+#         chunk_counter = 0
+#         for audio_chunk in syn_tokens: # output streaming
+#             chunk_counter += 1
+#             frame_count = len(audio_chunk) // (wf.getsampwidth() * wf.getnchannels())
+#             total_frames += frame_count
+#             wf.writeframes(audio_chunk)
+#         duration = total_frames / wf.getframerate()
+
+#         end_time = time.monotonic()
+#     print(f"It took {end_time - start_time} seconds to generate {duration:.2f} seconds of audio")
+
 # @router.websocket("/ttsOrpheus")
 # async def generateAudio(websocket : WebSocket):
 #     """ Generates and uploads artkit coefficients using Orpheus3B to adress data proprietry issues in a continuous manner

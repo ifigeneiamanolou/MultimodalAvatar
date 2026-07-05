@@ -51,17 +51,26 @@ async def generateTextResponse(user_input : UserInput):
     }
 
 @router.post("/response/stream")
-async def generateTextResponse(user_input : UserInput) -> StreamingResponse:
+async def generateTextResponse(user_input : UserInput):
     """ Generates a response from the LLM and streams it in a continuous manner
     Args:
         user_input (UserInput): Contains the user text query and the type of the interviewee
     """
 
     # Generate response from OpenAI
-    prompt = prompt1 if user_input.interview_type == 1 else prompt2
-    return StreamingResponse(
-        get_answer_router_stream([m.model_dump() for m in user_input.input], prompt), 
-        media_type='text/event-stream'
-    )
+    try:
+        return StreamingResponse(
+            get_answer_router_stream(
+                input = [m.model_dump() for m in user_input.input],
+                instructions = prompt1 if user_input.interview_type == 1 else prompt2
+            ), 
+            media_type='text/event-stream'
+        )
+    except Exception as e:
+        return{
+            "success" : False,
+            "data" : "",
+            "message" : f"Error during response generation : {e}"
+        }
  
     
