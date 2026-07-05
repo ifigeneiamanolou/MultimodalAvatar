@@ -1,4 +1,4 @@
-import { RefObject, useEffect } from 'react';
+import { RefObject, useEffect, useState } from 'react';
 import {
   useAudioRecorder,
   AudioModule,
@@ -15,6 +15,8 @@ type useRecorderProps = {
     setErrorPopUp : (show : boolean) => void;
     setSuccessPopUp : (show : boolean) => void;
 }
+
+const [emotion, setEmotion] = useState('');
 
 
 export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSuccessPopUp} : useRecorderProps){
@@ -39,7 +41,17 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
         await audioRecorder.stop();
         const response = await fetch(audioRecorder.uri!);       // Extract audio from file
         const audio = await response.blob();                    // Extract raw binary audio data 
-        const url = URL.createObjectURL(audio);
+
+        // Emotion recognition
+        const res = await fetch("http://localhost:8000/emotion2vec", {
+            method : "POST",
+            body : JSON.stringify({model : "iic/emotion2vec_plus_seed", audio : audio}),
+            headers: {"Content-Type": "application/json"}
+        });
+
+        const emotionData = await res.json();
+        const emotion = emotionData.data;
+        setEmotion(emotion);
 
         // Send the recording audio for ASR through a WebSocket
         if (ws.current?.readyState !== WebSocket.OPEN){
@@ -62,5 +74,6 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
         stopRecording,
         record,
         recorderState,
+        emotion
     };
 };

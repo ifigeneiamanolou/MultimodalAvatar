@@ -45,6 +45,7 @@ export default function Home() {
   // ======================= Imports =========================
   // Microphone recording
   const {
+    emotion,
     stopRecording,
     record,
     recorderState,

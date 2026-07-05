@@ -10,6 +10,7 @@ class Message(BaseModel):
     content: str
 
 class UserInput(BaseModel):
+    # to add emotion string 
     input : list[Message]
     interview_type : int             # 1 corresponds to user being the interviewer and 2 to user being the interviewee    
 
