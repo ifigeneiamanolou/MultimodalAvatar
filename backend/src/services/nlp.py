@@ -14,12 +14,13 @@ load_dotenv()
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 DEEPSEEK_API_KEY = os.environ["DEEPSEEK_API_KEY"]
 
-def get_answer(input : str, instructions : str) -> str:
+def get_answer(input : str, instructions : str, emotion : str) -> str:
     """ Generates a response using gpt-4o-mini through OpenAI API
 
     Args:
         input (str): Input of the user
         instructions (str): Default instructions used in every prompt
+        emotion (str) : emotion label
 
     Raises:
         HTTPException: if the response generation fails
@@ -37,7 +38,10 @@ def get_answer(input : str, instructions : str) -> str:
             input = [
                 {
                     "role" : "user",
-                    "content" : input
+                    "content" : {
+                        "text" : input,
+                        "emotion" : emotion
+                    }
                 },
                 {
                     "role" : "developer",
@@ -52,12 +56,13 @@ def get_answer(input : str, instructions : str) -> str:
     except Exception as e:
         raise HTTPException(status_code = 500, detail = {e})
     
-async def get_answer_stream(input : str, instructions : str) -> StreamingResponse:
+async def get_answer_stream(input : str, instructions : str, emotion : str) -> StreamingResponse:
     """ Stream the model's response through OpenAI API as it is generated using Server-Sent Events(SSE)
 
     Args:
         input (str): Input of the user
         instructions (str): Default instructions used in every prompt
+        emotion (str) : emotion label
 
     Raises:
         HTTPException: if the response generation fails
@@ -67,12 +72,13 @@ async def get_answer_stream(input : str, instructions : str) -> StreamingRespons
     """
     
 
-async def get_answer_deepseek(input : str, instructions : str) -> str:
+async def get_answer_deepseek(input : str, instructions : str, emotion : str) -> str:
     """ Stream the model's response from DeepSeek v3.2
 
     Args:
         input (str): Input of the user
         instructions (str): Default instructions used in every prompt
+        emotion (str) : emotion label
 
     Raises:
         HTTPException: if the response generation fails
@@ -87,7 +93,10 @@ async def get_answer_deepseek(input : str, instructions : str) -> str:
         messages=[
             {
                 "role" : "user",
-                "content" : input
+                "content" : {
+                    "text" : input,
+                    "emotion" : emotion
+                }
             },
             {
                 "role" : "developer",
@@ -99,12 +108,13 @@ async def get_answer_deepseek(input : str, instructions : str) -> str:
 
     return response.choices[0].message.content
 
-async def get_answer_router(input : list, instructions : str) -> str:
+async def get_answer_router(input : list, instructions : str, emotion : str) -> str:
     """ Stream the model's response through OpenRouter API (gpt-4o-mini)
 
     Args:
         input (list): Input of the user
         instructions (str): Default instructions used in every prompt
+        emotion (str) : emotion label
 
     Returns:
         str : response of the LLM 
@@ -114,6 +124,14 @@ async def get_answer_router(input : list, instructions : str) -> str:
     headers = {
         "Authorization": f"Bearer {os.getenv("OPENROUTER_API_KEY")}",
         "Content-Type": "application/json"
+    }
+
+    input[len(input) - 1] = {
+        "role" : "user",
+        "content" : {
+            "text" : input[len(input) - 1]["content"],
+            "emotion" : emotion
+        }
     }
 
     input.append(
@@ -132,18 +150,27 @@ async def get_answer_router(input : list, instructions : str) -> str:
     with requests.post(url, headers=headers, json=payload, stream=True) as response:
         return response.choices[0].message.content
     
-async def get_answer_router_stream(input : list, instructions : str):
+async def get_answer_router_stream(input : list, instructions : str, emotion : str):
     """ Stream the model's streaming response through OpenRouter API through SSEs
 
     Args:
         input (str): Input of the user
         instructions (str): Default instructions used in every prompt
+        emotion (str) : emotion label
     """
     url = "https://openrouter.ai/api/v1/chat/completions"
 
     headers = {
         "Authorization": f"Bearer {os.getenv("OPENROUTER_API_KEY")}",
         "Content-Type": "application/json"
+    }
+
+    input[len(input) - 1] = {
+        "role" : "user",
+        "content" : {
+            "text" : input[len(input) - 1]["content"],
+            "emotion" : emotion
+        }
     }
 
     input.append(

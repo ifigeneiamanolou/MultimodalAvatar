@@ -1,4 +1,4 @@
-{/* Generate a response received through continuous streaming (SSE) */}
+{/* Generate a response received through continuous streaming (SSE) and emotion integration with emotion2vec */}
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { useState } from 'react';
 
@@ -9,11 +9,12 @@ type responseProps = {
     setErrorPopUp : (show : boolean) => void;
     displayTextGradual : Function;
     setMessages : (messages : (prev : any) => any[]) => void;
+    emotion : string; 
 }
 
 const [blensdshapePath, setBlendshapePath] = useState<string | null>(null);
 
-export async function getResponse({messages, interviewer, setMessagePopUp, setErrorPopUp, displayTextGradual, setMessages} : responseProps){
+export async function getResponse({messages, interviewer, setMessagePopUp, setErrorPopUp, displayTextGradual, setMessages, emotion} : responseProps){
   const postProcessing = async (text : string) => {
     const response = await fetch("http://localhost/tts",{
       method : "POST",
@@ -42,7 +43,7 @@ export async function getResponse({messages, interviewer, setMessagePopUp, setEr
             'Content-Type': 'application/json',
             'Accept' : "text/event-stream",
         },
-        body: JSON.stringify({input : messages, interview_type : interview_type}),
+        body: JSON.stringify({input : messages, interview_type : interview_type, emotion : emotion}),
 
         onopen : async (res : Response) => {
           if (res.ok && res.status === 200) {

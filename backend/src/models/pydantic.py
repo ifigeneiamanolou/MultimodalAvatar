@@ -10,7 +10,7 @@ class Message(BaseModel):
     content: str
 
 class UserInput(BaseModel):
-    # to add emotion string 
+    emotion : str =  ['angry', 'disgusted', 'fearful', 'happy', 'sad', 'surprised', 'neutral']
     input : list[Message]
     interview_type : int             # 1 corresponds to user being the interviewer and 2 to user being the interviewee    
 

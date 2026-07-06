@@ -122,7 +122,8 @@ export default function Home() {
       setMessagePopUp,
       setErrorPopUp,
       displayTextGradual,
-      setMessages
+      setMessages,
+      emotion
     })
 
     // Clear the input field

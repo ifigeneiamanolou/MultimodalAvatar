@@ -57,7 +57,7 @@ def processScores(scores : np.ndarray) -> str:
     """
 
     # Labels from emotion2vec without unk and other
-    labels = ['angry', 'disgusted', 'fearful', 'happy', 'neutral', 'sad', 'surprised', 'neutral']
+    labels = ['angry', 'disgusted', 'fearful', 'happy', 'sad', 'surprised', 'neutral']
     # Concatenate neutral, other and unk scores into a single column
     neutral = scores[4] + scores[5] + scores[8]
     scores = np.delete(scores, [4, 5, 8])

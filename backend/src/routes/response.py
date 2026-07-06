@@ -31,7 +31,8 @@ async def generateTextResponse(user_input : UserInput):
     try:
         response = get_answer_router(
             input = [m.model_dump() for m in user_input.input],
-            instructions = prompt1 if user_input.interview_type == 1 else prompt2
+            instructions = prompt1 if user_input.interview_type == 1 else prompt2,
+            emotion = user_input.emotion
         )
     except Exception as e:
         return{
@@ -62,7 +63,8 @@ async def generateTextResponse(user_input : UserInput):
         return StreamingResponse(
             get_answer_router_stream(
                 input = [m.model_dump() for m in user_input.input],
-                instructions = prompt1 if user_input.interview_type == 1 else prompt2
+                instructions = prompt1 if user_input.interview_type == 1 else prompt2,
+                emotion = user_input.emotion,
             ), 
             media_type='text/event-stream'
         )
