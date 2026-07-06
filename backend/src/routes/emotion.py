@@ -1,5 +1,5 @@
 """
-    Endpoints for emotion detection
+    Endpoints for emotion detection through emotion2vec
 
 """
 
@@ -15,19 +15,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 @router.post("/emotion2vec", response_model = ResponseModel)
 async def detectAudioEmotion(input : EmotionInput):
-    """ Detect emotional state of user input audio through emotion2vec that classsifies input audio
-    into the following categories: anger, disgust, fear, happiness, neutrality, sadness, surprise
-
-    Args:
-        input (EmotionInput) : pydantic model with the model id and the audio 
-
-    Returns:
-        ResponseModel : information about the success of the request and the emotion label
-    """
-
     # Load the model
     load_model(input.model)
-    
+
     # Emotion detection
     try:
         scores = emotion_detection(base64.b64decode(input.audio, ' /'), input.model)

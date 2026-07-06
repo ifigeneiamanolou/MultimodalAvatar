@@ -41,7 +41,7 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
         const response = await fetch(audioRecorder.uri!);       // Extract audio from file
         const audio = await response.blob();                    // Extract raw binary audio data 
 
-        // Encode audio
+        // Encode audio into a base64 string
         const arrayBuffer = await audio.arrayBuffer();
         const binary = new Uint8Array(arrayBuffer);
         var base64string = btoa(String.fromCharCode(...binary));
@@ -63,7 +63,7 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
             const emotionData = await res.json();
             setEmotion(emotionData.data);
         } else{
-            setMessagePopUp("No web socket connection found");
+            setMessagePopUp("Error during emotion recognition");
             setErrorPopUp(true);
             return;
 

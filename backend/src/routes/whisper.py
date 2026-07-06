@@ -8,9 +8,7 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from src.models.ConnectionManager import ConnectionManager
 from src.services.fileServices import save, save_audio
-from src.services.fileServices import next_path
 from src.services.whisperServices import transcription
-import os
 import base64
 
 # Websocket manager
@@ -34,15 +32,15 @@ async def speechRecognition(websocket : WebSocket):
                 continue
             
             # Decode the base64 input audio
-            decoded_data = base64.b64decode(data, ' /');
-            
+            decoded_data = base64.b64decode(data, validate = True);
+
             # Save raw audio into a webm file  
-            path = save_audio(decoded_data, "../../data/raw/audio-%s.m4a")  
+            path = save_audio(decoded_data, "../../data/raw/audio-%s.webm")             # THE AUDIO IS NOT SAVED PROPERLY
 
             try:
                 # Perform audio trancription
-                text = transcription("tiny", path)
-
+                text = transcription("small", path)
+        
                 # Save the transcription result
                 save(text, "../../data/processed/transcription-%s.txt")
 

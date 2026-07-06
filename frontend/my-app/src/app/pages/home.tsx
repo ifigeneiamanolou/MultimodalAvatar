@@ -57,7 +57,7 @@ export default function Home() {
   // ======================= Web Socket ======================
   useEffect(() => {
     let reconnectTimer: ReturnType<typeof setTimeout>;
-    let reconnectTimerTTS: ReturnType<typeof setTimeout>;
+    // let reconnectTimerTTS: ReturnType<typeof setTimeout>;
 
     const connectASR = () => {
       const socket = new WebSocket("ws://127.0.0.1:8000/asr");
@@ -81,7 +81,9 @@ export default function Home() {
 
         // Prompt the LLM for an answer
       }
+
       ws.current.onerror = (e) => {console.log("ASR socket error : ", e.target);}
+      
       ws.current.onclose = () => {
         console.log("ASR socket closed");
         ws.current = null;
@@ -105,7 +107,7 @@ export default function Home() {
       wsTTS.current.onclose = () => {
         console.log("TTS socket closed");
         wsTTS.current = null;
-        reconnectTimerTTS = setTimeout(connectTTS, 5000);   // Open again the web socket after 5sec
+        // reconnectTimerTTS = setTimeout(connectTTS, 5000);   // Open again the web socket after 5sec
       }
     };
 
