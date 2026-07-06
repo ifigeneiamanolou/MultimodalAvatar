@@ -1,10 +1,10 @@
 from pathlib import Path
-from pydantic import BaseModel
+from typing import Any
+from pydantic import BaseModel, Field
 
 # ================== Pydantic models ===================
 
 # Request body pydantic models
-
 class Message(BaseModel):
     role: str
     content: str
@@ -21,11 +21,11 @@ class TTSInput(BaseModel):
 
 class EmotionInput(BaseModel):      # Model used in the emotion2vec endpoint
     model : str = ["iic/emotion2vec_plus_seed", "iic/emotion2vec_plus_base", "iic/emotion2vec_plus_large"]
-    audio : bytes
+    audio : str                     # Encoded audio into a string
 
 # Response Body pydantic models
 class ResponseModel(BaseModel):
     success : bool
-    data : str | dict
+    data : Any | None = None
     message : str
-    meta : dict = {}
+    meta : dict[str, Any] = Field(default_factory=dict)

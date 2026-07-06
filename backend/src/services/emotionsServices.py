@@ -1,13 +1,13 @@
 from funasr import AutoModel
-from dotenv import load_dotenv
 import os
 import numpy as np
+from dotenv import load_dotenv
 import torch
 
-load_dotenv()
-HF_TOKEN = os.environ("HF_TOKEN")
 _models = {}        # Avoid time consuming model reloading
 device = "cuda" if torch.cuda.is_available() else "cpu"
+load_dotenv()
+HF_TOKEN = os.environ["HF_TOKEN"]
 
 
 def load_model(model_id : str):
@@ -20,18 +20,19 @@ def load_model(model_id : str):
         _models[model_id] = AutoModel(
             model = model_id,
             hub = "hf", 
-            device = device
+            device = device,
+            disable_update = True,      # Skip updates of funasr models
         )
 
 def emotion_detection(
-        path : str, 
+        audio : bytes, 
         model_id : str = [["iic/emotion2vec_plus_seed", "iic/emotion2vec_plus_base", "iic/emotion2vec_plus_large"]]
     ) -> np.ndarray:
     """ Generate scores for each of the following emotions using emotion2vec in the same order : angry, disgusted, fearful, happy,
     neutral, other, sad, surprised, unk
 
     Args:
-        path (str): path of .wav file with audio bytes
+        audio (bytes): raw binary audio bytes to be processed by the model
         model_id (str): ID of the emotion2vec model to sue
 
     Returns:
@@ -40,7 +41,7 @@ def emotion_detection(
 
     model = _models[model_id]
     result =  model.generate(
-        path, 
+        audio, 
         language = "en", 
         extract_embedding = False
     )

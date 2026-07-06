@@ -4,11 +4,9 @@ import Alert from '../components/AlertMessage';
 import Success from '../components/SuccessMessage';
 import useRecorder from '../../hooks/record';
 import displayTextGradual from '../../hooks/displayGradual';
-import {generateFeedback} from '../../hooks/feedback';
-import {newConversation} from '../../hooks/reset';
-import {getResponse} from '../../hooks/response2';
 import MarkDown from 'react-markdown';
 import '../../../global.css';
+import { fetchEventSource } from '@microsoft/fetch-event-source';
 
 export default function Home() {
   // ====================== Constants ========================
@@ -42,7 +40,10 @@ export default function Home() {
   const [waitingASR, setWaitingASR] = useState(false);
   const [waitingFeedback, setWaitingFeedback] = useState(false);
 
-  // ======================= Imports =========================
+  // Avatar
+  const [blensdshapePath, setBlendshapePath] = useState<string | null>(null);
+
+  // ======================= Hooks =========================
   // Microphone recording
   const {
     emotion,
@@ -69,6 +70,8 @@ export default function Home() {
         // Show the transcribed user input
         const userMessage =  {role : "user", content : response};
         displayTextGradual({text : response, sender : "user", setMessages});    
+
+        // Prompt the LLM for an answer
       }
       ws.current.onerror = (e) => {console.log("ASR socket error : ", e.target);}
       ws.current.onclose = () => {
@@ -94,18 +97,18 @@ export default function Home() {
       wsTTS.current.onclose = () => {
         console.log("TTS socket closed");
         wsTTS.current = null;
-        reconnectTimerTTS = setTimeout(connectASR, 5000);   // Open again the web socket after 5sec
+        reconnectTimerTTS = setTimeout(connectTTS, 5000);   // Open again the web socket after 5sec
       }
     };
 
     connectASR();
-    connectTTS();
+    // connectTTS();
 
     return () => {
       clearTimeout(reconnectTimer);  
-      clearTimeout(reconnectTimerTTS);
+      // clearTimeout(reconnectTimerTTS);
       ws.current?.close(1000, "unmounted");
-      wsTTS.current?.close(1000, "unmounted");
+      // wsTTS.current?.close(1000, "unmounted");
     };
   }, []);
 
@@ -116,15 +119,58 @@ export default function Home() {
     displayTextGradual({text : recordedText, sender : "user", setMessages});
 
     // Send the query to openai and display the answer
-    await getResponse({
-      messages : [...messages, userMessage],
-      interviewer,
-      setMessagePopUp,
-      setErrorPopUp,
-      displayTextGradual,
-      setMessages,
-      emotion
-    })
+    try{
+      const interview_type = interviewer ? 1 : 2;  
+      var count = 0;          // Count the number of chunks
+      var partial_text = "";  // Text of 10 chunks to perform post-processing
+
+      // Fetch a response from OpenAI
+      await fetchEventSource("http://localhost:8000/response/stream", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept' : "text/event-stream",
+        },
+        body: JSON.stringify({input : messages, interview_type : interview_type, emotion : emotion}),
+
+        onopen : async (res : Response) => {
+          if (res.ok && res.status === 200) {
+            console.log("Connection made ", res);
+          } else if (
+            res.status >= 400 &&
+            res.status < 500 &&
+            res.status !== 429
+          ) {
+            console.log("Client side error ", res);
+          }
+        },
+
+        onmessage(event) {      // Data received from NLP
+          const parsedData = JSON.parse(event.data);
+          displayTextGradual({text : parsedData, sender : null, setMessages});
+
+          // Conditionally perform post-processing
+          count += 1;
+          partial_text += parsedData;
+          if(count >= 10 &&  ["!", ".", ";", ":", "?"].includes(parsedData.trim())){  // Context retention
+            console.log(partial_text);    
+            postProcessing(partial_text);
+            count = 0;
+            partial_text = "";
+          }
+        },
+
+        onclose() {
+          console.log("Connection closed by the server");
+        },
+
+        onerror(err) {
+          console.log("There was an error from server", err);
+        },
+      },)
+    } catch (error){
+      console.log(error);
+    }
 
     // Clear the input field
     setRecordedText('');
@@ -132,14 +178,68 @@ export default function Home() {
 
   const handleText = (e : React.ChangeEvent<HTMLInputElement>) => setRecordedText(e.target.value);
 
+  const postProcessing = async (text : string) => {
+    const response = await fetch("http://localhost:8000/tts",{
+      method : "POST",
+      headers : {
+        "Content-Type" : "application/json"
+      },
+      body : JSON.stringify({text : text, path : blensdshapePath})
+    })
+
+    const data = await response.json();
+    setBlendshapePath(data.path);
+    const audio = new Audio(data.audio);
+    audio.play();
+  };
+
+
   const handleFeedback = async () => {
-    setFeedback(
-      await generateFeedback({waiting, interviewer, messages, setMessagePopUp, setErrorPopUp})
-    );
+    // Ensure bot response has been received
+    if(waiting){
+      setErrorPopUp(true);
+      setMessagePopUp("Waiting for model response. Try again.");
+      return;
+    }
+
+    // Ensure the conversation has started
+    if(messages.length < 2){
+        setErrorPopUp(true);
+        setMessagePopUp("Complete at least 2 rounds of the interview");
+        return;
+    }
+
+    // Generate feedback
+    const type = interviewer ? 1 : 2;
+    const res = await fetch("http://localhost:8000/feedback", {
+        method : "POST",
+        body : JSON.stringify({input : messages, interview_type : type}),
+        headers: {"Content-Type": "application/json"}
+    });
+    
+    // Display the feedback
+    const response = await res.json();
+    setFeedback(response.data);
   }
 
   const handleNew = async () => {
-    newConversation({waiting, setMessagePopUp, setErrorPopUp, interviewer, messages, setMessages})
+    // Ensure bot response has been received
+    if(waiting){
+      setErrorPopUp(true);
+      setMessagePopUp("Waiting for model response. Try again.");
+      return;
+    }
+
+    // Save messages as a JSON object
+    const type = interviewer ? "interviewer" : "interviewee";
+    await fetch("http://localhost:8000/reset", {
+        method : "POST",
+        body : JSON.stringify({"interviewer" : type, "data" : messages}),
+        headers: {"Content-Type": "application/json"}
+    });
+
+    // Empty the display
+    setMessages([]);
   }
 
   const downloadFeedback = () => {
@@ -181,8 +281,8 @@ export default function Home() {
       {/* Main page */}
       <div className = "flex flex-row h-screen pb-8 z-0">
         {/* Chat interaction */}
-        <div className = "flex flex-col place-content-end gap-4 p-6 h-full w-100 shadow-md shadow-gray-300 m-4 overflow-hidden">
-          {/* Text conversation */}
+        <div className = "flex flex-col place-content-end gap-4 p-6 h-full w-96 shadow-md shadow-gray-300 m-4 overflow-hidden">
+          {/* Text conversation display */}
           <div className = "flex-1 overflow-auto mb-4 w-full overflow-x-hidden">
             {messages.length === 0 ? <p> Your conversation will appear here </p> : messages.map((msg, i) => (
               <div className = "w-full min-w-0 break-words" key = {i}>

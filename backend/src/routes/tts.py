@@ -79,13 +79,13 @@ async def generateAudio(input : TTSInput):
         "message" : "Audio and ArtKit coefficients generated successfully"
     }
 
-@router.websocket("/tts/stream")
+@router.post("/tts/stream")
 async def generateAudio(input : TTSInput):
     """ Transcribes the input audio using ElevenLabs and web sockets and generates artkit coefficients as a less
     ressource intensive alternative to using Audio2Face through AWS
 
     Args:
-        websocket (WebSocket): incomming web socket connection
+        input (TTSInput) : 
     """
 
     text = input.text

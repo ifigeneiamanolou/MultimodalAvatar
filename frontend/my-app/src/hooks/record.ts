@@ -16,10 +16,9 @@ type useRecorderProps = {
     setSuccessPopUp : (show : boolean) => void;
 }
 
-const [emotion, setEmotion] = useState('');
-
 
 export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSuccessPopUp} : useRecorderProps){
+    const [emotion, setEmotion] = useState('');
     const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
     const recorderState = useAudioRecorderState(audioRecorder);
 
@@ -42,25 +41,43 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
         const response = await fetch(audioRecorder.uri!);       // Extract audio from file
         const audio = await response.blob();                    // Extract raw binary audio data 
 
+        // Encode audio
+        const arrayBuffer = await audio.arrayBuffer();
+        const binary = new Uint8Array(arrayBuffer);
+        var base64string = btoa(String.fromCharCode(...binary));
+
         // Emotion recognition
         const res = await fetch("http://localhost:8000/emotion2vec", {
             method : "POST",
-            body : JSON.stringify({model : "iic/emotion2vec_plus_seed", audio : audio}),
-            headers: {"Content-Type": "application/json"}
+            body : JSON.stringify({
+                model : "iic/emotion2vec_plus_seed",
+                audio : base64string
+            }),
+            headers : {
+                "Content-Type" : "application/json"
+            }
         });
 
-        const emotionData = await res.json();
-        const emotion = emotionData.data;
-        setEmotion(emotion);
+        // Handle the response from emotion recognition endpoint
+        if(res.ok){
+            const emotionData = await res.json();
+            setEmotion(emotionData.data);
+        } else{
+            setMessagePopUp("No web socket connection found");
+            setErrorPopUp(true);
+            return;
+
+        }
 
         // Send the recording audio for ASR through a WebSocket
         if (ws.current?.readyState !== WebSocket.OPEN){
-          setMessagePopUp("No web socket connection found");
-          setErrorPopUp(true);
+            setMessagePopUp("No web socket connection found");
+            setErrorPopUp(true);
+            return;
         } else {
-          ws.current?.send(audio);
-          setMessagePopUp("Audio sent");
-          setSuccessPopUp(true);
+            ws.current?.send(base64string);
+            setMessagePopUp("Audio sent");
+            setSuccessPopUp(true);
         }
     };
 

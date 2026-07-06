@@ -3,6 +3,7 @@ import json
 from scipy.io.wavfile import write
 import numpy as np
 import tempfile
+import base64
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
 
@@ -111,21 +112,6 @@ def save_wav(buffer : list, path : str):
     """
     new_path = next_path(os.path.join(BASE_DIR, path))
     write(new_path, 24_000, np.concatenate(buffer))
-
-def temporary_audio(audio : bytes) -> str:
-    """ Generate a temporary wav file with the input audio
-
-    Args:
-        audio (bytes): input audio to save
-
-    Returns:
-        str : the path to the temporary file
-    """
-    with tempfile.NamedTemporaryFile(mode = "wb", suffix = ".wav") as file:
-        file.write(audio)
-        pathName = file.name
-        file.close()
-    return pathName
 
 
 

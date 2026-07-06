@@ -6,8 +6,9 @@
 from fastapi import APIRouter
 from src.models.pydantic import ResponseModel, EmotionInput
 import os
-from src.services.fileServices import temporary_audio
 from src.services.emotionsServices import load_model, emotion_detection, processScores
+import base64
+from src.services.fileServices import save
 
 router = APIRouter()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
@@ -23,15 +24,13 @@ async def detectAudioEmotion(input : EmotionInput):
     Returns:
         ResponseModel : information about the success of the request and the emotion label
     """
+
     # Load the model
     load_model(input.model)
-
-    # Create a temporary file
-    pathName = temporary_audio(input.audio)
-
+    
     # Emotion detection
     try:
-        scores = emotion_detection(pathName, input.model)
+        scores = emotion_detection(base64.b64decode(input.audio, ' /'), input.model)
     except RuntimeError as e:
         return{
             "success" : False,
@@ -42,12 +41,16 @@ async def detectAudioEmotion(input : EmotionInput):
     # Post processing
     try:
         emotion = processScores(scores)
+
     except (KeyError, TypeError, ValueError) as e:
         return{
             "success" : False,
             "data" : "",
             "message" : f"Error during post processing : {e}"
         }
+    
+    # Save the emotion to a file
+    save(emotion, "../../data/processed/emotion-%s.txt")
 
     # Return the emotion detected
     return{

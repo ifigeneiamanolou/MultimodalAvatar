@@ -6,81 +6,44 @@
 """
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-import whisperx
 from src.models.ConnectionManager import ConnectionManager
 from src.services.fileServices import save, save_audio
 from src.services.fileServices import next_path
+from src.services.whisperServices import transcription
 import os
-from dotenv import load_dotenv
-
-# Settings
-device = "cpu"
-compute_type = "int8"
+import base64
 
 # Websocket manager
-manager = ConnectionManager()
-
-# ffmpeg configuration
-if os.name == "nt":
-    os.add_dll_directory(r"C:/ffmpeg-n7.1-latest-win64-gpl-shared-7.1/bin")     # ADD YOUR FFMPEG HERE
-
-# Whisper models
-model = whisperx.load_model("tiny", device = device, compute_type = compute_type)
-model_align, metadata = whisperx.load_align_model(language_code = "en", device = device)
-
-# Directories 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
-
-# Environemt variables
-load_dotenv()  
-HF_TOKEN = os.environ["HF_TOKEN"]       
+manager = ConnectionManager() 
 
 # FastAPI router
 router = APIRouter()
 
+# Perform automatic speech recognition using Whisper and generate a response from OpenAI
 @router.websocket("/asr")
 async def speechRecognition(websocket : WebSocket):
-    """ Handles incoming data to the websocket (audio input)
-
-    Args:
-        websocket (WebSocket): input web socket connection
-
-    Raises:
-        HTTPException: if the transcription or force alignment process fails
-    """
-
     await manager.connect(websocket)        # Connect the client to the websocket manager
 
     try:
         while True:
-            # Receive data from the client
-            data = await websocket.receive_bytes()  
+            # Receive data from the client and decode
+            data = await websocket.receive_text()  
+            decoded_data = base64.b64decode(data, ' /');
             
             # Save raw audio into a webm file  
-            path = save_audio(data, "../../data/raw/audio-%s.webm")  
-            audio = whisperx.load_audio(path)
+            path = save_audio(decoded_data, "../../data/raw/audio-%s.m4a")  
 
             try:
-                # Perform audio transcription
-                result = model.transcribe(
-                    audio,            
-                    language = "en",
-                    batch_size = 4,
-                )
-            
-                # Perform force alignment
-                aligned = whisperx.align(result["segments"], model_align, metadata, audio, device, return_char_alignments = False)
-                aligned_text = " ".join(
-                    segment["text"] for segment in aligned["segments"]
-                )   
-            
-                # Save the transcription result
-                save(aligned_text, "../../data/processed/transcription-%s.txt")
+                # Perform audio trancription
+                text = transcription("tiny", path)
 
-                # Send back the result of the transcription to the frontend to display
-                await manager.send_personal(connection = websocket, data = aligned_text)
+                # Save the transcription result
+                save(text, "../../data/processed/transcription-%s.txt")
+
+                # Send back the result of the transcription to the frontend
+                await manager.send_personal(websocket, text)
             except Exception as e:
-                print(e)
+                await manager.send_personal(websocket, f"Error {e}")
     except WebSocketDisconnect:
         print("Client disconnected")
     except Exception as e:
