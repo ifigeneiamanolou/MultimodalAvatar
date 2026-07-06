@@ -26,8 +26,14 @@ async def speechRecognition(websocket : WebSocket):
 
     try:
         while True:
-            # Receive data from the client and decode
+            # Receive data from the client 
             data = await websocket.receive_text()  
+
+            # Handle keep-alive messages to prevent closure of the socket
+            if data == 'keep-alive':
+                continue
+            
+            # Decode the base64 input audio
             decoded_data = base64.b64decode(data, ' /');
             
             # Save raw audio into a webm file  

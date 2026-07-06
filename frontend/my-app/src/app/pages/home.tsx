@@ -63,6 +63,14 @@ export default function Home() {
       const socket = new WebSocket("ws://127.0.0.1:8000/asr");
       ws.current = socket;
       ws.current.onopen = () => {console.log("ASR socket open");}
+
+      // Keep sending ping messages to prevent closure
+      setInterval(() => {
+          if (ws.current?.readyState === WebSocket.OPEN) {
+              ws.current?.send('keep-alive');
+          }
+      }, 30000);
+
       ws.current.onmessage = async (e) => {    // Results of ASR
         console.log("data from ASR socket: ", e.data);
         const response = e.data;
