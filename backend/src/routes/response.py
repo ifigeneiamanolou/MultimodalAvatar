@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 import os
 from fastapi.responses import StreamingResponse
-from src.services.nlp import get_answer_router, get_answer_router_stream
-from src.models.pydantic import UserInput, ResponseModel
+from backend.src.services.nlpServices import get_answer_router, get_answer_router_stream
+from src.models.pydantic import LLMInput, ResponseModel
 from src.services.fileServices import save
 
 router = APIRouter()
@@ -18,10 +18,10 @@ with open(template_path2, "r") as f:
     prompt2 = f.read()
     
 @router.post("/response", response_model = ResponseModel)
-async def generateTextResponse(user_input : UserInput):
+async def generateTextResponse(user_input : LLMInput):
     """ Generates and saves the response to the input text using an LLM
     Args:
-        user_input (UserInput): Contains the user text query and the type of the interviewee
+        user_input (LLMInput): Contains the user text query and the type of the interviewee
 
     Returns:
         ResponseModel: Pydantic model with fields success, meta, data and message
@@ -32,7 +32,8 @@ async def generateTextResponse(user_input : UserInput):
         response = get_answer_router(
             input = [m.model_dump() for m in user_input.input],
             instructions = prompt1 if user_input.interview_type == 1 else prompt2,
-            emotion = user_input.emotion
+            emotion = user_input.emotion,
+            model = user_input.model
         )
     except Exception as e:
         return{
@@ -52,10 +53,10 @@ async def generateTextResponse(user_input : UserInput):
     }
 
 @router.post("/response/stream")
-async def generateTextResponse(user_input : UserInput):
+async def generateTextResponse(user_input :LLMInput):
     """ Generates a response from the LLM and streams it in a continuous manner
     Args:
-        user_input (UserInput): Contains the user text query and the type of the interviewee
+        user_input (LLMInput): Contains the user text query and the type of the interviewee
     """
 
     # Generate response from OpenAI
@@ -65,6 +66,7 @@ async def generateTextResponse(user_input : UserInput):
                 input = [m.model_dump() for m in user_input.input],
                 instructions = prompt1 if user_input.interview_type == 1 else prompt2,
                 emotion = user_input.emotion,
+                model = user_input.model
             ), 
             media_type='text/event-stream'
         )

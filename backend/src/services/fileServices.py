@@ -27,7 +27,7 @@ def next_path(path_pattern : str) -> str:
     return path_pattern % b
 
 def saveFeedback(messages : dict, path : str):
-    """ Writes the content of a dictionary into a file
+    """ Writes the content of a dictionary into a file in utf-8 encoding, with indentation
 
     Args:
         messages (dict): dictionary to write to a file
@@ -40,7 +40,7 @@ def saveFeedback(messages : dict, path : str):
         json.dump(messages, json_file, indent = 4, )
 
 def save_stream(input : str, path : str):
-    """ Saves the input text to the next available path in the specified location
+    """ Append the input text to the next available path in the specified location avoiding overwriting
 
     Args:
         input (str): input text
