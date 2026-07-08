@@ -58,6 +58,11 @@ async def generateTextResponse(user_input :LLMInput):
     Args:
         user_input (LLMInput): Contains the user text query and the type of the interviewee
     """
+    headers = {
+        "Content-Type": "text/event-stream",
+        "cache-control": "no-cache",
+        "Connection": "keep-alive"
+    }
 
     # Generate response from OpenAI
     try:
@@ -68,7 +73,7 @@ async def generateTextResponse(user_input :LLMInput):
                 emotion = user_input.emotion,
                 model = user_input.model
             ), 
-            media_type='text/event-stream'
+            headers = headers
         )
     except Exception as e:
         return{

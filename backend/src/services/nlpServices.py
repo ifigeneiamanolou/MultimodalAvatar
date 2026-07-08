@@ -5,6 +5,9 @@ from openai import OpenAI, RateLimitError, AsyncOpenAI, APIError
 import os
 from backend.src.routes import response
 from src.services.fileServices import save_stream
+from src.utils.sentenceBuffer import sentenceBuffer
+from src.utils.sseBuffer import sseBuffer
+from src.utils.controller import Controller
 from fastapi import HTTPException
 import logging
 from openrouter import OpenRouter
@@ -107,37 +110,19 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
         "stream": False
     }
 
-    buffer = ""
+    buffer = sentenceBuffer()
+    sseBuffer = sseBuffer()
+    syncCoordinator = Controller()
     with requests.post(url, headers=headers, json=payload, stream=True) as r:
         for chunk in r.iter_content(chunk_size = 1024, decode_unicode=True):
-            buffer += chunk     # Append the chunk produced to the buffer
-            while True:
-                try:
-                    # Find the next complete SSE line
-                    line_end = buffer.find('\n')
-                    if line_end == -1:
-                        break
-
-                    line = buffer[:line_end].strip()
-                    buffer = buffer[line_end + 1:]
-
-                    if line.startswith('data: '):
-                        data = line[6:]
-                    if data == '[DONE]':
-                        break
-
-                    try:
-                        data_obj = json.loads(data)
-                        content = data_obj["choices"][0]["delta"].get("content")
-                        if content:
-                            # Save the data for logging
-                            save_stream(content, "../../data/raw/response-%s.txt")
-                            # Return the data 
-                            yield content
-                    except json.JSONDecodeError:
-                        pass
-                except Exception:
-                    break
+            async for token in sseBuffer.add(chunk):
+                async for sentence in buffer.add(token):
+                    syncCoordinator.produce(sentence)       # Pass the sentence to the Queue
+    
+    async for sentence in buffer.flush():
+        syncCoordinator.produce(sentence)                   # Pass the remaining data to the Queue
+        syncCoordinator.produce(None)                       # Singal end of input
+            
 
 async def get_answer(input : list, instructions : str, emotion : str, model : str) -> str:
     """ Generates a response using OpenAI API
@@ -199,20 +184,18 @@ async def get_answer_stream(input : str, instructions : str, emotion : str, mode
             prompt_cache_retention = "24h",         # extended prompt cache retention  
             stream = True,
         )
-        
-        content = ""
+
         async for event in answer:
             if event.type == "response.output_text.delta":
                 text = event.delta
-                content += text
-                yield f"data: {text}\n\n"
-                
+                content = f"data: {text}\n\n"
+                save_stream(content, "../../data/raw/response-%s.txt")
+                yield content
+
             if event.type == "response.completed":
-                # Output the number of tokens produced
+                # Output the number of tokens used
                 total_tokens = event.response.usage.total_tokens
                 logging.info(f"Used tokens: {total_tokens}")
-                # Save the bot response 
-                save_stream(content, "../../data/raw/response-%s.txt")
 
     except RateLimitError as e:
         return "No API credit"
