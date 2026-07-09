@@ -113,6 +113,13 @@ def save_wav(buffer : list, path : str):
     new_path = next_path(os.path.join(BASE_DIR, path))
     write(new_path, 24_000, np.concatenate(buffer))
 
+def load_template(template : str = ["feedback1", "feedback2", "emotions", "interview1", "interview2"]):
+    """ Reads a template needed for prompt engineering
 
-
-
+    Args:
+        template (str) : name of template file in local storage
+    """
+    template_path = os.path.join(BASE_DIR, f"../../data/templates/{template}.md")         # Bot : interviewee
+    with open(template_path , "r") as f:
+        prompt = f.read()
+    return prompt

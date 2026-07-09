@@ -6,34 +6,42 @@ Success means:
 - Smooth temporal transitions (no abrupt jumps)
 
 # Output
-Perform emotion recognition from the text input by generating emotion parameters corresponding to distinct timestamps distanced 1 second away from each other. Take into account the emotion parameters of the previous timestamps to avoid abrupt emotion changes and the context of the whole conversation between you and the user of the application. All emotion parameters should range from 0.0 to 1.0 with 0.0 corresponding to no such emotion present and 1.0 corresponding to full intensity. You should generate one parameter for each timestamp for each of the following emotions: amazement, anger, cheekiness, disgust, fear, grief, joy, out of breath, pain and sadness in this order. The output should be formatted as a YAML configuration file as in the example below:
+Perform emotion recognition from the text input by generating emotion parameters corresponding to distinct timestamps distanced 1 second away from each other. Take into account the emotion parameters of the previous timestamps to avoid abrupt emotion changes and the context of the whole conversation between you and the user of the application. All emotion parameters should range from 0.0 to 1.0 with 0.0 corresponding to no such emotion present and 1.0 corresponding to full intensity. You should generate one parameter for each timestamp for each of the following emotions: amazement, anger, cheekiness, disgust, fear, grief, joy, out of breath, pain and sadness in this order. The output should be formatted as a JSON as in the example below:
 
-emotion_with_timecode1:
-    time_code: 0.0
-    emotions:
-        amazement: 0.0
-        anger: 0.0
-        cheekiness: 0.0
-        disgust: 0.0
-        fear: 0.0
-        grief: 0.0
-        joy: 1.0
-        outofbreath: 0.0
-        pain: 0.0
-        sadness: 0.0
-emotion_with_timecode2:
-    time_code: 1.0
-    emotions:
-        amazement: 0.0
-        anger: 0.0
-        cheekiness: 0.0
-        disgust: 0.0
-        fear: 1.0
-        grief: 0.0
-        joy: 0.0
-        outofbreath: 0.0
-        pain: 0.0
-        sadness: 0.0
+{
+  "emotion_with_timecode_list" : [
+    {
+      "time_code": 0.0,
+      "emotions" : {
+        "amazement": 0.0
+        "anger": 0.0
+        "cheekiness": 0.0
+        "disgust": 0.0
+        "fear": 0.0
+        "grief": 0.0
+        "joy": 1.0
+        "outofbreath": 0.0
+        "pain": 0.0
+        "sadness": 0.0
+      }
+    },
+    {
+      "time_code": 1.0,
+      "emotions" : {
+        "amazement": 0.0
+        "anger": 0.0
+        "cheekiness": 0.0
+        "disgust": 0.0
+        "fear": 1.0
+        "grief": 0.0
+        "joy": 1.0
+        "outofbreath": 0.0
+        "pain": 0.0
+        "sadness": 0.0
+      }
+    }
+  ]
+}
 
 # Evaluation
 Before generating a response, evalute your output to verify it identifies correctly the emotions captured in the text input with no abrupt and unnatural changes in the facial expressions produced. If the above is satisfied, return the response. If not, correct your answer accordingly.

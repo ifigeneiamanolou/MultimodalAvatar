@@ -224,34 +224,3 @@ post_processing_parameters:
 # An emotion with timecode is an emotion that is applied at a specific timecode
 # Emotions must be between 0.0 and 1.0
 # Timecodes must be >= 0.0
-emotion_with_timecode_list:
-  # this first emotion with timecode will apply joy at the very beginning of the
-  # audio clip
-  emotion_with_timecode1:
-      time_code: 0.0
-      emotions:
-        amazement: 0.0
-        anger: 0.0
-        cheekiness: 0.0
-        disgust: 0.0
-        fear: 0.0
-        grief: 0.0
-        joy: 1.0
-        outofbreath: 0.0
-        pain: 0.0
-        sadness: 0.0
-  # this second emotion with timecode will apply fear after 1 second of audio in the
-  # audio clip
-  emotion_with_timecode2:
-      time_code: 1.0
-      emotions:
-        amazement: 0.0
-        anger: 0.0
-        cheekiness: 0.0
-        disgust: 0.0
-        fear: 1.0
-        grief: 0.0
-        joy: 0.0
-        outofbreath: 0.0
-        pain: 0.0
-        sadness: 0.0
