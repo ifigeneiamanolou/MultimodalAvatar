@@ -7,6 +7,7 @@ import displayTextGradual from '../../hooks/displayGradual';
 import MarkDown from 'react-markdown';
 import '../../../global.css';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
+import { PixelStreamingWrapper } from '../components/PixelStreamingWrapper';
 
 export default function Home() {
   // ====================== Constants ========================
@@ -335,7 +336,18 @@ export default function Home() {
         <div className = "flex flex-col flex-1 h-full">
           {/* Avatar (pixel streaming)*/}
           <div className = "flex flex-1 basis-3/4">
-
+            <div>
+              <PixelStreamingWrapper
+                  initialSettings={{
+                      AutoPlayVideo: true,
+                      AutoConnect: true,
+                      ss: 'ws://localhost:80',    // Signaling server : REPLACE WITH AWS URL
+                      StartVideoMuted: true,
+                      HoveringMouse: true,
+                      WaitForStreamer: true
+                  }}
+              />
+            </div>
           </div>
 
           {/* Feedback generation */}

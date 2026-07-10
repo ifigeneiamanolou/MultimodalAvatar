@@ -24,7 +24,6 @@ class SyncedChunk:
     audio_bytes : bytes             # PCM 16-bit format
     emotion_params : dict           # Emotion configuration
 
-
 class Controller:
     def __init__(self):
         self.queue = asyncio.Queue(maxsize = 50)
@@ -86,5 +85,12 @@ class Controller:
             response = response.choices[0].message.content
 
     async def produce_audio(sentence : str):
-        # Call FASTAPI on remote server using requests
+        url = "http://<your-ec2-public-ip>:8000"
+
+        # Configure payload 
+        payload = {"content" : sentence}
+
+        with requests.post(url, json = payload) as response:
+            # Receive PCM 16-but audio
+            pass
         pass
