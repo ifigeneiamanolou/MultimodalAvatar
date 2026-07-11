@@ -81,6 +81,7 @@ export default function Home() {
         displayTextGradual({text : response, sender : "user", setMessages});    
 
         // Prompt the LLM for an answer
+        // TO DO
       }
 
       ws.current.onerror = (e) => {console.log("ASR socket error : ", e.target);}
@@ -92,41 +93,17 @@ export default function Home() {
       }
     };
 
-    const connectTTS = () => {
-      const socket = new WebSocket("ws://127.0.0.1:8000/tts/stream");
-      wsTTS.current = socket;
-      wsTTS.current.onopen = () => {console.log("TTS socket open");}
-      wsTTS.current.onerror = (e) => {console.log("TTS socket error : ", e.target);}
-      wsTTS.current.onmessage = (e) => {
-        console.log("message from TTS socket : ", e);
-        if(e.data instanceof Blob){
-          const url = URL.createObjectURL(e.data);
-          const audio = new Audio(url);
-          audio.play();
-        }
-      }
-      wsTTS.current.onclose = () => {
-        console.log("TTS socket closed");
-        wsTTS.current = null;
-        // reconnectTimerTTS = setTimeout(connectTTS, 5000);   // Open again the web socket after 5sec
-      }
-    };
-
     connectASR();
-    // connectTTS();
 
     return () => {
       clearTimeout(reconnectTimer);  
-      // clearTimeout(reconnectTimerTTS);
       ws.current?.close(1000, "unmounted");
-      // wsTTS.current?.close(1000, "unmounted");
     };
   }, []);
 
   // Handling incoming text queries
   const sendText = async () => {
     // Show the user input
-    const userMessage =  {role : "user", content : recordedText};
     displayTextGradual({text : recordedText, sender : "user", setMessages});
 
     // Send the query to openai and display the answer
@@ -144,6 +121,7 @@ export default function Home() {
         },
         body: JSON.stringify({input : messages, interview_type : interview_type, emotion : emotion}),
 
+        // TO CHANGE HANDLING OF RESPONSE
         onopen : async (res : Response) => {
           if (res.ok && res.status === 200) {
             console.log("Connection made ", res);
