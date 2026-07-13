@@ -109,81 +109,43 @@ async def generateAudio(input : TTSInput):
         media_type='audio/mpeg'
     )
 
-# @router.post("/tts/Orpheus", response_model = ResponseModel)
-# async def generateAudio(input : TTSInput):
-#     text = input.text
-#     path = input.path if input.path else next_path(os.path.join(BASE_DIR, "../../data/processed/blendshape-%s.csv"))
+@router.post("/tts/Orpheus", response_model = ResponseModel)
+async def generateAudio(input : TTSInput):
+    text = input.text
+    path = input.path if input.path else next_path(os.path.join(BASE_DIR, "../../data/processed/blendshape-%s.csv"))
     
-#     # ================= Blendshape generation ===============
-#     try:
-#         artkit = await generateAnimations(text)
-#         artkit.to_csv(path, header = False)
-#     except Exception as e:
-#         return {
-#             "success" : False,
-#             "data" : "",
-#             "message" : f"Error during coefficient generation and upload : {e}"
-#         }
+    # ================= Blendshape generation ===============
+    try:
+        artkit = await generateAnimations(text)
+        artkit.to_csv(path, header = False)
+    except Exception as e:
+        return {
+            "success" : False,
+            "data" : "",
+            "message" : f"Error during coefficient generation and upload : {e}"
+        }
     
-#     model = orpheus(model_name ="canopylabs/orpheus-tts-0.1-finetune-prod", max_model_len=2048)
+    model = orpheus(model_name ="canopylabs/orpheus-tts-0.1-finetune-prod", max_model_len=2048)
 
-#     start_time = time.monotonic()
-#     syn_tokens = model.generate_speech(
-#         prompt=prompt,
-#         voice="tara",
-#     )
+    start_time = time.monotonic()
+    syn_tokens = model.generate_speech(
+        prompt=prompt,
+        voice="tara",
+    )
 
-#     with wave.open("output.wav", "wb") as wf:
-#         wf.setnchannels(1)
-#         wf.setsampwidth(2)
-#         wf.setframerate(24000)
+    with wave.open("output.wav", "wb") as wf:
+        wf.setnchannels(1)
+        wf.setsampwidth(2)
+        wf.setframerate(24000)
 
-#         total_frames = 0
-#         chunk_counter = 0
-#         for audio_chunk in syn_tokens: # output streaming
-#             chunk_counter += 1
-#             frame_count = len(audio_chunk) // (wf.getsampwidth() * wf.getnchannels())
-#             total_frames += frame_count
-#             wf.writeframes(audio_chunk)
-#         duration = total_frames / wf.getframerate()
+        total_frames = 0
+        chunk_counter = 0
+        for audio_chunk in syn_tokens: # output streaming
+            chunk_counter += 1
+            frame_count = len(audio_chunk) // (wf.getsampwidth() * wf.getnchannels())
+            total_frames += frame_count
+            wf.writeframes(audio_chunk)
+        duration = total_frames / wf.getframerate()
 
-#         end_time = time.monotonic()
-#     print(f"It took {end_time - start_time} seconds to generate {duration:.2f} seconds of audio")
-
-# @router.websocket("/ttsOrpheus")
-# async def generateAudio(websocket : WebSocket):
-#     """ Generates and uploads artkit coefficients using Orpheus3B to adress data proprietry issues in a continuous manner
-
-#     Args:
-#         websocket (WebSocket): incomming web socket connection
-#     """
-
-#     await managerTTS.connect(websocket)
-
-#     try:    
-#         while True:
-#             # Receive data from the client
-#             data = await websocket.receive_text()  
-
-#             # Generate blendshapes
-#             artkit = await generateAnimations(data)
-#             path = next_path(os.path.join(BASE_DIR, "../../../data/processed/blendshape-%s.csv"))
-#             artkit.to_csv(path, header = False)
-
-#             # Text to Speech
-#             buffer = []
-#             for i, (_, chunk) in enumerate(orpheus.stream_tts_sync(data, options={"voice_id": "tara"})):
-#                 buffer.append(chunk)
-#                 await managerOrpheus.send_personal(websocket, chunk)
-
-#             # Audio upload in a wav file
-#             buffer = np.concatenate(buffer, axis=1)
-#             save_audio(buffer, "../../../data/processed/tts-%s.wav")
-#     except WebSocketDisconnect:
-#         print("Client disconnected")
-#     except Exception as e:
-#         raise HTTPException(status_code = 500, detail = f"Error when performing text transcription : {e}")
-#     finally:
-#         await managerOrpheus.disconnect(websocket)
-
-
+        end_time = time.monotonic()
+    print(f"It took {end_time - start_time} seconds to generate {duration:.2f} seconds of audio")

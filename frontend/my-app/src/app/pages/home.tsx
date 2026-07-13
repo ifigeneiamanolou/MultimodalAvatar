@@ -311,21 +311,19 @@ export default function Home() {
         </div>
 
         {/* Right part of the main page */}
-        <div className = "flex flex-col flex-1 h-full">
+        <div className = "flex flex-col flex-1 h-full m-4 gap-8">
           {/* Avatar (pixel streaming)*/}
           <div className = "flex flex-1 basis-3/4">
-            <div>
               <PixelStreamingWrapper
                   initialSettings={{
                       AutoPlayVideo: true,
                       AutoConnect: true,
-                      ss: 'ws://localhost:80',    // Signaling server : REPLACE WITH AWS URL
+                      ss: 'ws://3.20.233.130:80', // This changes every time the instance is launched or re-started to the public ipv4
                       StartVideoMuted: true,
                       HoveringMouse: true,
                       WaitForStreamer: true
                   }}
               />
-            </div>
           </div>
 
           {/* Feedback generation */}

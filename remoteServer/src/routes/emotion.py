@@ -20,7 +20,7 @@ async def detectAudioEmotion(input : EmotionInput):
 
     # Emotion detection
     try:
-        scores = emotion_detection(base64.b64decode(input.audio, ' /'), input.model)
+        scores = emotion_detection(base64.b64decode(input.audio, ' /'), input.model, input.language)
     except RuntimeError as e:
         return{
             "success" : False,

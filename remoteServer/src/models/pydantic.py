@@ -17,12 +17,13 @@ class LLMInput(BaseModel):
 
 class TTSInput(BaseModel):
     text : str
-    path : Path | None = None       # Path to store artkit coefficients, if not provided, new file
+    language : str
     # Additional fields
 
 class EmotionInput(BaseModel):      # Model used in the emotion2vec endpoint
     model : str = ["iic/emotion2vec_plus_seed", "iic/emotion2vec_plus_base", "iic/emotion2vec_plus_large"]
     audio : str                     # Encoded audio into a base64 string
+    language : str                  # Encoded as a language code ie "en"
 
 # Response Body pydantic models
 class ResponseModel(BaseModel):

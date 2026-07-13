@@ -26,7 +26,8 @@ def load_model(model_id : str):
 
 def emotion_detection(
         audio : bytes, 
-        model_id : str = [["iic/emotion2vec_plus_seed", "iic/emotion2vec_plus_base", "iic/emotion2vec_plus_large"]]
+        language : str,
+        model_id : str = [["iic/emotion2vec_plus_seed", "iic/emotion2vec_plus_base", "iic/emotion2vec_plus_large"]],
     ) -> np.ndarray:
     """ Generate scores for each of the following emotions using emotion2vec in the same order : angry, disgusted, fearful, happy,
     neutral, other, sad, surprised, unk
@@ -34,6 +35,7 @@ def emotion_detection(
     Args:
         audio (bytes): raw binary audio bytes to be processed by the model
         model_id (str): ID of the emotion2vec model to sue
+        language (str) : language code to reduce latency
 
     Returns:
         ndarray : numpy array with the output scores
@@ -42,7 +44,7 @@ def emotion_detection(
     model = _models[model_id]
     result =  model.generate(
         audio, 
-        language = "en", 
+        language = language, 
         extract_embedding = False
     )
     return np.array(result[0]['scores'], dtype = float)

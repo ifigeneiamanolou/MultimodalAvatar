@@ -15,9 +15,8 @@ router = APIRouter()
 @router.post("/tts/Orpheus", response_model = ResponseModel)
 async def generateAudio(input : TTSInput):
     text = input.text
-    path = input.path if input.path else next_path(os.path.join(BASE_DIR, "../../data/processed/blendshape-%s.csv"))
     
-    model = orpheus(model_name ="canopylabs/orpheus-tts-0.1-finetune-prod", max_model_len=2048)
+    model = orpheus(model_name = "canopylabs/orpheus-tts-0.1-finetune-prod" , max_model_len = 2048)
 
     start_time = time.monotonic()
     syn_tokens = model.generate_speech(

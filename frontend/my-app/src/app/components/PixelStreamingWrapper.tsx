@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import {
     Config,
     AllSettings,
@@ -18,10 +19,13 @@ export const PixelStreamingWrapper = ({
     const videoParent = useRef<HTMLDivElement>(null);
 
     // Pixel streaming library instance is stored into this state variable after initialization:
-    const [pixelStreaming, setPixelStreaming] = useState<PixelStreaming>();
+    const pixelStreaming = useRef<PixelStreaming | null>(null);
     
     // A boolean state variable that determines if the Click to play overlay is shown:
     const [clickToPlayVisible, setClickToPlayVisible] = useState(false);
+
+    // A boolean state variable that determines if no WebRTC connection is shown:
+    const [noConnection, setNoConnection] = useState(false);
 
     // Run on component mount:
     useEffect(() => {
@@ -37,8 +41,31 @@ export const PixelStreamingWrapper = ({
                 setClickToPlayVisible(true);
             });
 
+            // register a webRtcDisconnected handler to show No WebRTC connection if needed
+            streaming.addEventListener('webRtcDisconnected', () => {
+                setNoConnection(true);
+                console.log("Disconnected from signaling server");
+            });
+
+            // register a webRtcConnected handler to show Click if needed
+            streaming.addEventListener('webRtcConnected', () => {
+                setNoConnection(false);
+                console.log("Connected");
+            });
+
+            // register a webRtcConnecting handler to show current state on the console
+            streaming.addEventListener('webRtcConnecting', () => {
+                console.log("connecting ...");
+            })
+
+            // register a webRtcFailed handler to show WebRTC failed if need
+            streaming.addEventListener('webRtcFailed', () => {
+                setNoConnection(true);
+                console.log("WebRTC connection failed");
+            });
+
             // Save the library instance into component state so that it can be accessed later even if pixel streaming hasn't started
-            setPixelStreaming(streaming);
+            pixelStreaming.current = streaming;
 
             // Clean up on component unmount:
             return () => {
@@ -50,21 +77,28 @@ export const PixelStreamingWrapper = ({
     }, []);
 
     return (
-        <div className= 'w-full h-full relative'>
-            {/* DOM element to render pixel streaming */}
-            <div className = "w-full h-full" ref={videoParent}/>   
-            {/* Alternative content */}     
-            {clickToPlayVisible && (
-                <div
-                    className  = "top-0 left-0 w-full h-full flex justify-center align-middle cursor-pointer" 
-                    onClick={() => {
-                        pixelStreaming?.play();                 // Display the avatar
-                        setClickToPlayVisible(false);           // Hide the click page
-                    }}
-                >
-                    <div>Click to play</div>
+        <div className= 'w-full h-full relative place-content-center'>
+            {noConnection ? 
+                <div className = "w-full h-full place-content-center">
+                    <p className = "p-6" > No WebRTC connection </p> 
                 </div>
-            )}
+                : <>
+                    {/* DOM element to render pixel streaming */}
+                    <div className = "w-full h-full" ref={videoParent}/>   
+                    {/* Alternative content */}     
+                    {clickToPlayVisible && (
+                        <div
+                            className  = "absolute top-0 left-0 w-full h-full flex cursor-pointer" 
+                            onClick={() => {
+                                pixelStreaming.current?.play();                 // Display the avatar
+                                setClickToPlayVisible(false);                   // Hide the click page
+                            }}
+                        >
+                            <div className = "absolute align-middle"> Click to play </div>
+                        </div>
+                    )}
+                </>
+            }
         </div>
     );
 };
