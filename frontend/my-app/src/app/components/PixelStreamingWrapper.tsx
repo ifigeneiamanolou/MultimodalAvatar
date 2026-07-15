@@ -39,18 +39,20 @@ export const PixelStreamingWrapper = ({
             // register a playStreamRejected handler to show Click to play overlay if needed
             streaming.addEventListener('playStreamRejected', () => {  // stream was rejected, redisplay click button
                 setClickToPlayVisible(true);
+                setNoConnection(false);
+                console.log('Pixel stream rejected');
+            });
+
+            // register a webrtcconnected handler to show click every time a user loads the page
+            streaming.addEventListener('webRtcConnected', () => {
+                setClickToPlayVisible(true);
+                console.log('Connected to signaling server');
             });
 
             // register a webRtcDisconnected handler to show No WebRTC connection if needed
             streaming.addEventListener('webRtcDisconnected', () => {
                 setNoConnection(true);
                 console.log("Disconnected from signaling server");
-            });
-
-            // register a webRtcConnected handler to show Click if needed
-            streaming.addEventListener('webRtcConnected', () => {
-                setNoConnection(false);
-                console.log("Connected");
             });
 
             // register a webRtcConnecting handler to show current state on the console
@@ -71,34 +73,44 @@ export const PixelStreamingWrapper = ({
             return () => {
                 try {
                     streaming.disconnect();
+                    pixelStreaming.current = null;
                 } catch {}
             };
         }
     }, []);
 
+    const connect = () => {
+        setClickToPlayVisible(false);
+    };
+
     return (
         <div className= 'w-full h-full relative place-content-center'>
-            {noConnection ? 
+            {noConnection ? (
                 <div className = "w-full h-full place-content-center">
                     <p className = "p-6" > No WebRTC connection </p> 
                 </div>
-                : <>
-                    {/* DOM element to render pixel streaming */}
-                    <div className = "w-full h-full" ref={videoParent}/>   
-                    {/* Alternative content */}     
-                    {clickToPlayVisible && (
-                        <div
-                            className  = "absolute top-0 left-0 w-full h-full flex cursor-pointer" 
-                            onClick={() => {
-                                pixelStreaming.current?.play();                 // Display the avatar
-                                setClickToPlayVisible(false);                   // Hide the click page
-                            }}
-                        >
-                            <div className = "absolute align-middle"> Click to play </div>
+            ): (
+                <>
+                    {/* Mount the component */}
+                    <div className = "w-full h-full" ref={videoParent}/>  
+
+                    {clickToPlayVisible ? (
+                        <div className = "w-full h-full place-content-center" onClick = {connect}>
+                            <p className = 'p-6'> Click to play </p>
                         </div>
+                    ) : (
+                        <>
+                            <div
+                                className  = "absolute top-0 left-0 w-full h-full flex cursor-pointer" 
+                                onClick={() => {
+                                    pixelStreaming.current?.play();                 // Display the avatar
+                                    setClickToPlayVisible(false);                   // Hide the click page
+                                }}
+                            />
+                        </>
                     )}
                 </>
-            }
+            )}
         </div>
     );
 };

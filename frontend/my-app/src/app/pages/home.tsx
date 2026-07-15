@@ -61,7 +61,7 @@ export default function Home() {
     // let reconnectTimerTTS: ReturnType<typeof setTimeout>;
 
     const connectASR = () => {
-      const socket = new WebSocket("ws://127.0.0.1:8000/asr");
+      const socket = new WebSocket("ws://3.129.236.140:8000/asr");      
       ws.current = socket;
       ws.current.onopen = () => {console.log("ASR socket open");}
 
@@ -318,7 +318,7 @@ export default function Home() {
                   initialSettings={{
                       AutoPlayVideo: true,
                       AutoConnect: true,
-                      ss: 'ws://3.20.233.130:80', // This changes every time the instance is launched or re-started to the public ipv4
+                      ss: 'ws://3.129.236.140:80', 
                       StartVideoMuted: true,
                       HoveringMouse: true,
                       WaitForStreamer: true
