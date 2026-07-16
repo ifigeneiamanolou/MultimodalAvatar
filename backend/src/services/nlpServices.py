@@ -1,18 +1,12 @@
 from dotenv import load_dotenv
-from fastapi.responses import StreamingResponse
-from matplotlib import text
-from openai import OpenAI, RateLimitError, AsyncOpenAI, APIError
+from openai import OpenAI, RateLimitError
 import os
-from backend.src.routes import response
 from src.services.fileServices import save_stream
 from src.utils.sentenceBuffer import sentenceBuffer
-from src.utils.sseBuffer import sseBuffer
 from src.utils.controller import Controller
 from fastapi import HTTPException
 import logging
-from openrouter import OpenRouter
 import requests
-import json
 
 # Environment variables
 load_dotenv()
