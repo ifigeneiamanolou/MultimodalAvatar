@@ -48,7 +48,6 @@ class Controller:
             finally:   
                 self.queue.task_done()
 
-
     async def produce(self, data : str):
         await self.queue.put(data)
 
@@ -106,12 +105,10 @@ class Controller:
         saveJSON(response, "../../processed/emotionParameters-%s.json")
 
     async def produce_audio(sentence : str):
-        url = "http://3.129.236.140:8000"
+        url = "http://3.129.236.140:8000/orpheus"
 
         # Configure payload 
         payload = {"content" : sentence}
 
-        with requests.post(url, json = payload) as response:
-            # Receive PCM 16-but audio
-            pass
-        pass
+        # Send the sentence to Orpheus3B
+        requests.post(url, json = payload) 

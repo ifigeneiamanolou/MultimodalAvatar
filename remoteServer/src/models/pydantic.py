@@ -5,25 +5,15 @@ from pydantic import BaseModel, Field
 # ================== Pydantic models ===================
 
 # Request body pydantic models
-class Message(BaseModel):
-    role: str
-    content: str
-
-class LLMInput(BaseModel):
-    emotion : str =  ['angry', 'disgusted', 'fearful', 'happy', 'sad', 'surprised', 'neutral']
-    input : list[Message]
-    interview_type : int             # 1 corresponds to user being the interviewer and 2 to user being the interviewee   
-    model : str | None = "openai/gpt-4o-mini" 
-
-class TTSInput(BaseModel):
-    text : str
-    language : str
-    # Additional fields
-
 class EmotionInput(BaseModel):      # Model used in the emotion2vec endpoint
     model : str = ["iic/emotion2vec_plus_seed", "iic/emotion2vec_plus_base", "iic/emotion2vec_plus_large"]
     audio : str                     # Encoded audio into a base64 string
     language : str                  # Encoded as a language code ie "en"
+
+class TTSInput(BaseModel):
+    sentence : str
+    voice : str = ["tara", "leah", "jess", "leo", "dan", "mia", "zac", "zoe"]
+    model : str = ["canopylabs/orpheus-tts-0.1-finetune-prod"]
 
 # Response Body pydantic models
 class ResponseModel(BaseModel):
