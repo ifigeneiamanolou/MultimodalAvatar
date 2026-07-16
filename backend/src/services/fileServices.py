@@ -2,8 +2,7 @@ import os
 import json
 from scipy.io.wavfile import write
 import numpy as np
-import tempfile
-import base64
+import json
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
 
@@ -26,7 +25,23 @@ def next_path(path_pattern : str) -> str:
 
     return path_pattern % b
 
-def saveFeedback(messages : dict, path : str):
+def load_json(path : str):
+    """ Reads a json file from the data folder
+
+    Args:
+        path (str) : relative location of target file
+
+    Returns:
+        dict : the json formatted dictionary read
+    """
+      
+    pathNew = os.path.join(BASE_DIR, path)
+    with open(pathNew, "r") as f: 
+        schema = json.load(f)
+    return schema
+
+
+def saveJSON(messages : dict, path : str):
     """ Writes the content of a dictionary into a file in utf-8 encoding, with indentation
 
     Args:

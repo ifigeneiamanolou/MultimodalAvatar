@@ -10,23 +10,24 @@
 import asyncio
 import requests
 from dotenv import load_dotenv
-from src.services.fileServices import load_template
+from src.services.fileServices import load_template, load_json, saveJSON
 import os
 from dataclasses import dataclass
 
 load_dotenv()
 OPENROUTER_API_KEY = os.environ["OPENROUTER_API_KEY"]
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
 
 @dataclass
 class SyncedChunk:
     sequence_id : int
     audio_bytes : bytes             # PCM 16-bit format
-    emotion_params : dict           # Emotion configuration
+    emotion_params : dict = {}      # Emotion configuration
 
 class Controller:
     def __init__(self):
         self.queue = asyncio.Queue(maxsize = 50)
+        self.current_sentence = ""                  # Sentence currently processed
+        self.model = "gpt-4o-mini"                  # Used for emotion generation
 
 
     async def consume(self):
@@ -36,12 +37,14 @@ class Controller:
             if sentence is None:
                 self.queue.task_done()
                 break
+            self.current_sentence = sentence
 
             try:
-                # Perform some task
                 async with asyncio.TaskGroup() as task_group:
-                    emotionTask = task_group.create_task(self.produce_emotions(sentence, "gpt-4o-mini"))
-                    audioTask = task_group.create_task(self.produce_audio(sentence))
+                    await task_group.create_task(self.produce_emotions(sentence, "gpt-4o-mini"))
+                    await task_group.create_task(self.produce_audio(sentence))
+            except Exception as e:
+                print(f"\n Sentence : {sentence} failed with error {e} \n")
             finally:   
                 self.queue.task_done()
 
@@ -49,7 +52,7 @@ class Controller:
     async def produce(self, data : str):
         await self.queue.put(data)
 
-    async def produce_emotions(sentence : str, model : str):
+    async def produce_emotions(self):
         # API endpoint
         url = "https://openrouter.ai/api/v1/chat/completions"
 
@@ -70,22 +73,40 @@ class Controller:
             },
             {
                 "role" : "user",
-                "content" : sentence
+                "content" : self.current_sentence
             }
         ]
 
+        # Response JSON schema
+        schema = load_json("../../data/templates/schema.json")
+
+        format = {
+            "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "Emotions",
+                    "strict": True,
+                    "schema": schema
+                }
+            }
+        }
+
         # Request payload
         payload = {
-            "model": model,
+            "model": self.model,
             "messages": input,
+            "response_format" : format,
             "stream": False
         }
 
         with requests.post(url, headers = headers, json = payload, stream=True) as response:
             response = response.choices[0].message.content
 
+        # Save the response for debugging
+        saveJSON(response, "../../processed/emotionParameters-%s.json")
+
     async def produce_audio(sentence : str):
-        url = "http://<your-ec2-public-ip>:8000"
+        url = "http://3.129.236.140:8000"
 
         # Configure payload 
         payload = {"content" : sentence}

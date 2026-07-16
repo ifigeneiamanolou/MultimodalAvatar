@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from src.models.pydantic import UserInput, ResponseModel
-from src.services.fileServices import save, saveFeedback
+from src.services.fileServices import save, saveJSON
 import os
 from backend.src.services.nlpServices import get_answer_router
 
@@ -27,7 +27,7 @@ async def resetConversation(user_input : UserInput):
     """
     try:
         input_list = [m.model_dump for m in user_input.input]
-        saveFeedback(input_list, "../../data/feedback/conversation-%s.json")
+        saveJSON(input_list, "../../data/feedback/conversation-%s.json")
     except Exception as e:
         return{
             "success" : False, 
@@ -53,7 +53,7 @@ async def generateFeedback(user_input : UserInput):
     
     """   
     input_list = [m.model_dump() for m in user_input.input]
-    saveFeedback(input_list, "../../data/feedback/conversation-%s.json")
+    saveJSON(input_list, "../../data/feedback/conversation-%s.json")
     
     # Retrieve file name to save the response and instructions depending on the user role
     feedback_prompt = feedback_prompt1 if user_input.interview_type == 1 else feedback_prompt2

@@ -116,7 +116,9 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
     with requests.post(url, headers=headers, json=payload, stream=True) as r:
         for chunk in r.iter_content(chunk_size = 1024, decode_unicode=True):
             async for token in sseBuffer.add(chunk):
+                print(token, "\n")
                 async for sentence in buffer.add(token):
+                    print(sentence, "\n")
                     syncCoordinator.produce(sentence)       # Pass the sentence to the Queue
     
     async for sentence in buffer.flush():

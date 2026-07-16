@@ -13,31 +13,31 @@ Perform emotion recognition from the text input by generating emotion parameters
     {
       "time_code": 0.0,
       "emotions" : {
-        "amazement": 0.0
-        "anger": 0.0
-        "cheekiness": 0.0
-        "disgust": 0.0
-        "fear": 0.0
-        "grief": 0.0
-        "joy": 1.0
-        "outofbreath": 0.0
-        "pain": 0.0
-        "sadness": 0.0
+        "amazement": 0.0,
+        "anger": 0.0,
+        "cheekiness": 0.0,
+        "disgust": 0.0,
+        "fear": 0.0,
+        "grief": 0.0,
+        "joy": 1.0,
+        "outofbreath": 0.0,
+        "pain": 0.0,
+        "sadness": 0.0,
       }
     },
     {
       "time_code": 1.0,
       "emotions" : {
-        "amazement": 0.0
-        "anger": 0.0
-        "cheekiness": 0.0
-        "disgust": 0.0
-        "fear": 1.0
-        "grief": 0.0
-        "joy": 1.0
-        "outofbreath": 0.0
-        "pain": 0.0
-        "sadness": 0.0
+        "amazement": 0.0,
+        "anger": 0.0,
+        "cheekiness": 0.0,
+        "disgust": 0.0,
+        "fear": 1.0,
+        "grief": 0.0,
+        "joy": 1.0,
+        "outofbreath": 0.0,
+        "pain": 0.0,
+        "sadness": 0.0,
       }
     }
   ]
