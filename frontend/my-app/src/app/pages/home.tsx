@@ -13,7 +13,6 @@ export default function Home() {
   // ====================== Constants ========================
   // Web sockets
   const ws = useRef<WebSocket | null>(null);
-  const wsTTS = useRef<WebSocket | null>(null);                                     // Allows continuous streaming
 
   // Displayed chat
   const [recordedText, setRecordedText] = useState('');
@@ -35,11 +34,6 @@ export default function Home() {
 
   // Changing pages
   const navigate = useNavigate();
-
-  // Loaders
-  const [waitingNLP, setWaitingNLP] = useState(false);
-  const [waitingASR, setWaitingASR] = useState(false);
-  const [waitingFeedback, setWaitingFeedback] = useState(false);
 
   // Avatar
   const [blensdshapePath, setBlendshapePath] = useState<string | null>(null);
@@ -76,12 +70,39 @@ export default function Home() {
         console.log("data from ASR socket: ", e.data);
         const response = e.data;
 
-        // Show the transcribed user input
-        const userMessage =  {role : "user", content : response};
-        displayTextGradual({text : response, sender : "user", setMessages});    
+        // Check the status code of the response
+        if (response.ok && response.status === 200) {
+          console.log("Connection made ", response);
+        } else if (
+          response.status >= 400 &&
+          response.status < 500 &&
+          response.status !== 429
+        ) {
+          console.log("Server side error ", response);
+          setErrorPopUp(true);
+          setMessagePopUp("Server side error. Try again.");
+          return;
+        }
 
-        // Prompt the LLM for an answer
-        // TO DO
+        // Flag the user if no audio is detected
+        if(response === ""){
+          setErrorPopUp(true);
+          setMessagePopUp("No voice detected. Try again.");
+          return;
+        } else {
+          // Display the transcripted user audio input
+          displayTextGradual({text : response, sender : "user", setMessages});    
+
+          // Fetch a response from OpenAI
+          const interview_type = interviewer ? 1 : 2;  
+          await fetchEventSource("http://localhost:8000/response/stream", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({input : messages, interview_type : interview_type, emotion : emotion})
+          }) 
+        }
       }
 
       ws.current.onerror = (e) => {console.log("ASR socket error : ", e.target);}
@@ -101,27 +122,29 @@ export default function Home() {
     };
   }, []);
 
-  // Handling incoming text queries
   const sendText = async () => {
+    // Check if the input text is empty
+    if(recordedText === ""){
+      setErrorPopUp(true);
+      setMessagePopUp("No input text. Type something.");
+      return;
+    }
+
     // Show the user input
     displayTextGradual({text : recordedText, sender : "user", setMessages});
 
     // Send the query to openai and display the answer
     try{
       const interview_type = interviewer ? 1 : 2;  
-      var count = 0;          // Count the number of chunks
-      var partial_text = "";  // Text of 10 chunks to perform post-processing
 
       // Fetch a response from OpenAI
       await fetchEventSource("http://localhost:8000/response/stream", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Accept' : "text/event-stream",
         },
         body: JSON.stringify({input : messages, interview_type : interview_type, emotion : emotion}),
 
-        // TO CHANGE HANDLING OF RESPONSE
         onopen : async (res : Response) => {
           if (res.ok && res.status === 200) {
             console.log("Connection made ", res);
@@ -131,21 +154,6 @@ export default function Home() {
             res.status !== 429
           ) {
             console.log("Client side error ", res);
-          }
-        },
-
-        onmessage(event) {      // Data received from NLP
-          const parsedData = JSON.parse(event.data);
-          displayTextGradual({text : parsedData, sender : null, setMessages});
-
-          // Conditionally perform post-processing
-          count += 1;
-          partial_text += parsedData;
-          if(count >= 10 &&  ["!", ".", ";", ":", "?"].includes(parsedData.trim())){  // Context retention
-            console.log(partial_text);    
-            postProcessing(partial_text);
-            count = 0;
-            partial_text = "";
           }
         },
 
@@ -166,21 +174,6 @@ export default function Home() {
   };
 
   const handleText = (e : React.ChangeEvent<HTMLInputElement>) => setRecordedText(e.target.value);
-
-  const postProcessing = async (text : string) => {
-    const response = await fetch("http://localhost:8000/tts",{
-      method : "POST",
-      headers : {
-        "Content-Type" : "application/json"
-      },
-      body : JSON.stringify({text : text, path : blensdshapePath})
-    })
-
-    const data = await response.json();
-    setBlendshapePath(data.path);
-    const audio = new Audio(data.audio);
-    audio.play();
-  };
 
 
   const handleFeedback = async () => {

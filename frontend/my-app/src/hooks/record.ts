@@ -7,7 +7,6 @@ import {
   useAudioRecorderState,
 } from 'expo-audio';
 import { Alert } from 'react-native';
-import React from 'react';
 
 type useRecorderProps = {
     ws : RefObject<WebSocket | null>;
@@ -51,7 +50,8 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
             method : "POST",
             body : JSON.stringify({
                 model : "iic/emotion2vec_plus_seed",
-                audio : base64string
+                audio : base64string,
+                language : "en",
             }),
             headers : {
                 "Content-Type" : "application/json"
@@ -66,7 +66,6 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
             setMessagePopUp("Error during emotion recognition");
             setErrorPopUp(true);
             return;
-
         }
 
         // Send the recording audio for ASR through a WebSocket
