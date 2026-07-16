@@ -27,7 +27,7 @@ def load_model(model_id : str):
 def emotion_detection(
         audio : bytes, 
         language : str,
-        model_id : str = [["iic/emotion2vec_plus_seed", "iic/emotion2vec_plus_base", "iic/emotion2vec_plus_large"]],
+        model_id : str = ["iic/emotion2vec_plus_seed", "iic/emotion2vec_plus_base", "iic/emotion2vec_plus_large"],
     ) -> np.ndarray:
     """ Generate scores for each of the following emotions using emotion2vec in the same order : angry, disgusted, fearful, happy,
     neutral, other, sad, surprised, unk

@@ -20,7 +20,7 @@ async def detectAudioEmotion(input : EmotionInput):
 
     # Emotion detection
     try:
-        scores = emotion_detection(base64.b64decode(input.audio, ' /'), input.model, input.language)
+        scores = emotion_detection(base64.b64decode(input.audio, ' /'), input.language, input.model)
     except RuntimeError as e:
         return{
             "success" : False,
@@ -40,7 +40,7 @@ async def detectAudioEmotion(input : EmotionInput):
         }
     
     # Save the emotion to a file
-    save(emotion, "../../data/processed/emotion-%s.txt")
+    # save(emotion, "../../data/processed/emotion-%s.txt")
 
     # Return the emotion detected
     return{
