@@ -34,6 +34,7 @@ async def generate_audio(sentence : str, model_name : str, voice : str):
         model_name (str) : the name of the model to load
         voice (str) : the voice used to produce audio via Orpheus3B
     """
+    print("/n/n Starting audio generation ... /n/n")
 
     model = _models(model_name)
     syn_tokens = model.generate_speech(
@@ -42,5 +43,6 @@ async def generate_audio(sentence : str, model_name : str, voice : str):
     )
 
     for chunk in syn_tokens:
+        print(f"Chunk generated: {chunk} \n")
         async with websockets.connect(f'ws://localhost:8765') as websocket:
             await websocket.send_data(chunk)

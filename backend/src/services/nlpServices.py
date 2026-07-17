@@ -108,11 +108,13 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
     sseBuffer = sseBuffer()
     syncCoordinator = Controller()
     with requests.post(url, headers=headers, json=payload, stream=True) as r:
+        print("Started generating response ... \n\n")
         for chunk in r.iter_content(chunk_size = 1024, decode_unicode=True):
+            print(f"Chunk produced by the LLM {chunk} \n")
             async for token in sseBuffer.add(chunk):
-                print(token, "\n")
+                print(f"Token by sse buffer {token} \n")
                 async for sentence in buffer.add(token):
-                    print(sentence, "\n")
+                    print(f"sentence produced by buffer: \n {sentence} \n")
                     syncCoordinator.produce(sentence)       # Pass the sentence to the Queue
     
     async for sentence in buffer.flush():
