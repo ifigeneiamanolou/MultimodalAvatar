@@ -1,8 +1,8 @@
 from fastapi import APIRouter
-from backend.src.server.models.pydantic import TTSInput, ResponseModel
-from backend.src.server.services.animations import generateAnimations, textToSpeechStreaming
-from backend.src.server.services.fileServices import next_path, save_audio
-from backend.src.server.models.ConnectionManager import ConnectionManager
+from server.models.pydantic import TTSInput, ResponseModel
+from server.services.animations import generateAnimations, textToSpeechStreaming
+from server.services.fileServices import next_path, save_audio
+from server.models.ConnectionManager import ConnectionManager
 import os
 from elevenlabs.client import ElevenLabs
 from fastapi.responses import StreamingResponse
@@ -32,7 +32,7 @@ async def generateAudio(input : TTSInput):
     """
 
     text = input.text
-    path = input.path if input.path else next_path(os.path.join(BASE_DIR, "../../data/processed/blendshape-%s.csv"))
+    path = input.path if input.path else next_path(os.path.join(BASE_DIR, "../../../data/processed/blendshape-%s.csv"))
 
     # ================= Blendshape generation ===============
     try:
@@ -63,7 +63,7 @@ async def generateAudio(input : TTSInput):
     
     # ================ Audio upload ===================
     audio_chunks = b"".join(chunk for chunk in audio if chunk)
-    save_audio(audio_chunks, "../../data/processed/tts-%s.mp3")
+    save_audio(audio_chunks, "../../../data/processed/tts-%s.mp3")
     
     return {
         "success" : True,

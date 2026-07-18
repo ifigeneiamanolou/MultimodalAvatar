@@ -1,17 +1,17 @@
 from fastapi import APIRouter
-from backend.src.server.models.pydantic import UserInput, ResponseModel
-from backend.src.server.services.fileServices import save, saveJSON
+from server.models.pydantic import ResponseModel, UserInput
+from server.services.fileServices import save, saveJSON
 import os
-from backend.src.server.services.nlpServices import get_answer_router
+from server.services.nlpServices import get_answer_router
 
 router = APIRouter()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
 
-feedback_path1 = os.path.join(BASE_DIR, "../../data/templates/feedback1.md")         # Bot : interviewer
+feedback_path1 = os.path.join(BASE_DIR, "../../../data/templates/feedback1.md")         # Bot : interviewer
 with open(feedback_path1, "r") as f:
     feedback_prompt1 = f.read()
 
-feedback_path2 = os.path.join(BASE_DIR, "../../data/templates/feedback2.md")         # Bot : interviewee
+feedback_path2 = os.path.join(BASE_DIR, "../../../data/templates/feedback2.md")         # Bot : interviewee
 with open(feedback_path2, "r") as f:
     feedback_prompt2 = f.read()
 
@@ -27,7 +27,7 @@ async def resetConversation(user_input : UserInput):
     """
     try:
         input_list = [m.model_dump for m in user_input.input]
-        saveJSON(input_list, "../../data/feedback/conversation-%s.json")
+        saveJSON(input_list, "../../../data/feedback/conversation-%s.json")
     except Exception as e:
         return{
             "success" : False, 
@@ -53,7 +53,7 @@ async def generateFeedback(user_input : UserInput):
     
     """   
     input_list = [m.model_dump() for m in user_input.input]
-    saveJSON(input_list, "../../data/feedback/conversation-%s.json")
+    saveJSON(input_list, "../../../data/feedback/conversation-%s.json")
     
     # Retrieve file name to save the response and instructions depending on the user role
     feedback_prompt = feedback_prompt1 if user_input.interview_type == 1 else feedback_prompt2
@@ -72,7 +72,7 @@ async def generateFeedback(user_input : UserInput):
         }
 
     # Save the response to a file  
-    save(response, "../../processed/feedback-%s.txt")
+    save(response, "../../../processed/feedback-%s.txt")
 
     # Return the response to the frontend server to be displayed to the feedback box
     return {
