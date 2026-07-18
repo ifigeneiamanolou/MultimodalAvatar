@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.routes.whisper import router as whisper
-from src.routes.tts import router as tts
-from src.routes.emotion import router as emotion
+from remoteServer.src.server.routes.whisper import router as whisper
+from remoteServer.src.server.routes.tts import router as tts
+from remoteServer.src.server.routes.emotion import router as emotion
 
 app = FastAPI()
 app.include_router(whisper)

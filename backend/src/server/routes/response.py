@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 import os
 from fastapi.responses import StreamingResponse
-from backend.src.services.nlpServices import get_answer_router, get_answer_router_stream
-from src.models.pydantic import LLMInput, ResponseModel
-from src.services.fileServices import save
+from backend.src.server.services.nlpServices import get_answer_router, get_answer_router_stream
+from backend.src.server.models.pydantic import LLMInput, ResponseModel
+from backend.src.server.services.fileServices import save
 
 router = APIRouter()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))     

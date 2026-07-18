@@ -1,9 +1,9 @@
 from dotenv import load_dotenv
 from openai import OpenAI, RateLimitError
 import os
-from src.services.fileServices import save_stream
-from src.utils.sentenceBuffer import sentenceBuffer
-from src.utils.controller import Controller
+from backend.src.server.services.fileServices import save_stream
+from backend.src.server.utils.sentenceBuffer import sentenceBuffer
+from backend.src.server.utils.controller import Controller
 from fastapi import HTTPException
 import logging
 import requests

@@ -1,8 +1,8 @@
 from fastapi import APIRouter
-from src.models.pydantic import UserInput, ResponseModel
-from src.services.fileServices import save, saveJSON
+from backend.src.server.models.pydantic import UserInput, ResponseModel
+from backend.src.server.services.fileServices import save, saveJSON
 import os
-from backend.src.services.nlpServices import get_answer_router
+from backend.src.server.services.nlpServices import get_answer_router
 
 router = APIRouter()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 

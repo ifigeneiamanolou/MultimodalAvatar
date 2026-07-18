@@ -5,8 +5,8 @@
 
 from fastapi import APIRouter
 from fastapi.exceptions import HTTPException
-from src.services.fileServices import save_audio, save
-from src.models.pydantic import ResponseModel
+from backend.src.server.services.fileServices import save_audio, save
+from backend.src.server.models.pydantic import ResponseModel
 import boto3
 import json
 import base64

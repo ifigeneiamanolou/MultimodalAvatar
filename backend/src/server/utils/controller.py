@@ -10,8 +10,8 @@
 import asyncio
 import requests
 from dotenv import load_dotenv
-from src.services.fileServices import load_template, load_json, saveJSON
-from src.services.ttsServices import textToSpeechStreaming
+from backend.src.server.services.fileServices import load_template, load_json, saveJSON
+from backend.src.server.services.ttsServices import textToSpeechStreaming
 import os
 from dataclasses import dataclass
 

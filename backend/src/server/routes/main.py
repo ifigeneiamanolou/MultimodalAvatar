@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.routes.feedback import router as feedback
-from src.routes.response import router as response
+from backend.src.server.routes.feedback import router as feedback
+from backend.src.server.routes.response import router as response
 
 app = FastAPI()
 app.include_router(feedback)

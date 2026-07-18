@@ -1,7 +1,7 @@
 # Tests for measuring time required to generate artkit coefficients for variable length strings
 from faker import Faker
 import pandas as pd
-from src.services.animations import generateAnimations
+from backend.src.server.services.animations import generateAnimations
 from time import perf_counter
 import os
 

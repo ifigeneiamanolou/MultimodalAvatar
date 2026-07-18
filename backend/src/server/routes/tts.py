@@ -1,8 +1,8 @@
 from fastapi import APIRouter
-from src.models.pydantic import TTSInput, ResponseModel
-from src.services.animations import generateAnimations, textToSpeechStreaming
-from src.services.fileServices import next_path, save_audio
-from src.models.ConnectionManager import ConnectionManager
+from backend.src.server.models.pydantic import TTSInput, ResponseModel
+from backend.src.server.services.animations import generateAnimations, textToSpeechStreaming
+from backend.src.server.services.fileServices import next_path, save_audio
+from backend.src.server.models.ConnectionManager import ConnectionManager
 import os
 from elevenlabs.client import ElevenLabs
 from fastapi.responses import StreamingResponse

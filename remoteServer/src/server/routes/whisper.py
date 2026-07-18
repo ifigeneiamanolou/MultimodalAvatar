@@ -6,9 +6,9 @@
 """
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from src.models.ConnectionManager import ConnectionManager
-from src.services.fileServices import save, save_audio
-from src.services.whisperServices import transcription
+from remoteServer.src.server.models.ConnectionManager import ConnectionManager
+from remoteServer.src.server.services.fileServices import save, save_audio
+from remoteServer.src.server.services.whisperServices import transcription
 import base64
 
 # Websocket manager
