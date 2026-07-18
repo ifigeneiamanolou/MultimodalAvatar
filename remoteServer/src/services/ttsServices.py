@@ -2,7 +2,7 @@
 import os
 import torch
 from dotenv import load_dotenv
-from orpheus_tts import OrpheusModel
+# from orpheus_tts import OrpheusModel
 import asyncio 
 import websockets
 
@@ -13,7 +13,7 @@ load_dotenv()
 HF_TOKEN = os.environ["HF_TOKEN"]
 
 def load_model(model_name : str):
-    """ Load model into the models dictionary if not loaded before
+    """ Load Orpheus3B model into the models dictionary if not loaded before
 
     Args:
         model_id (str): the ID of the model to load
@@ -21,13 +21,14 @@ def load_model(model_name : str):
     """
 
     if id not in _models.keys():
-        _models[model_name] = OrpheusModel(
-            model_name = model_name,
-            max_model_len = 2048,
-        )
+        # _models[model_name] = OrpheusModel(
+        #     model_name = model_name,
+        #     max_model_len = 2048,
+        # )
+        pass
 
 async def generate_audio(sentence : str, model_name : str, voice : str):
-    """ Generate audio tokens from input sentence and stream it to Audio2Face
+    """ Generate audio tokens from input sentence and stream it to Audio2Face through Audio2Face
 
     Args:
         sentence (str): the sentence we need to produce audio from

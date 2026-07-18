@@ -113,6 +113,7 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
             print(f"Chunk produced by the LLM {chunk} \n")
             async for token in sseBuffer.add(chunk):
                 print(f"Token by sse buffer {token} \n")
+                yield token
                 async for sentence in buffer.add(token):
                     print(f"sentence produced by buffer: \n {sentence} \n")
                     syncCoordinator.produce(sentence)       # Pass the sentence to the Queue
@@ -120,6 +121,7 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
     async for sentence in buffer.flush():
         syncCoordinator.produce(sentence)                   # Pass the remaining data to the Queue
         syncCoordinator.produce(None)                       # Singal end of input
+        yield sentence                                      # Return the remaining text to frontend to print
             
 
 async def get_answer(input : list, instructions : str, emotion : str, model : str) -> str:

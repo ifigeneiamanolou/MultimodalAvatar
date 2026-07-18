@@ -11,6 +11,7 @@ import asyncio
 import requests
 from dotenv import load_dotenv
 from src.services.fileServices import load_template, load_json, saveJSON
+from src.services.ttsServices import textToSpeechStreaming
 import os
 from dataclasses import dataclass
 
@@ -37,12 +38,13 @@ class Controller:
             if sentence is None:
                 self.queue.task_done()
                 break
-            self.current_sentence = sentence
+            else:
+                self.current_sentence = sentence
 
             try:
                 async with asyncio.TaskGroup() as task_group:
-                    await task_group.create_task(self.produce_emotions(sentence, "gpt-4o-mini"))
-                    await task_group.create_task(self.produce_audio(sentence))
+                    await task_group.create_task(self.produce_emotions("gpt-4o-mini"))
+                    await task_group.create_task(self.produce_audio_elevenlabs())
             except Exception as e:
                 print(f"\n Sentence : {sentence} failed with error {e} \n")
             finally:   
@@ -104,11 +106,18 @@ class Controller:
         # Save the response for debugging
         saveJSON(response, "../../processed/emotionParameters-%s.json")
 
-    async def produce_audio(sentence : str):
+    async def produce_audio_orpheus(self):
         url = "http://3.129.236.140:8000/orpheus"
 
         # Configure payload 
-        payload = {"content" : sentence}
+        payload = {"content" : self.current_sentence}
 
         # Send the sentence to Orpheus3B
         requests.post(url, json = payload) 
+
+    async def produce_audio_elevenlabs(self):
+        voice_id = "JBFqnCBsd6RMkjVDRZzb"  # "George"
+        model_id = "eleven_flash_v2_5"
+        textToSpeechStreaming(self.current_sentence, voice_id, model_id)
+
+    
