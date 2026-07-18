@@ -4,11 +4,11 @@
 """
 
 from fastapi import APIRouter
-from remoteServer.src.server.models.pydantic import ResponseModel, EmotionInput
+from server.models.pydantic import ResponseModel, EmotionInput
 import os
-from remoteServer.src.server.services.emotionsServices import load_model, emotion_detection, processScores
+from server.services.emotionsServices import load_model, emotion_detection, processScores
 import base64
-from remoteServer.src.server.services.fileServices import save
+from server.services.fileServices import save
 
 router = APIRouter()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))   

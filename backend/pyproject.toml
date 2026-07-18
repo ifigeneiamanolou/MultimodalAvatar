@@ -5,7 +5,6 @@ description = "A backend server running locally"
 authors = [
     {name = "Ifigeneia Manolou",email = "ipm33@bath.ac.uk"}
 ]
-packages = [{include = "server", from = "src"}]
 readme = "README.md"
 requires-python = ">=3.12, <=3.13.10"
 dependencies = [
@@ -27,3 +26,7 @@ dependencies = [
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+packages = [{include = "server", from = "src"}]
+
