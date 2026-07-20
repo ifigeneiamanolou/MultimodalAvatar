@@ -4,10 +4,20 @@ import os
 from pymongo import AsyncMongoClient
 from pymongo.server_api import ServerApi
 from dotenv import load_dotenv
+import logging
 
 router = APIRouter()
 load_dotenv()
 MONGO_DB_URL = os.environ["MONGO_DB_URL"]
+
+# Configure basic logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+logger = logging.getLogger(__name__)
 
 # Connect to the cluster
 client = AsyncMongoClient(MONGO_DB_URL, server_api = ServerApi(version="1", strict=True, deprecation_errors=True))
@@ -33,6 +43,6 @@ async def getAllUsers() -> list:
 
         return users
     except Exception as e:
-        print(f"error when loading data : {e}")
+        logger.error(exc_info = True, msg = f"Error when searching in db : {str(e)}")
     finally:
         client.close()

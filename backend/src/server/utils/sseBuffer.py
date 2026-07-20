@@ -1,30 +1,29 @@
-from fastapi import Request
 import json
 
 class sseBuffer:
     def __init__(self):
-        self.buffer = ""                                # Buffer for SSE events data
+        self.buffer = ""                                        # Buffer for SSE events data
 
     async def flush_buffer(self, chunk):                       # Async generator
         self.buffer += chunk
         """ Extracts SSE events fron the response buffer and yields sentences as a generator """
         while True:
             try:
-                # Find the next complete SSE line
                 line_end = self.buffer.find('\n')
                 if line_end == -1:
                     break
 
-                # Extract the full SSE line
                 line = self.buffer[:line_end].strip()
+                self.buffer = self.buffer[line_end + 1:]   # <-- removes the processed part, critical
 
-                # Remove the processed line from the buffer
-                self.buffer = self.buffer[line_end + 1:]      
+                if not line.startswith('data: '):
+                    continue
 
-                if line.startswith('data: '):
-                    data = line[6:]
-                if data == '[DONE]':
-                    return None
+                data = line[6:]
+
+                if data == '[[DONE]]':
+                    yield None
+                    continue
 
                 try:
                     data_obj = json.loads(data)

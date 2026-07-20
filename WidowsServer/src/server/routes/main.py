@@ -1,12 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from server.routes.whisper import router as whisper
-from server.routes.tts import router as tts
 from server.routes.emotion import router as emotion
 
 app = FastAPI()
 app.include_router(whisper)
-app.include_router(tts)
 app.include_router(emotion)
 
 origins = [

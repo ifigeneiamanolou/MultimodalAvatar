@@ -1,31 +1,59 @@
+import { Int32 } from "react-native/Libraries/Types/CodegenTypes";
+
 type displayProps = {
     text : string | null;
-    sender : string | null;
+    messageID : string;
     setMessages : (messages : (prev : any) => any[]) => void;
 }
 
-export default function displayTextGradual({text, sender, setMessages} : displayProps){
-    if(sender){
-      setMessages(prev => [...prev, {role : sender, content : ''}]);
-    } else {
-      sender = "assistant";
+type Message = {content : string, running : boolean};
+const queue = new Map<string, Message>();
+
+const runReveal = (messageID : string, setMessages : displayProps['setMessages']) => {
+  const state = queue.get(messageID);
+  if(!state || state?.running){
+    return;
+  }
+
+  // Change the state of the current message
+  state.running = true;
+
+  // Display the message gradually
+  const display = setInterval(() => {
+    const s = queue.get(messageID);
+    // Check if the queue is empty
+    if(!s || s.content.length === 0){
+      if(s) s.running = false;
+      clearInterval(display);
+      return;
     }
 
-    if(text){
-      var index = 0;
-      const displayText = setInterval(() => {
-          setMessages(prev => {
-            const updated = [...prev];
-            updated[updated.length - 1] = {
-              role : sender,
-              content : text.slice(0, index + 1)
-            };
-            return updated;
-          });
-          index = index + 1;
-          if (index >= text.length){
-            clearInterval(displayText);
-          }
-      }, 80);
-    } 
+    // Display the next character
+    const nextChar = s.content[0];
+    s.content = s.content.slice(1);
+    setMessages(prev => prev.map((m : {id : string, content : string, role : string}) => (m.id == messageID ? {...m, content : m.content + nextChar} : m)));
+  
+    if(s.content.length === 0){
+      clearInterval(display);
+      s.running = false;
+    }
+  
+  }, 40);
+
+};
+
+export default function displayTextGradual({text, messageID, setMessages} : displayProps){
+    if(!text) return
+    
+    // Extract the element from the queue with the matching id
+    const message = queue.get(messageID) ?? {content : "", running : false};
+
+    // Modify the text
+    message.content += text;
+
+    // Modify the queue element
+    queue.set(messageID, message);
+
+    // Reveal the message with the current id
+    runReveal(messageID, setMessages);
 };

@@ -1,12 +1,16 @@
 from dotenv import load_dotenv
 from openai import OpenAI, RateLimitError
 import os
-from backend.src.server.services.fileServices import save_stream
-from backend.src.server.utils.sentenceBuffer import sentenceBuffer
-from backend.src.server.utils.controller import Controller
+from server.services.fileServices import save_stream
+from server.utils.sentenceBuffer import sentenceBuffer
+from server.utils.sseBuffer import sseBuffer
+from server.utils.controller import Controller
 from fastapi import HTTPException
 import logging
 import requests
+import re
+import asyncio
+import httpx
 
 # Environment variables
 load_dotenv()
@@ -25,14 +29,9 @@ def input_processing(input : list, instructions : str, emotion : str, role : str
     Returns:
         list: processed input to the LLM
     """
-    # Emotion integration
-    input[len(input) - 1] = {
-        "role" : "user",
-        "content" : {
-            "text" : input[len(input) - 1]["content"],
-            "emotion" : emotion
-        }
-    }
+
+    re.sub(r"[EMOTION]", emotion, instructions)
+
 
     # Developer instructions to the input
     input.append(
@@ -65,7 +64,7 @@ async def get_answer_router(input : list, instructions : str, emotion : str, mod
     }
 
     # Input processing
-    input = input_processing(input, instructions, emotion, "developer")
+    input = input_processing(input, instructions, emotion, "system")
 
     # Request payload
     payload = {
@@ -101,29 +100,30 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
     payload = {
         "model": model,
         "messages": input,
-        "stream": False
+        "stream": True
     }
 
     buffer = sentenceBuffer()
-    sseBuffer = sseBuffer()
+    bufferSmall = sseBuffer()
     syncCoordinator = Controller()
-    with requests.post(url, headers=headers, json=payload, stream=True) as r:
-        print("Started generating response ... \n\n")
-        for chunk in r.iter_content(chunk_size = 1024, decode_unicode=True):
-            print(f"Chunk produced by the LLM {chunk} \n")
-            async for token in sseBuffer.add(chunk):
-                print(f"Token by sse buffer {token} \n")
-                yield token
-                async for sentence in buffer.add(token):
-                    print(f"sentence produced by buffer: \n {sentence} \n")
-                    syncCoordinator.produce(sentence)       # Pass the sentence to the Queue
-    
-    async for sentence in buffer.flush():
-        syncCoordinator.produce(sentence)                   # Pass the remaining data to the Queue
-        syncCoordinator.produce(None)                       # Singal end of input
-        yield sentence                                      # Return the remaining text to frontend to print
-            
+    consumerTask = asyncio.create_task(syncCoordinator.consume())
+    try:
+        async with httpx.AsyncClient() as client:
+            async with client.stream(url = url, headers = headers, json = payload, method = "POST") as r:
+                async for chunk in r.aiter_text(chunk_size = 1024):
+                    async for token in bufferSmall.flush_buffer(chunk): 
+                        yield f"data: {token}\n\n"                  
+                        async for sentence in buffer.add(token):           
+                            await syncCoordinator.produce(sentence)        # Pass the sentence to the Queue
 
+        async for sentence in buffer.flush():
+            await syncCoordinator.produce(sentence)   # Pass the remaining data to the Queue
+            await syncCoordinator.produce(None)                         # Singal end of input
+    except Exception as e:
+        print(f"error {str(e)} \n")
+    finally:
+        await consumerTask
+            
 async def get_answer(input : list, instructions : str, emotion : str, model : str) -> str:
     """ Generates a response using OpenAI API
 
@@ -189,7 +189,7 @@ async def get_answer_stream(input : str, instructions : str, emotion : str, mode
             if event.type == "response.output_text.delta":
                 text = event.delta
                 content = f"data: {text}\n\n"
-                save_stream(content, "../../data/raw/response-%s.txt")
+                save_stream(content, "../../../data/raw/response-%s.txt")
                 yield content
 
             if event.type == "response.completed":
@@ -198,7 +198,7 @@ async def get_answer_stream(input : str, instructions : str, emotion : str, mode
                 logging.info(f"Used tokens: {total_tokens}")
 
     except RateLimitError as e:
-        return "No API credit"
+        yield "No API credit"
     except Exception as e:
         raise HTTPException(status_code = 500, detail = str(e))
 

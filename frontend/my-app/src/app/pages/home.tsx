@@ -8,6 +8,7 @@ import MarkDown from 'react-markdown';
 import '../../../global.css';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { PixelStreamingWrapper } from '../components/PixelStreamingWrapper';
+import { Int32 } from 'react-native/Libraries/Types/CodegenTypes';
 
 export default function Home() {
   // ====================== Constants ========================
@@ -16,7 +17,7 @@ export default function Home() {
 
   // Displayed chat
   const [recordedText, setRecordedText] = useState('');
-  const [messages, setMessages] = useState<{role : string, content : string}[]>([]);
+  const [messages, setMessages] = useState<{id : string, role : string, content : string}[]>([]);
 
   // Popups
   const [successPopUp, setSuccessPopUp] = useState(false);
@@ -35,26 +36,20 @@ export default function Home() {
   // Changing pages
   const navigate = useNavigate();
 
-  // Avatar
-  const [blensdshapePath, setBlendshapePath] = useState<string | null>(null);
-
   // ======================= Hooks =========================
-  // Microphone recording
+  const emotion = useRef('');
   const {
-    emotion,
     stopRecording,
     record,
     recorderState,
-  } = useRecorder({setMessagePopUp, setErrorPopUp, setSuccessPopUp, ws});
-  const [audio, setAudio] = useState();
-
+  } = useRecorder({ws, setMessagePopUp, setErrorPopUp, setSuccessPopUp, emotion});
+  const [audio, _] = useState();
 
   // ======================= Web Socket ======================
   useEffect(() => {
     let reconnectTimer: ReturnType<typeof setTimeout>;
-    // let reconnectTimerTTS: ReturnType<typeof setTimeout>;
 
-    const connectASR = () => {
+    const connectASR = async () => {
       const socket = new WebSocket("ws://3.129.236.140:8000/asr");      
       ws.current = socket;
       ws.current.onopen = () => {console.log("ASR socket open");}
@@ -91,20 +86,12 @@ export default function Home() {
           return;
         } else {
           // Display the transcripted user audio input
-          displayTextGradual({text : response, sender : "user", setMessages});    
-
-          // Fetch a response from OpenAI
-          const interview_type = interviewer ? 1 : 2;  
-          await fetchEventSource("http://localhost:8000/response/stream", {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({input : messages, interview_type : interview_type, emotion : emotion})
-          }) 
+          const id = startUserMessage();
+          displayTextGradual({text : response, messageID : id, setMessages});    
+          // Fetch a response from OpenAI 
+          setRecordedText(response);
         }
       }
-
       ws.current.onerror = (e) => {console.log("ASR socket error : ", e.target);}
       
       ws.current.onclose = () => {
@@ -116,11 +103,53 @@ export default function Home() {
 
     connectASR();
 
-    return () => {
+    return () => {    // Cleanup
       clearTimeout(reconnectTimer);  
       ws.current?.close(1000, "unmounted");
     };
   }, []);
+
+  useEffect(() => {
+    const fetchData = async (input : {role : string, content : string}[]) => {
+      const interview_type = interviewer ? 1 : 2; 
+      const ctr = new AbortController();
+      const msgID = startBotMessage();
+      await fetchEventSource("http://localhost:8000/response/stream", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': "text/event-stream",
+        },
+        body: JSON.stringify({input, interview_type : interview_type, emotion : emotion.current}),
+        onopen: async (res : Response) => {
+          if (res.ok && res.status === 200) {
+            console.log("Connection made ", res, " with code ", res.status);
+          } else if (
+            res.status >= 400 &&
+            res.status < 500 &&
+            res.status !== 429
+          ) {
+            console.log("Client side error ", res, "with code ", res.status);
+          }
+        },
+        onmessage(event) {
+          console.log("Data from NLP", event.data);
+          displayTextGradual({text : event.data, messageID : msgID, setMessages});
+        },
+        onclose() {
+          console.log("Connection closed by the server");
+        },
+        signal : ctr.signal,
+        onerror(err) {
+          console.log("There was an error from server", err);
+        },
+      },)
+    };
+    if(recordedText){
+      fetchData([...messages, {role : "user", content : recordedText}]);
+      setRecordedText('');
+    }
+  }, [recordedText]);
 
   const sendText = async () => {
     // Check if the input text is empty
@@ -131,43 +160,8 @@ export default function Home() {
     }
 
     // Show the user input
-    displayTextGradual({text : recordedText, sender : "user", setMessages});
-
-    // Send the query to openai and display the answer
-    try{
-      const interview_type = interviewer ? 1 : 2;  
-
-      // Fetch a response from OpenAI
-      await fetchEventSource("http://localhost:8000/response/stream", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({input : messages, interview_type : interview_type, emotion : emotion}),
-
-        onopen : async (res : Response) => {
-          if (res.ok && res.status === 200) {
-            console.log("Connection made ", res);
-          } else if (
-            res.status >= 400 &&
-            res.status < 500 &&
-            res.status !== 429
-          ) {
-            console.log("Client side error ", res);
-          }
-        },
-
-        onclose() {
-          console.log("Connection closed by the server");
-        },
-
-        onerror(err) {
-          console.log("There was an error from server", err);
-        },
-      },)
-    } catch (error){
-      console.log(error);
-    }
+    const msgID = startUserMessage();
+    displayTextGradual({text : recordedText, messageID : msgID, setMessages});
 
     // Clear the input field
     setRecordedText('');
@@ -175,6 +169,17 @@ export default function Home() {
 
   const handleText = (e : React.ChangeEvent<HTMLInputElement>) => setRecordedText(e.target.value);
 
+  const startUserMessage = () => {
+    const newID = crypto.randomUUID();
+    setMessages(prev => [...prev, {id : newID, role : "user", content : ""}]);
+    return newID;
+  };
+
+  const startBotMessage = () => {
+    const newID = crypto.randomUUID();
+    setMessages(prev => [...prev, {id : newID, role : "assistant", content : ""}]);
+    return newID;
+  }
 
   const handleFeedback = async () => {
     // Ensure bot response has been received
@@ -266,8 +271,8 @@ export default function Home() {
         <div className = "flex flex-col place-content-end gap-4 p-6 h-full w-96 shadow-md shadow-gray-300 m-4 overflow-hidden">
           {/* Text conversation display */}
           <div className = "flex-1 overflow-auto mb-4 w-full overflow-x-hidden">
-            {messages.length === 0 ? <p> Your conversation will appear here </p> : messages.map((msg, i) => (
-              <div className = "w-full min-w-0 break-words" key = {i}>
+            {messages.length === 0 ? <p> Your conversation will appear here </p> : messages.map((msg) => (
+              <div className = "w-full min-w-0 break-words" key = {msg.id}>
                 <span className = "break-words whitespace-pre-wrap">
                   <strong> {msg.role} </strong> {msg.content}
                 </span>

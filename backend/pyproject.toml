@@ -19,14 +19,14 @@ dependencies = [
     "boto3 (>=1.43.49,<2.0.0)",
     "elevenlabs (>=2.58.0,<3.0.0)",
     "pymongo (>=4.17.0,<5.0.0)",
-    "pydantic (>=2.13.4,<3.0.0)"
+    "pydantic (>=2.13.4,<3.0.0)",
+    "httpx (>=0.28.1,<0.29.0)"
 ]
 
+[tool.poetry]
+packages = [{include = "server", from = "src"}]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry]
-packages = [{include = "server", from = "src"}]
 

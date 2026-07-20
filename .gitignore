@@ -12,6 +12,9 @@ backend/data/Audio2Face-3D-Samples/
 # Additional files
 .vscode/*
 
+# pycache
+__pycache__
+
 # Ignore Python cache files
 backend/src/tests/__pycache__/
 backend/src/apis/__pycache__/

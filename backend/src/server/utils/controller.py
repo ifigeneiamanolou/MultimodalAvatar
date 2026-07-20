@@ -10,19 +10,22 @@
 import asyncio
 import requests
 from dotenv import load_dotenv
-from backend.src.server.services.fileServices import load_template, load_json, saveJSON
-from backend.src.server.services.ttsServices import textToSpeechStreaming
+from server.services.fileServices import load_template, load_json, saveJSON
+from server.services.ttsServices import textToSpeechStreaming, processText
 import os
-from dataclasses import dataclass
+import logging
 
 load_dotenv()
 OPENROUTER_API_KEY = os.environ["OPENROUTER_API_KEY"]
 
-@dataclass
-class SyncedChunk:
-    sequence_id : int
-    audio_bytes : bytes             # PCM 16-bit format
-    emotion_params : dict = {}      # Emotion configuration
+# Configure basic logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+logger = logging.getLogger(__name__)
 
 class Controller:
     def __init__(self):
@@ -40,17 +43,17 @@ class Controller:
                 break
             else:
                 self.current_sentence = sentence
+            logger.info(msg = f"Current sentence consumed is: {self.current_sentence}")
 
             try:
-                async with asyncio.TaskGroup() as task_group:
-                    await task_group.create_task(self.produce_emotions("gpt-4o-mini"))
-                    await task_group.create_task(self.produce_audio_elevenlabs())
+                await self.produce_audio_elevenlabs()
             except Exception as e:
-                print(f"\n Sentence : {sentence} failed with error {e} \n")
+                logging.error(msg = f"Error in task group {str(e)}")
             finally:   
                 self.queue.task_done()
 
     async def produce(self, data : str):
+        logger.info(msg = f"Produced sentence in the queue : {data}")
         await self.queue.put(data)
 
     async def produce_emotions(self):
@@ -99,12 +102,11 @@ class Controller:
             "response_format" : format,
             "stream": False
         }
-
-        with requests.post(url, headers = headers, json = payload, stream=True) as response:
-            response = response.choices[0].message.content
-
-        # Save the response for debugging
-        saveJSON(response, "../../processed/emotionParameters-%s.json")
+        try:
+            with requests.post(url, headers = headers, json = payload, stream=True) as response:
+                response = response.choices[0].message.content
+        except Exception as e:
+            logger.error(msg = f"Error during emotion generation : {e}")
 
     async def produce_audio_orpheus(self):
         url = "http://3.129.236.140:8000/orpheus"
@@ -113,11 +115,18 @@ class Controller:
         payload = {"content" : self.current_sentence}
 
         # Send the sentence to Orpheus3B
-        requests.post(url, json = payload) 
+        try:
+            requests.post(url, json = payload) 
+        except Exception as e:
+            logger.error(msg = f"Error during orpheus 3b remote upload : {e}")
 
     async def produce_audio_elevenlabs(self):
         voice_id = "JBFqnCBsd6RMkjVDRZzb"  # "George"
         model_id = "eleven_flash_v2_5"
-        textToSpeechStreaming(self.current_sentence, voice_id, model_id)
+        # await textToSpeechStreaming(self.current_sentence, voice_id, model_id)
+        try:
+            await processText(self.current_sentence, model_id, voice_id)
+        except Exception as e:
+            logger.error(msg = f"Error during elevenlabs upload : {e}")
 
     

@@ -5,6 +5,7 @@ from phonemizer.backend.espeak.wrapper import EspeakWrapper
 from phonemizer.separator import Separator
 from phonemizer.backend import EspeakBackend
 import os
+import logging
 
 # Espeak configuration for phoneme detection
 EspeakWrapper.set_library(
@@ -13,11 +14,20 @@ EspeakWrapper.set_library(
 backend = EspeakBackend(preserve_punctuation = True, 
                         language = "en-us")
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
+BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
+
+# Configure basic logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+logger = logging.getLogger(__name__)
 
 # Dictionaries
 try:
-    db = read_csv(os.path.join(BASE_DIR, "../../data/PhoBlendDataset.csv"))
+    db = read_csv(os.path.join(BASE_DIR, "../../../data/PhoBlendDataset.csv"))
 except Exception as e:
     raise HTTPException(status_code = 500, detail = f"Error when loading the PhoBlendDataset : {e}")
 

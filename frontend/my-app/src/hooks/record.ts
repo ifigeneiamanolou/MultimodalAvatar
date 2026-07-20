@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useState } from 'react';
+import { Dispatch, RefObject, SetStateAction, useEffect, useState } from 'react';
 import {
   useAudioRecorder,
   AudioModule,
@@ -13,11 +13,11 @@ type useRecorderProps = {
     setMessagePopUp : (message : string) => void;
     setErrorPopUp : (show : boolean) => void;
     setSuccessPopUp : (show : boolean) => void;
+    emotion : RefObject<string>;
 }
 
 
-export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSuccessPopUp} : useRecorderProps){
-    const [emotion, setEmotion] = useState('');
+export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSuccessPopUp, emotion} : useRecorderProps){
     const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
     const recorderState = useAudioRecorderState(audioRecorder);
 
@@ -61,7 +61,7 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
         // Handle the response from emotion recognition endpoint
         if(res.ok){
             const emotionData = await res.json();
-            setEmotion(emotionData.data);
+            emotion.current = emotionData.data;
         } else{
             setMessagePopUp("Error during emotion recognition");
             setErrorPopUp(true);
@@ -85,11 +85,9 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
         audioRecorder.record();
     };
 
-
     return {
         stopRecording,
         record,
-        recorderState,
-        emotion
+        recorderState
     };
 };

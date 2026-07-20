@@ -4,5 +4,5 @@ This project explores how AI can be used to render conversational agents capable
 
 * frontend -> Build the frontend of the application via Expo
 * backend -> FastAPI backend server locally running connected with the frontend
-* remoteServer -> Remote FastAPI server used to host ML models in a remote GPU
-* unrealEngine -> Contains custom C++ code to configure the UE5 application
+* WindowsServer -> Used in the remote AWS Windows server to host Emotion2Vec and Whisper through a Uvicorn server, as well as deploy the UE5 application with pixel streaming configured
+* UbuntuServer -> Used in the remote AWS Ubuntu server to host Orpheus3B through a Uvicorn server and Audio2Face through a gRPC server

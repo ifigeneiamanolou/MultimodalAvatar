@@ -65,21 +65,15 @@ async def generateTextResponse(user_input :LLMInput):
     }
 
     # Generate response from OpenAI
-    try:
-        return StreamingResponse(
-            get_answer_router_stream(
-                input = [m.model_dump() for m in user_input.input],
-                instructions = prompt1 if user_input.interview_type == 1 else prompt2,
-                emotion = user_input.emotion,
-                model = user_input.model
-            ), 
-            headers = headers
-        )
-    except Exception as e:
-        return{
-            "success" : False,
-            "data" : "",
-            "message" : f"Error during response generation : {e}"
-        }
+    return StreamingResponse(
+        get_answer_router_stream(
+            input = [m.model_dump() for m in user_input.input],
+            instructions = prompt1 if user_input.interview_type == 1 else prompt2,
+            emotion = user_input.emotion,
+            model = user_input.model,
+        ), 
+        media_type = "text/event-stream",
+        headers = headers
+    )
  
     
