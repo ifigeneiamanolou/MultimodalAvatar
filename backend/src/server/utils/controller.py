@@ -32,23 +32,25 @@ class Controller:
         self.queue = asyncio.Queue(maxsize = 50)
         self.current_sentence = ""                  # Sentence currently processed
         self.model = "gpt-4o-mini"                  # Used for emotion generation
-
+        self.orpheus_model = "canopylabs/orpheus-tts-0.1-finetune-prod"
+        self.voice = "tara"                         # Voice used in orpheus3b
 
     async def consume(self):
         while True:
             sentence = await self.queue.get()
 
             if sentence is None:
+                self.signal_end_audio()
                 self.queue.task_done()
                 break
-            else:
-                self.current_sentence = sentence
+
+            self.current_sentence = sentence
             logger.info(msg = f"Current sentence consumed is: {self.current_sentence}")
 
             try:
-                await self.produce_audio_elevenlabs()
+                await self.produce_orpheus()
             except Exception as e:
-                logging.error(msg = f"Error in task group {str(e)}")
+                logger.error(msg = f"Error while uploading to orpheus3 {str(e)}")
             finally:   
                 self.queue.task_done()
 
@@ -108,25 +110,30 @@ class Controller:
         except Exception as e:
             logger.error(msg = f"Error during emotion generation : {e}")
 
+        return response
+    
+    async def signal_end_audio(self):
+        url = "http://18.220.173.152/orpheus/end"
+        try:
+            requests.post(url) 
+        except Exception as e:
+            logger.error(msg = f"Error when ending audio upload : {e}")
+
+
     async def produce_audio_orpheus(self):
-        url = "http://3.129.236.140:8000/orpheus"
+        url = "http://18.220.173.152/orpheus"
 
         # Configure payload 
-        payload = {"content" : self.current_sentence}
+        payload = {
+            "sentence" : self.current_sentence,
+            "voice" : self.voice,
+            "model" : self.orpheus_model
+        }
 
         # Send the sentence to Orpheus3B
         try:
             requests.post(url, json = payload) 
         except Exception as e:
             logger.error(msg = f"Error during orpheus 3b remote upload : {e}")
-
-    async def produce_audio_elevenlabs(self):
-        voice_id = "JBFqnCBsd6RMkjVDRZzb"  # "George"
-        model_id = "eleven_flash_v2_5"
-        # await textToSpeechStreaming(self.current_sentence, voice_id, model_id)
-        try:
-            await processText(self.current_sentence, model_id, voice_id)
-        except Exception as e:
-            logger.error(msg = f"Error during elevenlabs upload : {e}")
 
     

@@ -7,12 +7,22 @@ import os
 from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
 import asyncio
+import logging
 
 load_dotenv()
 ELEVENLABS_API_KEY = os.environ["ELEVENLABS_API_KEY"]
 elevenlabs = ElevenLabs(
     api_key=ELEVENLABS_API_KEY,
 )
+
+# Configure basic logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+logger = logging.getLogger(__name__)
 
 async def textToSpeechStreaming(text : str, voice_id : str, model_id : str):
     """ Initiate a connection to the ElevenLabs streaming API and send data
@@ -31,20 +41,20 @@ async def textToSpeechStreaming(text : str, voice_id : str, model_id : str):
                 "xi_api_key": ELEVENLABS_API_KEY,
             }))
         except Exception as e:
-            raise HTTPException(status_code = 500, detail = F"upload str(e)")
+            logger.error(msg = f"Error during text upload {str(e)}")
 
         try:
             # Send empty string to indicate the end of the text sequence which will close the WebSocket connection
             await WebSocket.send(json.dumps({"text": ""}))
         except Exception as e:
-            raise HTTPException(status_code = 500, detail = F"cleaning str(e)")
+            logger.error(msg = f"Error when closing elevenlabs connection {str(e)}")
 
         try:
             # Add listen task to pass audio chunks to audio2face
             listen_task = asyncio.create_task(listen(WebSocket))
             await listen_task
         except Exception as e:
-            raise HTTPException(status_code = 500, detail = F"listening")
+            logger.error(msg = f"Error during audio upload to Audio2Face {str(e)}")
     
 
 async def listen(websocket : WebSocket):
@@ -70,7 +80,7 @@ async def listen(websocket : WebSocket):
                 async with websockets.connect(f'ws://localhost:8765') as websocket:
                     await websocket.send_text("[[DONE]]")
         except websockets.exceptions.ConnectionClosed:
-            print("Connection closed")
+            logger.error(msg = f"Websocket connection with UE5 closed")
             break
 
 async def processText(text : str, model_id : str, voice_id : str):
@@ -83,7 +93,7 @@ async def processText(text : str, model_id : str, voice_id : str):
             model_id = model_id
         )
     except Exception as e:
-        raise HTTPException(status_code = 500, detail = f"conversion {str(e)}")
+        logger.error(msg = f"Error speech elevenlabs generation {str(e)}")
 
     # Send the audio chunks to Audio2Face
     try:
@@ -94,6 +104,6 @@ async def processText(text : str, model_id : str, voice_id : str):
                     await websocket.send_data(chunk)
             await websocket.send_text("[[DONE]]")
     except Exception as e:
-        raise HTTPException(status_code = 500, detail = f"sending {str(e)}")
+        logger.error(msg = f"Error during sending to Audio2Face {str(e)}")
 
 

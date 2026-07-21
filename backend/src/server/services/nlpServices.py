@@ -11,12 +11,71 @@ import requests
 import re
 import asyncio
 import httpx
+import logging
+
+# Configure basic logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+logger = logging.getLogger(__name__)
 
 # Environment variables
 load_dotenv()
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 DEEPSEEK_API_KEY = os.environ["DEEPSEEK_API_KEY"]
 OPENROUTER_API_KEY = os.environ["OPENROUTER_API_KEY"]
+
+async def get_answer_router_stream(input : list, instructions : str, emotion : str, model : str):
+    """ Stream the model's streaming response through OpenRouter API through SSEs
+
+    Args:
+        input (str): Input of the user
+        instructions (str): Default instructions used in every prompt
+        emotion (str) : emotion label
+        model (str) : model name to use for inference
+    """
+    url = "https://openrouter.ai/api/v1/chat/completions"
+
+    # Authorization headers for OpenRouter API
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    # Input processing
+    input = input_processing(input, instructions, emotion, "developer")
+
+    # Request payload
+    payload = {
+        "model": model,
+        "messages": input,
+        "stream": True
+    }
+
+    buffer = sentenceBuffer()
+    bufferSmall = sseBuffer()
+    syncCoordinator = Controller()
+    consumerTask = asyncio.create_task(syncCoordinator.consume())
+    try:
+        async with httpx.AsyncClient() as client:
+            async with client.stream(url = url, headers = headers, json = payload, method = "POST") as r:
+                async for chunk in r.aiter_text(chunk_size = 1024):
+                    async for token in bufferSmall.flush_buffer(chunk): 
+                        yield f"data: {token}\n\n"                         # Used in the frontend         
+                        async for sentence in buffer.add(token):           
+                            await syncCoordinator.produce(sentence)        # Pass the sentence to the asyncio Queue
+
+        async for sentence in buffer.flush():
+            if(sentence):
+                await syncCoordinator.produce(sentence)                 # Pass the remaining data to the Queue if they exist
+            await syncCoordinator.produce(None)                         # Singal end of input
+    except Exception as e:
+        logger.error(msg = f"Error during processing of NLP : {str(e)}")
+    finally:
+        await consumerTask                                              # Await for the queue to finish consuming the sentences
 
 def input_processing(input : list, instructions : str, emotion : str, role : str) -> list:
     """ Preprocess the user input to include emotion detected and instructions
@@ -75,54 +134,6 @@ async def get_answer_router(input : list, instructions : str, emotion : str, mod
 
     with requests.post(url, headers = headers, json = payload, stream=True) as response:
         return response.choices[0].message.content
-    
-async def get_answer_router_stream(input : list, instructions : str, emotion : str, model : str):
-    """ Stream the model's streaming response through OpenRouter API through SSEs
-
-    Args:
-        input (str): Input of the user
-        instructions (str): Default instructions used in every prompt
-        emotion (str) : emotion label
-        model (str) : model name to use for inference
-    """
-    url = "https://openrouter.ai/api/v1/chat/completions"
-
-    # Authorization headers for OpenRouter API
-    headers = {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-        "Content-Type": "application/json"
-    }
-
-    # Input processing
-    input = input_processing(input, instructions, emotion, "developer")
-
-    # Request payload
-    payload = {
-        "model": model,
-        "messages": input,
-        "stream": True
-    }
-
-    buffer = sentenceBuffer()
-    bufferSmall = sseBuffer()
-    syncCoordinator = Controller()
-    consumerTask = asyncio.create_task(syncCoordinator.consume())
-    try:
-        async with httpx.AsyncClient() as client:
-            async with client.stream(url = url, headers = headers, json = payload, method = "POST") as r:
-                async for chunk in r.aiter_text(chunk_size = 1024):
-                    async for token in bufferSmall.flush_buffer(chunk): 
-                        yield f"data: {token}\n\n"                  
-                        async for sentence in buffer.add(token):           
-                            await syncCoordinator.produce(sentence)        # Pass the sentence to the Queue
-
-        async for sentence in buffer.flush():
-            await syncCoordinator.produce(sentence)   # Pass the remaining data to the Queue
-            await syncCoordinator.produce(None)                         # Singal end of input
-    except Exception as e:
-        print(f"error {str(e)} \n")
-    finally:
-        await consumerTask
             
 async def get_answer(input : list, instructions : str, emotion : str, model : str) -> str:
     """ Generates a response using OpenAI API
@@ -156,7 +167,7 @@ async def get_answer(input : list, instructions : str, emotion : str, model : st
     except RateLimitError as e:
         return "No API credit"
     except Exception as e:
-        raise HTTPException(status_code = 500, detail = {e})
+        logger.error(msg = f"Error during Openai response generation {str(e)}")
     
 async def get_answer_stream(input : str, instructions : str, emotion : str, model : str):
     """ Stream the model's response through OpenAI API using Server-Sent Events(SSE)
@@ -200,7 +211,7 @@ async def get_answer_stream(input : str, instructions : str, emotion : str, mode
     except RateLimitError as e:
         yield "No API credit"
     except Exception as e:
-        raise HTTPException(status_code = 500, detail = str(e))
+        logger.error(msg = f"Error during processing of NLP through Openai : {str(e)}")
 
 async def get_answer_deepseek(input : str, instructions : str, emotion : str, model : str) -> str:
     """ Return the model's response using DeepSeek API (deepseek-v4-flash as default) with CoT completion
