@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from server.models.pydantic import TTSInput
-from server.services.ttsServices import load_model, generate_audio
+from server.services.ttsServices import load_model, generate_audio, signal_end
 
 router = APIRouter()
 
@@ -25,4 +25,7 @@ async def generate_speech(input : TTSInput):
             "data" : "",
             "message" : f"Error during speech generation and websocket upload : {e}"
         }
-    
+
+@router.post("/orpheus/end")
+async def signal_end():
+    signal_end()
