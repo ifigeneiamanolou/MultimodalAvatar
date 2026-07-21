@@ -1,16 +1,16 @@
-# General
+# Overview
 
 The backend is built using Python and follows the file structure of most modern ML projects, divided in 3 main folders:
 * data : stored datasets, dictionaries, and data created while running the application
 * src : source code
-* notebooks : contains jupyter notebooks
+* notebooks : contains jupyter notebooks used for testing
 
-The src folder is structured into the following folders:
-1) models : custom classes and pydantic models
+The src/server folder is structured into the following folders:
+1) models : custom web socket manager and pydantic models
 2) routes : FastAPI application, endpoints and web socket connectins
 3) services : business logic used in the routes
-4) tests : test scripts to evaluate the performance of specific parts of the app
-5) utils : utilities such as hashing and authentication
+4) utils : utilities such as a consumer-producer class for an asyncio queue and custom buffers
+The src/tests folder contains scripts to test specific parts of the application.
 
 # Poetry
 
@@ -53,9 +53,21 @@ To activate the virtual environment created by Poetry run the following and then
    poetry env activate
    ```
 
-For information on running the FastAPI backend server, go to the README in the "backend/src/routes" folder.
+# Running the server
 
-# Additional installations needed
-Currently, to generate ArtKit coefficients, phonemization is used, planning to migrate to Audio2Face in the future. The backend used for this is "espeak" and needs to be installed. To do this, we need to download "msi" file through this github page : https://github.com/espeak-ng/espeak-ng/releases, and run the installer following the default options.
+To run the backend FastAPI server in development mode (live changes) redirect to the "routes" folder and run:
 
-Also, for Whisper ffmpeg needs to installed through the official site: https://www.gyan.dev/ffmpeg/builds/ or the githu releases page. Make sure the installed version is 4, 5, 6 or 7 for litorchcodec to work properly and that the "shared" zip is downloaded. Afterwards, the zip needs to be extracted and the directory to the bin folder added to "whisper.py" in the location shown.
+   ```bash
+   fastapi dev avatar.py
+   ```
+or run the python script directly, using (notice you need to re-run the server when making a change with this):
+
+   ```bash
+   py avatar.py
+   ```
+
+This needs to run along with the application, so that the app runs correctly.
+
+# Port configuration information
+
+The backend server runs using HTTP protocol (TCP when converted to a WebSocket) in "127.0.0.1" origin and port 8000. The frontend Expo server runs again using the HTTP protocol on localhost and port 8081. In case, one wants to use a different backend server URL, the corresponding variable for the WebSocket should change in the file "home.tsx" under "pages" folder In case, one wants to use a different frontend server URL, this should be reflected in the origins array used for CorsMiddleware in "main.py" under "routes" folder to avoid CORS errors.
