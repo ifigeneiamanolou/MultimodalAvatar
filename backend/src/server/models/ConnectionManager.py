@@ -11,10 +11,10 @@ class ConnectionManager:
     async def disconnect(self, connection : WebSocket):
         self.active_connections.remove(connection)
 
-    async def send_personal(self, connection : WebSocket, data : str):      # Send data to a single client / websocket
+    async def send_personal(self, connection : WebSocket, data : str):      # Send data to a single client 
         await connection.send_text(data)
 
-    async def broadcast(self, data : str):
+    async def broadcast(self, data : str):                                  # Send data to all clients connected to the server
         for connection in self.active_connections:
             await connection.send_text(data)
 

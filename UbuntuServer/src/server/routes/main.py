@@ -6,8 +6,7 @@ app = FastAPI()
 app.include_router(tts)
 
 origins = [
-            "http://188.73.239.65/32:8081",        # Frontend Expo server
-            "http://188.73.239.65/32:8000"         # Backend Uvicorn server
+           "http://109.242.186.148:8081"        # Backend uvicorn server
           ]
 
 app.add_middleware(

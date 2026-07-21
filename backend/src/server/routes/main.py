@@ -7,9 +7,7 @@ app = FastAPI()
 app.include_router(feedback)
 app.include_router(response)
 
-origins = ["http://localhost:8081",
-            "http://localhost:8082",
-            "http://localhost:8000"]
+origins = ["http://localhost:8081"]             # Fronted expo server
 
 app.add_middleware(
     CORSMiddleware,
