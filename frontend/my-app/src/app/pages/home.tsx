@@ -27,9 +27,6 @@ export default function Home() {
   // Toggle
   const [interviewer, setInterviewer] = useState(true);
 
-  // Waiting for feedback
-  const [waiting, setWaiting] = useState(false);
-
   // Text displayed in the feedback box
   const [feedback, setFeedback] = useState('');
 
@@ -182,13 +179,6 @@ export default function Home() {
   }
 
   const handleFeedback = async () => {
-    // Ensure bot response has been received
-    if(waiting){
-      setErrorPopUp(true);
-      setMessagePopUp("Waiting for model response. Try again.");
-      return;
-    }
-
     // Ensure the conversation has started
     if(messages.length < 2){
         setErrorPopUp(true);
@@ -210,13 +200,6 @@ export default function Home() {
   }
 
   const handleNew = async () => {
-    // Ensure bot response has been received
-    if(waiting){
-      setErrorPopUp(true);
-      setMessagePopUp("Waiting for model response. Try again.");
-      return;
-    }
-
     // Save messages as a JSON object
     const type = interviewer ? "interviewer" : "interviewee";
     await fetch("http://localhost:8000/reset", {
