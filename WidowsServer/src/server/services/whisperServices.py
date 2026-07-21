@@ -1,6 +1,16 @@
 from faster_whisper import WhisperModel
 from pathlib import Path
 import torch
+import logging
+
+# Configure basic logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+logger = logging.getLogger(__name__)
 
 # models
 _models = {}
@@ -33,17 +43,20 @@ def transcription(model_id : str, path : Path) -> str:
         _models[model_id] = WhisperModel(model_size_or_path = model_id, device = device, compute_type = compute_type)  
 
     # Perform audio transcription
-    segments, _ = _models[model_id].transcribe(
-        path,                     # Absolute path to webm file stored locally
-        language = "en",
-        vad_filter = True,        # Address hallucination
-        vad_parameters = dict(
-            min_silence_duration_ms=500,
-            speech_pad_ms=400
-        ),
-        condition_on_previous_text=False,
-        beam_size = 1             # Faster inference
-    )
+    try:
+        segments, _ = _models[model_id].transcribe(
+            path,                     # Absolute path to webm file stored locally
+            language = "en",
+            vad_filter = True,        # Address hallucination
+            vad_parameters = dict(
+                min_silence_duration_ms=500,
+                speech_pad_ms=400
+            ),
+            condition_on_previous_text=False,
+            beam_size = 1             # Faster inference
+        )
+    except Exception as e:
+        logger.error(msg = f"Error during whisper inference : {str(e)}")
     
     text = " ".join([segment.text for segment in segments])
     return text

@@ -3,11 +3,21 @@ import os
 import numpy as np
 from dotenv import load_dotenv
 import torch
+import logging
 
 _models = {}        # Avoid time consuming model reloading
 device = "cuda" if torch.cuda.is_available() else "cpu"
 load_dotenv()
 HF_TOKEN = os.environ["HF_TOKEN"]
+
+# Configure basic logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+logger = logging.getLogger(__name__)
 
 
 def load_model(model_id : str):
@@ -40,13 +50,20 @@ def emotion_detection(
     Returns:
         ndarray : numpy array with the output scores
     """
+    if model_id in _models.keys():
+        model = _models[model_id]
+    else:
+        logger.info(msg = "Model not loaded")
 
-    model = _models[model_id]
-    result =  model.generate(
-        audio, 
-        language = language, 
-        extract_embedding = False
-    )
+    try:
+        result =  model.generate(
+            audio, 
+            language = language, 
+            extract_embedding = False
+        )
+    except Exception as e:
+        logger.error(msg = f"Error during emotio2vec inference : {str(e)}")
+        
     return np.array(result[0]['scores'], dtype = float)
 
 def processScores(scores : np.ndarray) -> str:
