@@ -61,12 +61,3 @@ async def generate_audio(sentence : str, model_name : str, voice : str):
          logger.info(msg = "Disconnected with UE5 server")
     except Exception as e:
         logger.error(msg = f"Error during speech generation from orpheus : {str(e)}")
-
-async def signal_end():
-    try:
-        async with websockets.connect(f'ws://localhost:8765') as websocket:
-            await websocket.send("[[DONE]]")
-    except WebSocketDisconnect:
-         logger.info(msg = "Disconnected with UE5 server")
-    except Exception as e:
-        logger.error(msg = f"Error during speech generation from orpheus : {str(e)}")

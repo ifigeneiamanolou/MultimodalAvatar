@@ -10,6 +10,8 @@
 import asyncio
 import requests
 from dotenv import load_dotenv
+from fastapi import WebSocketDisconnect
+import websockets
 from server.services.fileServices import load_template, load_json, saveJSON
 from server.services.ttsServices import textToSpeechStreaming, processText
 import os
@@ -113,12 +115,13 @@ class Controller:
         return response
     
     async def signal_end_audio(self):
-        url = "http://18.220.173.152/orpheus/end"
         try:
-            requests.post(url) 
+            async with websockets.connect(f'ws://localhost:8765') as websocket:
+                await websocket.send("[[DONE]]")
+        except WebSocketDisconnect:
+            logger.info(msg = "Disconnected with UE5 server")
         except Exception as e:
-            logger.error(msg = f"Error when ending audio upload : {e}")
-
+            logger.error(msg = f"Error during speech generation from orpheus : {str(e)}")
 
     async def produce_audio_orpheus(self):
         url = "http://18.220.173.152/orpheus"
