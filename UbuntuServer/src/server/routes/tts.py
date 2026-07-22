@@ -18,7 +18,7 @@ async def generate_speech(input : TTSInput):
 
     # Generate speech and send to Audio2Face
     try:
-        generate_audio(sentence = input.sentence, model_name = input.model, voice = input.voice)
+        await generate_audio(sentence = input.sentence, model_name = input.model, voice = input.voice)
     except RuntimeError as e:
         return{
             "success" : False,

@@ -1,4 +1,4 @@
-
+from fastapi import HTTPException
 import os
 import torch
 from dotenv import load_dotenv
@@ -6,6 +6,7 @@ from orpheus_tts import OrpheusModel
 from fastapi import WebSocketDisconnect
 import websockets
 import logging
+from vllm import AsyncLLMEngine, AsyncEngineArgs
 
 # Configure basic logging
 logging.basicConfig(
@@ -18,8 +19,17 @@ logger = logging.getLogger(__name__)
 
 _models = {}
 device = "cuda" if torch.cuda.is_available() else "cpu"
+logger.info(msg = f"Using device {device}")
 load_dotenv()
 HF_TOKEN = os.environ["HF_TOKEN"]
+
+def custom_setup_engine(self):
+    engine_args = AsyncEngineArgs(
+        model=self.model_name,
+        dtype=self.dtype,
+        max_model_len=2048,
+    )
+    return AsyncLLMEngine.from_engine_args(engine_args)
 
 def load_model(model_name : str):
     """ Load Orpheus3B model into the models dictionary if not loaded before
@@ -28,14 +38,14 @@ def load_model(model_name : str):
         model_id (str): the ID of the model to load
         language (str) : the language of the model
     """
+    # Resolve issue with key max_model_len not found
+    OrpheusModel._setup_engine = custom_setup_engine
+
     try:
         if id not in _models.keys():
-            _models[model_name] = OrpheusModel(
-                model_name = model_name,
-                max_model_len = 2048,
-            )
+            _models[model_name] = OrpheusModel(model_name = model_name)
     except Exception as e:
-        logger.error(msg = f"Error during orpheus 3b loading : {str(e)}")
+        logger.exception(msg = f"Error during orpheus 3b loading : {e}")
 
 async def generate_audio(sentence : str, model_name : str, voice : str):
     """ Generate audio tokens from input sentence and stream it to Audio2Face through Audio2Face
@@ -45,8 +55,12 @@ async def generate_audio(sentence : str, model_name : str, voice : str):
         model_name (str) : the name of the model to load
         voice (str) : the voice used to produce audio via Orpheus3B
     """
+    
+    if model_name in _models.keys():
+    	model = _models[model_name]
+    else:
+        raise HTTPException(status_code = 500, detail = "no such model")
 
-    model = _models(model_name)
     try:
         syn_tokens = model.generate_speech(
             prompt = sentence,
@@ -58,6 +72,6 @@ async def generate_audio(sentence : str, model_name : str, voice : str):
             async with websockets.connect(f'ws://localhost:8765') as websocket:
                 await websocket.send_data(chunk)
     except WebSocketDisconnect:
-         logger.info(msg = "Disconnected with UE5 server")
+        logger.info(msg = "Disconnected with UE5 server")
     except Exception as e:
         logger.error(msg = f"Error during speech generation from orpheus : {str(e)}")
