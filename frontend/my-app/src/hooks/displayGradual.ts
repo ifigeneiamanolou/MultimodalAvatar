@@ -28,6 +28,13 @@ const runReveal = (messageID : string, setMessages : displayProps['setMessages']
       return;
     }
 
+    // Drop emotional tags
+    const emotions = ["<laugh>", "<chuckle>", "<sigh>", "<cough>", "<sniffle>", "<groan>", "<yawn>", "<gasp>"];
+    for(var i = 0; i < emotions.length; i ++){
+      s.content.replace(emotions[i], "");
+    }
+
+
     // Display the next character
     const nextChar = s.content[0];
     s.content = s.content.slice(1);
