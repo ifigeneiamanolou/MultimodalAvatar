@@ -8,7 +8,6 @@ import MarkDown from 'react-markdown';
 import '../../../global.css';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { PixelStreamingWrapper } from '../components/PixelStreamingWrapper';
-import { Int32 } from 'react-native/Libraries/Types/CodegenTypes';
 
 export default function Home() {
   // ====================== Constants ========================
@@ -17,6 +16,7 @@ export default function Home() {
 
   // Displayed chat
   const [recordedText, setRecordedText] = useState('');
+  const [inputText, setInputText] = useState('');
   const [messages, setMessages] = useState<{id : string, role : string, content : string}[]>([]);
 
   // Popups
@@ -47,7 +47,7 @@ export default function Home() {
     let reconnectTimer: ReturnType<typeof setTimeout>;
 
     const connectASR = async () => {
-      const socket = new WebSocket("ws://3.129.236.140:8000/asr");      
+      const socket = new WebSocket("ws://3.129.236.140:8000/asr");          // Elastic IP address
       ws.current = socket;
       ws.current.onopen = () => {console.log("ASR socket open");}
 
@@ -111,13 +111,14 @@ export default function Home() {
       const interview_type = interviewer ? 1 : 2; 
       const ctr = new AbortController();
       const msgID = startBotMessage();
+      const emotionState = emotion.current ? emotion.current : "neutral";
       await fetchEventSource("http://localhost:8000/response/stream", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': "text/event-stream",
         },
-        body: JSON.stringify({input, interview_type : interview_type, emotion : emotion.current}),
+        body: JSON.stringify({input, interview_type : interview_type, emotion : emotionState}),
         onopen: async (res : Response) => {
           if (res.ok && res.status === 200) {
             console.log("Connection made ", res, " with code ", res.status);
@@ -143,14 +144,14 @@ export default function Home() {
       },)
     };
     if(recordedText){
-      fetchData([...messages, {role : "user", content : recordedText}]);
-      setRecordedText('');
+      fetchData([...messages, {id : crypto.randomUUID(), role : "user", content : recordedText}]);
+      console.log(messages);
     }
   }, [recordedText]);
 
   const sendText = async () => {
     // Check if the input text is empty
-    if(recordedText === ""){
+    if(inputText === ""){
       setErrorPopUp(true);
       setMessagePopUp("No input text. Type something.");
       return;
@@ -158,13 +159,17 @@ export default function Home() {
 
     // Show the user input
     const msgID = startUserMessage();
-    displayTextGradual({text : recordedText, messageID : msgID, setMessages});
+    displayTextGradual({text : inputText, messageID : msgID, setMessages});
+
+    // Trigger a response
+    setRecordedText(inputText);
 
     // Clear the input field
-    setRecordedText('');
+    setInputText('');
   };
 
-  const handleText = (e : React.ChangeEvent<HTMLInputElement>) => setRecordedText(e.target.value);
+
+  const handleText = (e : React.ChangeEvent<HTMLInputElement>) => setInputText(e.target.value);
 
   const startUserMessage = () => {
     const newID = crypto.randomUUID();
@@ -201,10 +206,10 @@ export default function Home() {
 
   const handleNew = async () => {
     // Save messages as a JSON object
-    const type = interviewer ? "interviewer" : "interviewee";
+    const type = interviewer ? 1 : 2;
     await fetch("http://localhost:8000/reset", {
         method : "POST",
-        body : JSON.stringify({"interviewer" : type, "data" : messages}),
+        body : JSON.stringify({interview_type : type, input : messages}),
         headers: {"Content-Type": "application/json"}
     });
 
@@ -266,7 +271,7 @@ export default function Home() {
           <div className = "flex flex-col gap-4">
             {/* Input through text */}
             <div className = "flex flex-row gap-4 py-4">
-              <input value = {recordedText} placeholder= "Hello, let's start this interview" title = "User input" id = "textInput" onChange = {handleText} type = "text" className = "grow focus:border-blue-300 border-gray-300 bg-gray-50 text-gray-500 text-sm p-2 border-2 rounded-lg outline-none"/>
+              <input value = {inputText} placeholder= "Hello, let's start this interview" title = "User input" id = "textInput" onChange = {handleText} type = "text" className = "grow focus:border-blue-300 border-gray-300 bg-gray-50 text-gray-500 text-sm p-2 border-2 rounded-lg outline-none"/>
               <button className = "flex-none bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700" onClick = {sendText}> OK </button>
             </div>
 
@@ -294,7 +299,7 @@ export default function Home() {
         {/* Right part of the main page */}
         <div className = "flex flex-col flex-1 h-full m-4 gap-8">
           {/* Avatar (pixel streaming)*/}
-          <div className = "flex flex-1 basis-3/4">
+          <div className = "flex flex-1 basis-3/4 ">
               <PixelStreamingWrapper
                   initialSettings={{
                       AutoPlayVideo: true,

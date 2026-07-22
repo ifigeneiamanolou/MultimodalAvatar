@@ -46,7 +46,7 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
         var base64string = btoa(String.fromCharCode(...binary));
 
         // Emotion recognition
-        const res = await fetch("http://3.129.236.140:8000/emotion2vec", {         
+        const res = await fetch("http://3.129.236.140:8000/emotion2vec", {              // Elastic IP address 
             method : "POST",
             body : JSON.stringify({
                 model : "iic/emotion2vec_plus_seed",

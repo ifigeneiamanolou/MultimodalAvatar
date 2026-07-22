@@ -31,7 +31,11 @@ const runReveal = (messageID : string, setMessages : displayProps['setMessages']
     // Display the next character
     const nextChar = s.content[0];
     s.content = s.content.slice(1);
-    setMessages(prev => prev.map((m : {id : string, content : string, role : string}) => (m.id == messageID ? {...m, content : m.content + nextChar} : m)));
+    setMessages(prev => 
+      prev.map((m : {id : string, content : string, role : string}) =>
+         (m.id === messageID ? {...m, content : m.content + nextChar} : m)
+      )
+    );
   
     if(s.content.length === 0){
       clearInterval(display);
@@ -43,7 +47,9 @@ const runReveal = (messageID : string, setMessages : displayProps['setMessages']
 };
 
 export default function displayTextGradual({text, messageID, setMessages} : displayProps){
-    if(!text) return
+    if(!text){
+      return;
+    } 
     
     // Extract the element from the queue with the matching id
     const message = queue.get(messageID) ?? {content : "", running : false};

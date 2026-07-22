@@ -10,7 +10,7 @@
 import asyncio
 import requests
 from dotenv import load_dotenv
-from fastapi import WebSocketDisconnect
+from fastapi import WebSocketDisconnect, HTTPException
 import websockets
 from server.services.fileServices import load_template, load_json, saveJSON
 from server.services.ttsServices import textToSpeechStreaming, processText
@@ -50,7 +50,7 @@ class Controller:
             logger.info(msg = f"Current sentence consumed is: {self.current_sentence}")
 
             try:
-                await self.produce_orpheus()
+                await self.produce_audio_orpheus()
             except Exception as e:
                 logger.error(msg = f"Error while uploading to orpheus3 {str(e)}")
             finally:   
@@ -124,7 +124,7 @@ class Controller:
             logger.error(msg = f"Error during speech generation from orpheus : {str(e)}")
 
     async def produce_audio_orpheus(self):
-        url = "http://18.220.173.152/orpheus"
+        url = "http://3.151.224.227:8000/orpheus"            # Elastic IP address
 
         # Configure payload 
         payload = {

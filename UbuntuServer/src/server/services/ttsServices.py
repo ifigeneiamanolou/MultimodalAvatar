@@ -42,7 +42,7 @@ def load_model(model_name : str):
     OrpheusModel._setup_engine = custom_setup_engine
 
     try:
-        if id not in _models.keys():
+        if model_name not in _models.keys():
             _models[model_name] = OrpheusModel(model_name = model_name)
     except Exception as e:
         logger.exception(msg = f"Error during orpheus 3b loading : {e}")
@@ -57,21 +57,20 @@ async def generate_audio(sentence : str, model_name : str, voice : str):
     """
     
     if model_name in _models.keys():
-    	model = _models[model_name]
-    else:
-        raise HTTPException(status_code = 500, detail = "no such model")
+        model = _models[model_name]
 
-    try:
-        syn_tokens = model.generate_speech(
-            prompt = sentence,
-            voice = voice
-        )
+        try:
+            syn_tokens = model.generate_speech(
+                prompt = sentence,
+                voice = voice
+            )
 
-        for chunk in syn_tokens:
-            print(f"Chunk generated: {chunk} \n")
-            async with websockets.connect(f'ws://localhost:8765') as websocket:
-                await websocket.send_data(chunk)
-    except WebSocketDisconnect:
-        logger.info(msg = "Disconnected with UE5 server")
-    except Exception as e:
-        logger.error(msg = f"Error during speech generation from orpheus : {str(e)}")
+            for chunk in syn_tokens:
+                print(f"Chunk generated: {chunk} \n")
+                async with websockets.connect('ws://localhost:8765') as websocket:
+                    # send chunk (text or bytes) over websocket
+                    await websocket.send(chunk)
+        except WebSocketDisconnect:
+            logger.info(msg = "Disconnected with UE5 server")
+        except Exception as e:
+            logger.error(msg = f"Error during speech generation from orpheus : {str(e)}")

@@ -46,23 +46,28 @@ export const PixelStreamingWrapper = ({
             // register a webrtcconnected handler to show click every time a user loads the page
             streaming.addEventListener('webRtcConnected', () => {
                 setClickToPlayVisible(true);
+                setNoConnection(false);
                 console.log('Connected to signaling server');
             });
 
             // register a webRtcDisconnected handler to show No WebRTC connection if needed
             streaming.addEventListener('webRtcDisconnected', () => {
                 setNoConnection(true);
+                setClickToPlayVisible(false);
                 console.log("Disconnected from signaling server");
             });
 
             // register a webRtcConnecting handler to show current state on the console
             streaming.addEventListener('webRtcConnecting', () => {
+                setNoConnection(false);
+                setClickToPlayVisible(true);
                 console.log("connecting ...");
             })
 
             // register a webRtcFailed handler to show WebRTC failed if need
             streaming.addEventListener('webRtcFailed', () => {
                 setNoConnection(true);
+                setClickToPlayVisible(false);
                 console.log("WebRTC connection failed");
             });
 
@@ -102,7 +107,7 @@ export const PixelStreamingWrapper = ({
                         <>
                             <div
                                 className  = "absolute top-0 left-0 w-full h-full flex cursor-pointer" 
-                                onClick={() => {
+                                onClick = {() => {
                                     pixelStreaming.current?.play();                 // Display the avatar
                                     setClickToPlayVisible(false);                   // Hide the click page
                                 }}
