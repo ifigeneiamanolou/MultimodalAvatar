@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from server.models.pydantic import TTSInput
-from server.services.ttsServices import load_model, generate_audio, signal_end
+from server.services.ttsServices import load_model, generate_audio
 
 router = APIRouter()
 

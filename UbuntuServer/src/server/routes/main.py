@@ -6,7 +6,7 @@ app = FastAPI()
 app.include_router(tts)
 
 origins = [
-           "http://109.242.186.148:8081"        # Backend uvicorn server
+           "http://109.242.186.148:8000"        # Backend uvicorn server
           ]
 
 app.add_middleware(
