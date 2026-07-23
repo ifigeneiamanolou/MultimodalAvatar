@@ -1,6 +1,6 @@
 import pandas as pd
 import logging
-from dotenv import load_dotenv()
+from dotenv import load_dotenv
 from vllm import AsyncLLMEngine, AsyncEngineArgs
 from orpheus_tts import OrpheusModel
 import torch
