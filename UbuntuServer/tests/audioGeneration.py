@@ -35,32 +35,34 @@ def custom_setup_engine(self):
     )
     return AsyncLLMEngine.from_engine_args(engine_args)
 
-# Load the dataset as a series
-db = pd.read_csv(os.path.join(BASE_PATH, "../data/sentences.csv"))
+def main():
+    # Load the dataset as a series    
+    db = pd.read_csv(os.path.join(BASE_PATH, "../data/sentences.csv"))
+   
+    # Initialize the orpheus model
+    OrpheusModel._setup_engine = custom_setup_engine
+    model =  OrpheusModel(model_name = "canopylabs/orpheus-tts-0.1-finetune-prod")
 
-# Initialize the orpheus model
-OrpheusModel._setup_engine = custom_setup_engine
-model =  OrpheusModel(model_name = "canopylabs/orpheus-tts-0.1-finetune-prod")
+    # Loop through the sentences
+    for idx, row in db.iterrows():
+        # Perform audio transcription
+        syn_tokens = model.generate_speech(
+            prompt = row["sentences"],
+            voice = "tara"
+        )
 
-# Loop through the sentences
-for idx, val in db.items():
-    # Perform audio transcription
-    syn_tokens = model.generate_speech(
-        prompt = val,
-        voice = "tara"
-    )
+        # Save the audio as a wav file in the data folder
+        path = os.path.join(BASE_PATH, f"../data/sentenceAudio{idx}")
+        with wave.open(path, "wb") as wf:
+            wf.setnchannels(1)
+            wf.setsampwidth(2)
+            wf.setframerate(16000)
 
-    # Save the audio as a wav file in the data folder
-    path = os.path.join(BASE_PATH, f"../data/sentenceAudio{idx}")
-    with wave.open(path, "wb") as wf:
-        wf.setnchannels(1)
-        wf.setsampwidth(2)
-        wf.setframerate(16000)
+            for audio_chunk in syn_tokens: # output streaming
+                wf.writeframes(audio_chunk)
 
-        for audio_chunk in syn_tokens: # output streaming
-            wf.writeframes(audio_chunk)
+        # Logging
+        logger.info(msg = f"Finished sentence {idx}")
 
-    # Logging
-    logger.info(msg = f"Finished sentence {idx} : {val}")
-
-
+if __name__ == "__main__": 
+    main()
