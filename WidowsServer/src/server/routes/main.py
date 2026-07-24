@@ -2,10 +2,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from server.routes.whisper import router as whisper
 from server.routes.emotion import router as emotion
+from server.routes.bert import router as bert
 
 app = FastAPI()
 app.include_router(whisper)
 app.include_router(emotion)
+app.include_router(bert)
 
 origins = [
             "http://109.242.186.148:8081",        # Frontend Expo server

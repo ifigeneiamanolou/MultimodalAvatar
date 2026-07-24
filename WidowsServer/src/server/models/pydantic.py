@@ -1,5 +1,4 @@
-from pathlib import Path
-from typing import Any
+from typing import Any, Literal, Annotated
 from pydantic import BaseModel, Field
 
 # ================== Pydantic models ===================
@@ -15,9 +14,18 @@ class TTSInput(BaseModel):
     voice : str = ["tara", "leah", "jess", "leo", "dan", "mia", "zac", "zoe"]
     model : str = ["canopylabs/orpheus-tts-0.1-finetune-prod"]
 
+class BertInput(BaseModel):
+    sentence : str
+
 # Response Body pydantic models
 class ResponseModel(BaseModel):
     success : bool
     data : Any | None = None
     message : str
     meta : dict[str, Any] = Field(default_factory=dict)
+
+class BertOutput(BaseModel):
+    text : str
+    emotion : Literal['amazement', 'anger', 'cheekiness', 'disgust', 'fear', 'grief', 'joy', 'out of breath', 'pain', 'sadness', 'neutral']
+    maxProb : Annotated[int, Field(gt = 0, lt = 1)]
+    predictions : dict
