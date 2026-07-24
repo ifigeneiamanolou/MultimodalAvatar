@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from openai import OpenAI, RateLimitError
 import os
-from server.services.fileServices import save_stream
+from server.services.fileServices import save_stream, load_template
 from server.utils.sentenceBuffer import sentenceBuffer
 from server.utils.sseBuffer import sseBuffer
 from server.utils.controller import Controller
@@ -60,6 +60,7 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
     syncCoordinator = Controller()
     consumerTask = asyncio.create_task(syncCoordinator.consume())
     try:
+        await consumerTask                                              # Await for the queue to finish consuming the sentences
         async with httpx.AsyncClient() as client:
             async with client.stream(url = url, headers = headers, json = payload, method = "POST") as r:
                 async for chunk in r.aiter_text(chunk_size = 1024):
@@ -74,8 +75,6 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
             await syncCoordinator.produce(None)                         # Singal end of input
     except Exception as e:
         logger.error(msg = f"Error during processing of NLP : {str(e)}")
-    finally:
-        await consumerTask                                              # Await for the queue to finish consuming the sentences
 
 def input_processing(input : list, instructions : str, emotion : str, role : str) -> list:
     """ Preprocess the user input to include emotion detected and instructions
@@ -242,3 +241,57 @@ async def get_answer_deepseek(input : str, instructions : str, emotion : str, mo
     )
 
     return response.choices[0].message.content
+
+async def produce_emotions(self):
+        # API endpoint
+        url = "https://openrouter.ai/api/v1/chat/completions"
+
+        # Authorization headers for OpenRouter API
+        headers = {
+            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+            "Content-Type": "application/json"
+        }
+
+        # Load template
+        instructions = load_template("emotions")
+
+        # Input processing
+        input = [
+            {
+                "role" : "developer",
+                "content" : instructions
+            },
+            {
+                "role" : "user",
+                "content" : self.current_sentence
+            }
+        ]
+
+        # Response JSON schema
+        schema = load_json("../../data/templates/schema.json")
+
+        format = {
+            "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "Emotions",
+                    "strict": True,
+                    "schema": schema
+                }
+            }
+        }
+
+        # Request payload
+        payload = {
+            "model": self.model,
+            "messages": input,
+            "response_format" : format,
+            "stream": False
+        }
+        try:
+            with requests.post(url, headers = headers, json = payload, stream=True) as response:
+                response = response.choices[0].message.content
+        except Exception as e:
+            logger.error(msg = f"Error during emotion generation : {e}")
+
+        return response
