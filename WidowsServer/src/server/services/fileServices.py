@@ -2,8 +2,6 @@ import os
 import json
 from scipy.io.wavfile import write
 import numpy as np
-import tempfile
-import base64
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
 

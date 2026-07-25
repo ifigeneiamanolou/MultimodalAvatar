@@ -20,5 +20,5 @@ def predict(input : BertInput):
         "text": input.sentence, 
         "emotion": emotions[idx],
         "maxProb" : maxProb,
-        "predictions": result
+        "predictions": result,
     }

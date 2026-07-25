@@ -231,9 +231,8 @@ class Controller:
         data = json.dumps(
             {
                 "type" : "emotion",
-                "sentence id" : id,                 # indicate id of sentence
+                "sentence_id" : id,                 # indicate id of sentence
                 "sentence" : emotions['sentence'],
-                "sentence id" : id,
                 "emotion" : emotions['emotion'],
                 "predictions" : emotions['predictions'],
                 "maxProb" : emotions['maxProb']

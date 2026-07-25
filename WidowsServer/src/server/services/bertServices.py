@@ -1,13 +1,15 @@
 from transformers import DistilBertForSequenceClassification, DistilBertTokenizer
 import torch
 import torch.nn.functional as F
+import os
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
 # Load model and tokenizer
-model = DistilBertForSequenceClassification.from_pretrained("./fine_tuned_model")
+model = DistilBertForSequenceClassification.from_pretrained(os.path.join(BASE_DIR, "../../../data/fine_tuned_model"))
 model.to(device)
-tokenizer = DistilBertTokenizer.from_pretrained("./fine_tuned_model")
+tokenizer = DistilBertTokenizer.from_pretrained(os.path.join(BASE_DIR, "../../../data/fine_tuned_model"))
 tokenizer.to(device)
 
 def tokenize_input(sentence : str):
