@@ -142,7 +142,6 @@ class Controller:
             }
         )
         chunk_index = 0
-
         # Send the sentence to Orpheus3B
         try:
             async with self._session.post(self.ubuntu_url, json = payload) as resp:
@@ -151,6 +150,8 @@ class Controller:
                         continue
                     await self.send_audio_bytes(id, chunk_index, audio_chunk)
                     chunk_index += 1
+
+            await self.send_audio_end(id)
         except Exception as e:
             logger.error(msg = f"Error during orpheus 3b remote upload : {e}")
 
@@ -163,7 +164,7 @@ class Controller:
         header = json.dumps(
             {
                 "type" : "audio_chunk",
-                "sentence id" : id,
+                "sentence_id" : id,                 # indicate id of sentence
                 "chunk_index" : chunk_index,
                 "length" : len(audio_chunk)
             }
@@ -173,6 +174,29 @@ class Controller:
             async with self._ue5_lock:
                 await self._ue5_ws.send(header)
                 await self._ue5_ws.send(audio_chunk)
+        except WebSocketDisconnect:
+            logger.info("Disconnected from UE5 server")
+            self._ue5_ws = None
+        except Exception as e:
+            logger.error(f"Error from UE5 server : {str(e)}")
+            self._ue5_ws = None
+
+    async def send_audio_end(self, id : int):
+        await self.ensure_connection()
+        if self._ue5_ws is None:
+            logger.info("Unable to send audio chunk. Server is unavailable")
+            return
+
+        header = json.dumps(
+            {
+                "type" : "audio_end",
+                "sentence_id" : id,                 # indicate id of sentence
+            }
+        )
+
+        try:
+            async with self._ue5_lock:
+                await self._ue5_ws.send(header)
         except WebSocketDisconnect:
             logger.info("Disconnected from UE5 server")
             self._ue5_ws = None
@@ -191,14 +215,14 @@ class Controller:
             logger.error(f"Error during emotion generation {id} of : {sentence}")
             raise
 
-        await self.send_ue5_emotion(emotions)
+        await self.send_ue5_emotion(emotions, id)
 
     async def produce_emotion(self, sentence) -> dict[str, any]:
         payload = {"sentence" : sentence}
         async with self._session.post(self.windows_url, json = payload) as resp:
             return await resp.json()
 
-    async def send_ue5_emotion(self, emotions : dict[str, any]):
+    async def send_ue5_emotion(self, emotions : dict[str, any], id : int):
         await self.ensure_connection()
         if self._ue5_ws is None:
             logger.info("Unable to send emotion. Server is unavailable")
@@ -207,14 +231,14 @@ class Controller:
         data = json.dumps(
             {
                 "type" : "emotion",
+                "sentence id" : id,                 # indicate id of sentence
                 "sentence" : emotions['sentence'],
                 "sentence id" : id,
                 "emotion" : emotions['emotion'],
                 "predictions" : emotions['predictions'],
                 "maxProb" : emotions['maxProb']
             }
-        )
-        
+        )     
 
         try:
             async with self._ue5_lock:
