@@ -2,8 +2,17 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from server.routes.feedback import router as feedback
 from server.routes.response import router as response
+from server.utils.controller import Controller
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+controller = Controller()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    controller.start()
+    yield
+    controller.close()
+
+app = FastAPI(lifespan = lifespan)
 app.include_router(feedback)
 app.include_router(response)
 
@@ -16,6 +25,7 @@ app.add_middleware(
     allow_methods = ["*"],
     allow_credentials = True      
 )
+    
 
 if __name__ == "__main__":
     import uvicorn

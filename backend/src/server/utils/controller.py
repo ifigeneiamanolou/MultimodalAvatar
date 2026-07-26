@@ -35,13 +35,13 @@ class Controller:
 
         self.windows_url = "http://3.129.236.140:8000/distilbert"                      # DistilBert (elastip ip)
         self.ubuntu_url = "http://3.151.224.227:8000/orpheus"                          # Orpheus3B (elastic ip)
-        self.ws_url = "http://3.129.236.140:8765"
+        self.ws_url = "ws://3.129.236.140:8765"
         self.chunk_size = 4096
 
         self._ue5_lock = asyncio.Lock()                                       # Avoid sending both emotion and audio to UE5
         self._session : Optional[aiohttp.ClientSession] = None                # Asychronous HTTP requests
         self._ue5_ws = None    # Web socket connection with UE5 app
-
+        
     ############################################################
     # Lifecycle
     ############################################################
@@ -50,12 +50,13 @@ class Controller:
         # Start session for http requests
         self._session = aiohttp.ClientSession()
 
-        # Connect to the web socket
+        # Connect to the web socket 
+        # TO DO : add reconnection logic
         await self.connect_ue5()
 
     async def close(self):
         if self._ue5_ws:
-            await self._ue5_ws.cloe()
+            await self._ue5_ws.close()
             logger.info("Disconnected from UE5 server")
 
         if self._session:
@@ -98,9 +99,8 @@ class Controller:
                 async with asyncio.TaskGroup() as tg:
                     tg.create_task(self.produce_audio_orpheus(self.current_sentence, id))
                     tg.create_task(self.emotion(self.current_sentence, id))
-            except* Exception as exs:
-                for e in exs:
-                    logger.error(msg = f"Error processing sentence {id} : {str(e)}")
+            except* Exception as e:
+                logger.error(msg = f"Error processing sentence {id} : {str(e)}")
             finally:   
                 self.queue.task_done()
 
@@ -134,13 +134,12 @@ class Controller:
 
     async def produce_audio_orpheus(self, sentence : str, id : int):
         # Configure payload 
-        payload = json.dumps(
-            {
-                "sentence" : sentence,
-                "voice" : self.voice,
-                "model" : self.orpheus_model
-            }
-        )
+        payload ={
+            "sentence" : sentence,
+            "voice" : self.voice,
+            "model" : self.orpheus_model
+        }
+
         chunk_index = 0
         # Send the sentence to Orpheus3B
         try:
