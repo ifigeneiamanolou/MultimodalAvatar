@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from fastapi.responses import StreamingResponse
 from server.models.pydantic import TTSInput
 from server.services.ttsServices import load_model, generate_audio
 
@@ -16,12 +17,5 @@ async def generate_speech(input : TTSInput):
             "message" : f"Error during model loading : {e}"
         }
 
-    # Generate speech and send to Audio2Face
-    try:
-        await generate_audio(sentence = input.sentence, model_name = input.model, voice = input.voice)
-    except RuntimeError as e:
-        return{
-            "success" : False,
-            "data" : "",
-            "message" : f"Error during speech generation and websocket upload : {e}"
-        }
+    # Generate speech and send audio chunks to backend
+    return StreamingResponse(generate_audio(input.sentence, input.model, input.voice))
