@@ -7,6 +7,9 @@ from fastapi import WebSocketDisconnect
 import websockets
 import logging
 from vllm import AsyncLLMEngine, AsyncEngineArgs
+import asyncio
+import Queue
+
 
 # Configure basic logging
 logging.basicConfig(
@@ -56,9 +59,15 @@ async def generate_audio(sentence : str, model_name : str, voice : str):
         voice (str) : the voice used to produce audio via Orpheus3B
     """
     
-    if model_name in _models.keys():
-        model = _models[model_name]
+    if model_name not in _models.keys():
+	logger.info(f"model name not in dictionary)
+	return
+        
+    model = _models[model_name]
+    q : Queue = Queue()
+    SENTINEL = -1
 
+    def produce():
         try:
             syn_tokens = model.generate_speech(
                 prompt = sentence,
@@ -66,11 +75,18 @@ async def generate_audio(sentence : str, model_name : str, voice : str):
             )
 
             for chunk in syn_tokens:
-                print(f"Chunk generated: {chunk} \n")
-                async with websockets.connect('ws://localhost:8765') as websocket:
-                    # send chunk (text or bytes) over websocket
-                    await websocket.send(chunk)
+                q.put(chunk)
+	    q.put(-1)
         except WebSocketDisconnect:
             logger.info(msg = "Disconnected with UE5 server")
         except Exception as e:
             logger.error(msg = f"Error during speech generation from orpheus : {str(e)}")
+
+    running_loop = asyncio.get_event_loop()
+    running_loop.run_in_executor(None, produce)
+    
+    while(True):
+	chunk = await running_loop.run_in_executor(None, q.get())
+	if chunk is None:
+	    break
+	yield chunk
