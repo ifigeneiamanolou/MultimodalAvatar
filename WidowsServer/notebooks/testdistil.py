@@ -76,7 +76,6 @@ def train():
 
     distil_dataset = distil_dataset.map(add_label)
 
-
     ds_train_devtest = distil_dataset.train_test_split(test_size=0.2, seed=42)
     ds_devtest = ds_train_devtest['test'].train_test_split(test_size=0.5, seed=42)
 

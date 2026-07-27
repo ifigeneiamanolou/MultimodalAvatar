@@ -1,16 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from server.routes.feedback import router as feedback
+from server.routes.feedbackNew import router as feedback
 from server.routes.response import router as response
-from server.utils.controller import Controller
+from server.utils.controller import controller
 from contextlib import asynccontextmanager
 
-controller = Controller()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    controller.start()
+    await controller.start()
     yield
-    controller.close()
+    await controller.close()
 
 app = FastAPI(lifespan = lifespan)
 app.include_router(feedback)

@@ -4,9 +4,7 @@ import os
 from server.services.fileServices import save_stream, load_template, load_json
 from server.utils.sentenceBuffer import sentenceBuffer
 from server.utils.sseBuffer import sseBuffer
-from server.routes.main import controller as syncCoordinator
-from server.utils.controller import Controller
-from fastapi import HTTPException
+from server.utils.controller import controller as syncCoordinator
 import requests
 import re
 import asyncio
@@ -89,7 +87,7 @@ def input_processing(input : list, instructions : str, emotion : str, role : str
         list: processed input to the LLM
     """
 
-    re.sub(r"[EMOTION]", emotion, instructions)
+    re.sub(r"\[EMOTION\]", emotion, instructions)
 
 
     # Developer instructions to the input

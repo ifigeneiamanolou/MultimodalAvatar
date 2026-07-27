@@ -7,10 +7,8 @@
 """
 
 import asyncio
-import requests
 from fastapi import WebSocketDisconnect
 import websockets
-import os
 import logging
 from typing import Optional
 import aiohttp
@@ -27,49 +25,77 @@ logger = logging.getLogger(__name__)
 
 class Controller:
     def __init__(self):
+        # General attributes
         self.queue = asyncio.Queue(maxsize = 50)
         self.current_sentence = ""                  # Sentence currently processed
         self.orpheus_model = "canopylabs/orpheus-tts-0.1-finetune-prod"
         self.voice = "tara"                         # Voice used in orpheus3b
         self._sequence_id = 0
 
+        # Orpheus3B and distilbert
         self.windows_url = "http://3.129.236.140:8000/distilbert"                      # DistilBert (elastip ip)
         self.ubuntu_url = "http://3.151.224.227:8000/orpheus"                          # Orpheus3B (elastic ip)
+        self._session_windows : Optional[aiohttp.ClientSession] = None        # Asychronous HTTP requests to Windows server
+        self._session_ubuntu : Optional[aiohttp.ClientSession] = None        # Asychronous HTTP requests to Ubuntuserver
+
+        # Web socket
         self.ws_url = "ws://3.129.236.140:8765"
         self.chunk_size = 4096
-
         self._ue5_lock = asyncio.Lock()                                       # Avoid sending both emotion and audio to UE5
-        self._session : Optional[aiohttp.ClientSession] = None                # Asychronous HTTP requests
         self._ue5_ws = None    # Web socket connection with UE5 app
+        self._server = None     # temporary server
+        self.ue5_ws_host = "0.0.0.0"
+        self.ue5_ws_port = 8765
+        # SOS : THIS SHOULD CHANGE TO HAVE THE WEBSOCKET SERVER IN THE UE5 APP AND THE CLIENT IN THE PYTHON BACKEND
         
     ############################################################
     # Lifecycle
     ############################################################
 
     async def start(self):
-        # Start session for http requests
-        self._session = aiohttp.ClientSession()
+        # Start sessions for http requests
+        self._session_windows = aiohttp.ClientSession()
+        self._session_ubuntu = aiohttp.ClientSession()
 
         # Connect to the web socket 
         # TO DO : add reconnection logic
-        await self.connect_ue5()
+        self._server = await websockets.serve(
+            self._handle_ue5_connection, self.ue5_ws_host, self.ue5_ws_port
+        )
 
     async def close(self):
-        if self._ue5_ws:
-            await self._ue5_ws.close()
-            logger.info("Disconnected from UE5 server")
+        # if self._ue5_ws:
+        #     await self._ue5_ws.close()
+        #     logger.info("Disconnected from UE5 server")
 
-        if self._session:
-            await self._session.close()
-            self.logger.info("Disconnected from HTTP session")
+        if self._session_windows:
+            await self._session_windows.close()
+            logger.info("Disconnected from windows HTTP session")
 
-    async def connect_ue5(self):
+        if self._session_ubuntu:
+            await self._session_ubuntu.close()
+            logger.info("Disconnected from ubuntu HTTP session")
+
+        if self._server:
+            self._server.close()
+            await self._server.wait_closed()
+
+    # async def connect_ue5(self):
+    #     try:
+    #         self._ue5_ws = await websockets.connect(self.ws_url)
+    #         logger.info(f"Connected to {self.ws_url}")
+    #     except Exception as e:
+    #         self._ue5_ws = None
+    #         logger.info(f"Unable to connect to {self.ws_url} with error {str(e)}")
+
+    async def _handle_ue5_connection(self, websocket):
+        logger.info("UE5 connected")
+        self._ue5_ws = websocket
         try:
-            self._ue5_ws = await websockets.connect(self.ws_url)
-            logger.info(f"Connected to {self.ws_url}")
-        except Exception as e:
+            await websocket.wait_closed()
+        finally:
+            logger.info("UE5 disconnected")
             self._ue5_ws = None
-            logger.info(f"Unable to connect to {self.ws_url} with error {str(e)}")
 
     async def ensure_connection(self):
         if self._ue5_ws is None or self._ue5_ws.connection_lost:
@@ -99,7 +125,7 @@ class Controller:
                 async with asyncio.TaskGroup() as tg:
                     tg.create_task(self.produce_audio_orpheus(self.current_sentence, id))
                     tg.create_task(self.emotion(self.current_sentence, id))
-            except* Exception as e:
+            except Exception as e:
                 logger.error(msg = f"Error processing sentence {id} : {str(e)}")
             finally:   
                 self.queue.task_done()
@@ -143,7 +169,8 @@ class Controller:
         chunk_index = 0
         # Send the sentence to Orpheus3B
         try:
-            async with self._session.post(self.ubuntu_url, json = payload) as resp:
+            logger.info(msg = f"producing audio for sentence {self.current_sentence} ...")
+            async with self._session_ubuntu.post(self.ubuntu_url, json = payload) as resp:
                 async for audio_chunk in resp.content.iter_chunked(self.chunk_size):
                     if not audio_chunk:
                         continue
@@ -210,15 +237,14 @@ class Controller:
     async def emotion(self, sentence, id):
         try:
             emotions = await self.produce_emotion(sentence)
+            await self.send_ue5_emotion(emotions, id)
         except Exception as e:
             logger.error(f"Error during emotion generation {id} of : {sentence}")
             raise
 
-        await self.send_ue5_emotion(emotions, id)
-
     async def produce_emotion(self, sentence) -> dict[str, any]:
         payload = {"sentence" : sentence}
-        async with self._session.post(self.windows_url, json = payload) as resp:
+        async with self._session_windows.post(self.windows_url, json = payload) as resp:
             return await resp.json()
 
     async def send_ue5_emotion(self, emotions : dict[str, any], id : int):
@@ -248,6 +274,6 @@ class Controller:
             logger.error(f"Error from UE5 server : {str(e)}")
             self._ue5_ws = None
 
-
+controller = Controller()
 
     
