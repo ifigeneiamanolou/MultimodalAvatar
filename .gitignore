@@ -1,0 +1,35 @@
+# Environment variables
+.env
+
+# Virtual environments
+.venv/
+venv/
+
+
+# Datasets
+backend/data/Audio2Face-3D-Samples/
+
+# Additional files
+.vscode/*
+
+# pycache
+__pycache__
+
+# Ignore Python cache files
+backend/src/tests/__pycache__/
+backend/src/apis/__pycache__/
+backend/src/config/__pycache__/
+backend/src/controllers/__pycache__/
+backend/src/middleware/__pycache__/
+backend/src/models/__pycache__/
+backend/src/routes/__pycache__/
+backend/src/services/__pycache__/
+backend/src/utils/__pycache__/
+
+# Working data
+backend/data/processed/
+backend/data/raw/
+backend/data/feedback/
+
+# Orpheus
+Orpheus-TTS/

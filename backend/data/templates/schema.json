@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Emotions",
+  "description": "Emotion parameters for Audio2Face-3D",
+  "type": "object",
+  "properties": {
+    "emotion_with_timecode_list": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "time_code": {
+            "type": "integer",
+            "examples": [
+              0
+            ]
+          },
+          "emotions": {
+            "type": "object",
+            "properties": {
+              "amazement": {
+                "type": "integer",
+                "exclusiveMinimum": 0.0,
+                "exclusiveMaximum": 1.0,
+                "examples": [
+                  0
+                ]
+              },
+              "anger": {
+                "type": "integer",
+                "exclusiveMinimum": 0.0,
+                "exclusiveMaximum": 1.0,
+                "examples": [
+                  0
+                ]
+              },
+              "cheekiness": {
+                "type": "integer",
+                "exclusiveMinimum": 0.0,
+                "exclusiveMaximum": 1.0,
+                "examples": [
+                  0
+                ]
+              },
+              "disgust": {
+                "type": "integer",
+                "exclusiveMinimum": 0.0,
+                "exclusiveMaximum": 1.0,
+                "examples": [
+                  0
+                ]
+              },
+              "fear": {
+                "type": "integer",
+                "exclusiveMinimum": 0.0,
+                "exclusiveMaximum": 1.0,
+                "examples": [
+                  0
+                ]
+              },
+              "grief": {
+                "type": "integer",
+                "exclusiveMinimum": 0.0,
+                "exclusiveMaximum": 1.0,
+                "examples": [
+                  0
+                ]
+              },
+              "joy": {
+                "type": "integer",
+                "exclusiveMinimum": 0.0,
+                "exclusiveMaximum": 1.0,
+                "examples": [
+                  1
+                ]
+              },
+              "outofbreath": {
+                "type": "integer",
+                "exclusiveMinimum": 0.0,
+                "exclusiveMaximum": 1.0,
+                "examples": [
+                  0
+                ]
+              },
+              "pain": {
+                "type": "integer",
+                "exclusiveMinimum": 0.0,
+                "exclusiveMaximum": 1.0,
+                "examples": [
+                  0
+                ]
+              },
+              "sadness": {
+                "type": "integer",
+                "exclusiveMinimum": 0.0,
+                "exclusiveMaximum": 1.0,
+                "examples": [
+                  0
+                ]
+              }
+            },
+            "required": [
+              "amazement",
+              "anger",
+              "cheekiness",
+              "disgust",
+              "fear",
+              "grief",
+              "joy",
+              "outofbreath",
+              "pain",
+              "sadness"
+            ]
+          }
+        },
+        "required": [
+          "time_code",
+          "emotions"
+        ]
+      }
+    }
+  },
+  "required": [
+    "emotion_with_timecode_list"
+  ]
+}
