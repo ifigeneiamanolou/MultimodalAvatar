@@ -40,7 +40,7 @@ class Controller:
         self._session_ubuntu : Optional[aiohttp.ClientSession] = None        # Asychronous HTTP requests to Ubuntuserver
 
         # Web socket
-        self.ws_url = "ws://127.0.0.1:7865"                                   # To replace with 3.129.236.140
+        self.ws_url = "ws://3.129.236.140:7865"                                   
         self.chunk_size = 4096
         self._ue5_lock = asyncio.Lock()                                       # Avoid sending both emotion and audio to UE5
         self._ue5_ws = None    # Web socket connection with UE5 app

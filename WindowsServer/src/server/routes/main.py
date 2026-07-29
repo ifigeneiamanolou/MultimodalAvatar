@@ -10,8 +10,8 @@ app.include_router(emotion)
 app.include_router(bert)
 
 origins = [
-            "http://109.242.186.148:8081",        # Frontend Expo server
-            ""                                    # Backend Uvicorn server
+            "http://188.73.239.65:8081",        # Frontend Expo server
+            "http:// 188.73.239.65:8000"        # Backend Uvicorn server
           ]
 
 app.add_middleware(
