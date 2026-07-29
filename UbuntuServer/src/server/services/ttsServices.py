@@ -10,6 +10,7 @@ from vllm import AsyncLLMEngine, AsyncEngineArgs
 import asyncio
 from queue import Queue
 
+
 # Configure basic logging
 logging.basicConfig(
     level=logging.INFO,
@@ -63,6 +64,7 @@ async def generate_audio(sentence: str, model_name: str, voice: str):
     if model_name not in _models.keys():
         logger.info(f"model name not in dictionary")
         return
+    
     model = _models[model_name]
     q = Queue()
     SENTINEL = None
@@ -70,27 +72,28 @@ async def generate_audio(sentence: str, model_name: str, voice: str):
     def produce():
         try:
             syn_tokens = model.generate_speech(
-                prompt=sentence,
-                voice=voice
+                prompt = sentence,
+                voice = voice
             )
 
             for chunk in syn_tokens:
                 logger.info(f"placed {chunk} in queue")
-                q.put(chunk)
-            q.put(None)
+                q.put(chunk)           
         except WebSocketDisconnect:
-            logger.info(msg="Disconnected with UE5 server")
+            logger.info(msg = "Disconnected with UE5 server")
         except Exception as e:
-            logger.error(
-                msg=f"Error during speech generation from orpheus : {str(e)}")
-    # Blocking Orpheus3B inference will halt the application if executed in the event loop, so multiple threads are used
-    # Since this is a blocking operation, awaiting the producer will block the application until all sentences are produced 
-    producer = asyncio.create_task(asyncio.to_thread(produce))
-    while (True):
-        chunk = await asyncio.to_thread(q.get)     # non-thread safe queue (will be called when needed)
-        logger.info(f"extracted {chunk} from queue")
+            logger.error(msg = f"Error during speech generation from orpheus : {str(e)}")
+        finally:
+            q.put(SENTINEL)
 
-        if chunk is None:
+    running_loop = asyncio.get_event_loop()
+    producer = running_loop.run_in_executor(None, produce)
+    
+    while(True):
+        chunk = await asyncio.to_thread(q.get)
+        logger.info(f"extracted {chunk} from queue")
+        if chunk is SENTINEL:
             break
         yield chunk
-    await producer	# consumer and producer run concurrently
+
+    await producer
