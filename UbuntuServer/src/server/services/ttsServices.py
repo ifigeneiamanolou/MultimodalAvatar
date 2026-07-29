@@ -32,6 +32,7 @@ def custom_setup_engine(self):
         model=self.model_name,
         dtype=self.dtype,
         max_model_len=2048,
+        gpu_memory_utilization=0.5,     # Enable Audio2Face to run along with Orpheus3B
     )
     return AsyncLLMEngine.from_engine_args(engine_args)
 
