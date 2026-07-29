@@ -11,6 +11,7 @@ app.include_router(bert)
 
 origins = [
             "http://109.242.186.148:8081",        # Frontend Expo server
+            ""                                    # Backend Uvicorn server
           ]
 
 app.add_middleware(
