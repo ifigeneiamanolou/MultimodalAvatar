@@ -162,7 +162,7 @@ class Controller:
 
             await self.send_audio_end(id)
         except Exception as e:
-            logger.error(msg = f"Error during orpheus 3b remote upload : {e.with_traceback}")
+            logger.error(msg = f"Error during orpheus 3b remote upload : {e}")
 
     async def send_audio_bytes(self, id : int, chunk_index : int, audio_chunk : bytes):
         await self.ensure_connection()
@@ -179,13 +179,10 @@ class Controller:
             }
         )
 
-        # Adjust the chunk sent to the length expected by the websocket
-        audio = struct.pack("<I", len(audio_chunk)) + audio_chunk
-
         try:
             async with self._ue5_lock:
                 await self._ue5_ws.send(header)
-                await self._ue5_ws.send(audio)
+                await self._ue5_ws.send(audio_chunk)
         except WebSocketDisconnect:
             logger.info("Disconnected from UE5 server")
             self._ue5_ws = None

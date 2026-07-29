@@ -1,15 +1,11 @@
-from fastapi import HTTPException
 import os
 import torch
 from dotenv import load_dotenv
 from orpheus_tts import OrpheusModel
-from fastapi import WebSocketDisconnect
-import websockets
 import logging
 from vllm import AsyncLLMEngine, AsyncEngineArgs
 import asyncio
-from queue import Queue
-
+import time
 
 # Configure basic logging
 logging.basicConfig(
@@ -20,81 +16,65 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-_models = {}
 device = "cuda" if torch.cuda.is_available() else "cpu"
-logger.info(msg=f"Using device {device}")
 load_dotenv()
 HF_TOKEN = os.environ["HF_TOKEN"]
 
+class ttsController:
+    def __init__(self):
+        self.queue = asyncio.Queue(maxsize = 50)
+        self._models = {}               # in case multiple models are used
+        self.lock = asyncio.Lock()                  
 
-def custom_setup_engine(self):
-    engine_args = AsyncEngineArgs(
-        model=self.model_name,
-        dtype=self.dtype,
-        max_model_len=2048,
-        gpu_memory_utilization=0.5,     # Enable Audio2Face to run along with Orpheus3B
-    )
-    return AsyncLLMEngine.from_engine_args(engine_args)
+    def custom_setup_engine(self):
+        engine_args = AsyncEngineArgs(
+            model=self.model_name,
+            dtype=self.dtype,
+            max_model_len=2048,
+            gpu_memory_utilization=0.5,     # Enable Audio2Face to run along with Orpheus3B : default is 0.9
+        )
+        return AsyncLLMEngine.from_engine_args(engine_args)
 
-
-def load_model(model_name: str):
-    """ Load Orpheus3B model into the models dictionary if not loaded before
-
-    Args:
-        model_id (str): the ID of the model to load
-        language (str) : the language of the model
-    """
-    # Resolve issue with key max_model_len not found
-    OrpheusModel._setup_engine = custom_setup_engine
-
-    try:
-        if model_name not in _models.keys():
-            _models[model_name] = OrpheusModel(model_name=model_name)
-    except Exception as e:
-        logger.exception(msg=f"Error during orpheus 3b loading : {e}")
-
-
-async def generate_audio(sentence: str, model_name: str, voice: str):
-    """ Generate audio tokens from input sentence and stream it to Audio2Face through Audio2Face
-
-    Args:
-        sentence (str): the sentence we need to produce audio from
-        model_name (str) : the name of the model to load
-        voice (str) : the voice used to produce audio via Orpheus3B
-    """
-    if model_name not in _models.keys():
-        logger.info(f"model name not in dictionary")
-        return
-    
-    model = _models[model_name]
-    q = Queue()
-    SENTINEL = None
-
-    def produce():
+    def start(self, model_name : str):
+        """ Load Orpheus3B model into the models dictionary if not loaded before
+        
+        Args:
+            model_name (str): the ID of the model to load
+        """
+        # Resolve issue with key max_model_len not found
+        OrpheusModel._setup_engine = self.custom_setup_engine
+        
         try:
-            syn_tokens = model.generate_speech(
-                prompt = sentence,
-                voice = voice
-            )
-
-            for chunk in syn_tokens:
-                logger.info(f"placed {chunk} in queue")
-                q.put(chunk)           
-        except WebSocketDisconnect:
-            logger.info(msg = "Disconnected with UE5 server")
+            if model_name not in self._models.keys():
+                self._models[model_name] = OrpheusModel(model_name=model_name)
         except Exception as e:
-            logger.error(msg = f"Error during speech generation from orpheus : {str(e)}")
-        finally:
-            q.put(SENTINEL)
+            logger.exception(msg=f"Error during orpheus 3b loading : {e}")
+            raise
 
-    running_loop = asyncio.get_event_loop()
-    producer = running_loop.run_in_executor(None, produce)
-    
-    while(True):
-        chunk = await asyncio.to_thread(q.get)
-        logger.info(f"extracted {chunk} from queue")
-        if chunk is SENTINEL:
-            break
-        yield chunk
+    def generate_audio_stream(self, sentence : str, voice : str, model : str):
+        if model not in self._models.keys():
+            logger.info(f"model name not in dictionary")
+            raise 
+        start = time.perf_counter()
+        syn_tokens = self.model.generate_speech(
+            prompt=sentence,
+            voice="tara",
+            repetition_penalty=1.1,
+            stop_token_ids=[128258],
+            max_tokens=2000,
+            temperature=0.4,
+            top_p=0.9
+        )
 
-    await producer
+        # sample rate => 24000
+        # bits per sample => 16
+        # mono channel
+        # byte rate => 48000
+        first = True
+        for chunk in syn_tokens:
+            if first:
+                first = False
+                logger.info(msg = f"TTFT for {sentence} is {time.perf_counter() - start}")
+            yield chunk
+
+controller = ttsController()

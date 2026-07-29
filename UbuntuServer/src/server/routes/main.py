@@ -1,12 +1,19 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from server.routes.tts import router as tts
+from contextlib import asynccontextmanager
+from server.services.ttsServices import controller
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await controller.start("canopylabs/orpheus-tts-0.1-finetune-prod")
+    yield
+
+app = FastAPI(lifespan = lifespan)
 app.include_router(tts)
 
 origins = [
-           "http:// 188.73.239.65:8000"        # Backend uvicorn server
+           "http://109.242.88.228:8000"        # Backend uvicorn server
           ]
 
 app.add_middleware(
