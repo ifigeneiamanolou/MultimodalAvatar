@@ -83,7 +83,7 @@ export default function Home() {
           return;
         } else {
           // Display the transcripted user audio input
-          const id = startUserMessage();
+          const id = startUserMessage(response);
           displayTextGradual({text : response, messageID : id, setMessages});    
           // Fetch a response from OpenAI 
           setRecordedText(response);
@@ -158,7 +158,7 @@ export default function Home() {
     }
 
     // Show the user input
-    const msgID = startUserMessage();
+    const msgID = startUserMessage(inputText);
     displayTextGradual({text : inputText, messageID : msgID, setMessages});
 
     // Trigger a response
@@ -171,9 +171,9 @@ export default function Home() {
 
   const handleText = (e : React.ChangeEvent<HTMLInputElement>) => setInputText(e.target.value);
 
-  const startUserMessage = () => {
+  const startUserMessage = (text : string  = "") => {
     const newID = crypto.randomUUID();
-    setMessages(prev => [...prev, {id : newID, role : "user", content : ""}]);
+    setMessages(prev => [...prev, {id : newID, role : "user", content : text}]);
     return newID;
   };
 

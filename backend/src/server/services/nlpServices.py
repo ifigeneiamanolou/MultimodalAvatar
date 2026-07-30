@@ -61,7 +61,6 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
         async with httpx.AsyncClient() as client:
             async with client.stream(url = url, headers = headers, json = payload, method = "POST") as r:
                 async for chunk in r.aiter_text(chunk_size = 1024):
-                    logger.info(msg = f"Chunk produced by nlp is {chunk}")
                     async for token in bufferSmall.flush_buffer(chunk): 
                         yield f"data: {token}\n\n"                         # Used in the frontend         
                         async for sentence in buffer.add(token):           
@@ -70,10 +69,12 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
         async for sentence in buffer.flush():
             if(sentence):
                 await syncCoordinator.produce(sentence)                 # Pass the remaining data to the Queue if they exist
-            await syncCoordinator.produce(None)                         # Singal end of input
-        await consumerTask   # Await for the queue to finish consuming the sentences
     except Exception as e:
-        logger.error(msg = f"Error during processing of NLP : {str(e)}")
+        logger.error(msg = f"Error during processing of NLP : {e}")
+        await syncCoordinator.produce(None)
+    finally:
+        await consumerTask      # Await for the queue to finish consuming the sentences   
+
 
 def input_processing(input : list, instructions : str, emotion : str, role : str) -> list:
     """ Preprocess the user input to include emotion detected and instructions
