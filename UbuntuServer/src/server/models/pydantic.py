@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 # Request body pydantic models
 class TTSInput(BaseModel):
     sentence : str
-    voice : str = ["tara", "leah", "jess", "leo", "dan", "mia", "zac", "zoe"]
+    voice : str = ["zoe", "zac","jess", "leo", "mia", "julia", "leah"]
     model : str = ["canopylabs/orpheus-tts-0.1-finetune-prod"]
 
 # Response Body pydantic models

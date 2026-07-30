@@ -1,7 +1,7 @@
 import os
 import torch
 from dotenv import load_dotenv
-from orpheus_tts import OrpheusModel
+from server.services.engine_class import OrpheusModel
 import logging
 from vllm import AsyncLLMEngine, AsyncEngineArgs
 import asyncio
@@ -32,10 +32,9 @@ def custom_setup_engine(self):
 class ttsController:
     def __init__(self):
         self.queue = asyncio.Queue(maxsize = 50)
-        self._models = {}               # in case multiple models are used
-        self.lock = asyncio.Lock()                  
+        self._models = {}               # in case multiple models are used                  
 
-    async def close(self):
+    async def stop(self):
         self._models = {}
 
     async def start(self, model_name : str):
@@ -45,7 +44,7 @@ class ttsController:
             model_name (str): the ID of the model to load
         """
         # Resolve issue with key max_model_len not found
-        OrpheusModel._setup_engine = custom_setup_engine
+        # OrpheusModel._setup_engine = custom_setup_engine
         
         try:
             if model_name not in self._models.keys():
@@ -53,15 +52,23 @@ class ttsController:
         except Exception as e:
             logger.exception(msg=f"Error during orpheus 3b loading : {e}")
             raise
+        
+        # Warm up
+        warmup = 'Hey there, looks like you forgot to provide a prompt! Please provide one that will help us generate speech'
+        first = True       
+        async for chunk in self.generate_audio_stream(warmup, "zoe", model_name):
+           if first:           
+               logger.info(f"length of audio chunk is {len(chunk)}")
+               first = False
 
-    def generate_audio_stream(self, sentence : str, voice : str, model : str):
+    async def generate_audio_stream(self, sentence : str, voice : str, model : str):
         if model not in self._models.keys():
             logger.info(f"model name not in dictionary")
             raise 
         start = time.perf_counter()
         syn_tokens = self._models[model].generate_speech(
             prompt=sentence,
-            voice="tara",
+            voice=voice,
             repetition_penalty=1.1,
             stop_token_ids=[128258],
             max_tokens=2000,
