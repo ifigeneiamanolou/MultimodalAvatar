@@ -27,5 +27,5 @@ class ResponseModel(BaseModel):
 class BertOutput(BaseModel):
     text : str
     emotion : Literal['amazement', 'anger', 'cheekiness', 'disgust', 'fear', 'grief', 'joy', 'out of breath', 'pain', 'sadness', 'neutral']
-    maxProb : Annotated[int, Field(gt = 0, lt = 1)]
+    maxProb : Annotated[float, Field(gt = 0, lt = 1)]
     predictions : dict
