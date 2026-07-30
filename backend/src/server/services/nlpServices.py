@@ -26,6 +26,9 @@ OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 DEEPSEEK_API_KEY = os.environ["DEEPSEEK_API_KEY"]
 OPENROUTER_API_KEY = os.environ["OPENROUTER_API_KEY"]
 
+# Openai Client
+http_client = httpx.AsyncClient()
+
 async def get_answer_router_stream(input : list, instructions : str, emotion : str, model : str):
     """ Stream the model's streaming response through OpenRouter API through SSEs
 
@@ -57,14 +60,12 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
     bufferSmall = sseBuffer()
     consumerTask = asyncio.create_task(syncCoordinator.consume())
     try:
-                                            
-        async with httpx.AsyncClient() as client:
-            async with client.stream(url = url, headers = headers, json = payload, method = "POST") as r:
-                async for chunk in r.aiter_text(chunk_size = 1024):
-                    async for token in bufferSmall.flush_buffer(chunk): 
-                        yield f"data: {token}\n\n"                         # Used in the frontend         
-                        async for sentence in buffer.add(token):           
-                            await syncCoordinator.produce(sentence)        # Pass the sentence to the asyncio Queue
+        async with http_client.stream(url = url, headers = headers, json = payload, method = "POST") as r:
+            async for chunk in r.aiter_text(chunk_size = 1024):
+                async for token in bufferSmall.flush_buffer(chunk): 
+                    yield f"data: {token}\n\n"                         # Used in the frontend         
+                    async for sentence in buffer.add(token):           
+                        await syncCoordinator.produce(sentence)        # Pass the sentence to the asyncio Queue
 
         async for sentence in buffer.flush():
             if(sentence):

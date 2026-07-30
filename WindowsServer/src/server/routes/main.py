@@ -3,11 +3,52 @@ from fastapi.middleware.cors import CORSMiddleware
 from server.routes.whisper import router as whisper
 from server.routes.emotion import router as emotion
 from server.routes.bert import router as bert
+from contextlib import asynccontextmanager
+import logging
+from server.services.emotionsServices import load_model as load_emotion2vec
+from server.services.emotionsServices import emotion_detection
+from server.services.whisperServices import load_model as load_whisper
+from server.services.whisperServices import transcription
+from server.services.bertServices import load as load_distilbert
+from server.services.bertServices import bert_ready_inference
+from server.services.fileServices import read_audio
+import os
 
 app = FastAPI()
 app.include_router(whisper)
 app.include_router(emotion)
 app.include_router(bert)
+
+# Configure basic logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+logger = logging.getLogger(__name__)
+
+# Constant
+WARMUP_SENTENCE = "This is a warmup sentence for the machine learning models"
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Load emotion2vec, distilert and whisper
+    load_emotion2vec("iic/emotion2vec_plus_seed") 
+    load_whisper("small")
+    load_distilbert()
+
+    # Warm up the ML models
+    bert_ready_inference(WARMUP_SENTENCE)
+    emotion_detection(read_audio("../../../data/raw/Warmup.m4a"), "en", "iic/emotion2vec_plus_seed")
+    transcription("small", read_audio("../../../data/raw/Warmup.m4a"))
+
+    # Run the server
+    yield
+
+    # Server closing down
+    logger.info("Windows Server shutting down ...")
+
 
 origins = [
             "http://188.73.239.65:8081",        # Frontend Expo server

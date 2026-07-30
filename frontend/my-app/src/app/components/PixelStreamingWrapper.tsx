@@ -85,6 +85,7 @@ export const PixelStreamingWrapper = ({
     }, []);
 
     const connect = () => {
+        pixelStreaming.current?.play();
         setClickToPlayVisible(false);
     };
 
@@ -100,20 +101,11 @@ export const PixelStreamingWrapper = ({
                     <div className = "w-full h-full" ref={videoParent}/>  
 
                     {clickToPlayVisible ? (
-                        <div className = "w-full h-full place-content-center" onClick = {connect}>
-                            <p className = 'p-6'> Click to play </p>
+                        <div className = "absolute top-0 left-0 w-full h-full flex items-center justofy-center bg-black cursor-pointer" 
+                             onClick = {connect}>
+                            <p className = 'p-6 text-white font-bold'> Click to play </p>
                         </div>
-                    ) : (
-                        <>
-                            <div
-                                className  = "absolute top-0 left-0 w-full h-full flex cursor-pointer" 
-                                onClick = {() => {
-                                    pixelStreaming.current?.play();                 // Display the avatar
-                                    setClickToPlayVisible(false);                   // Hide the click page
-                                }}
-                            />
-                        </>
-                    )}
+                    ) : null }
                 </>
             )}
         </div>

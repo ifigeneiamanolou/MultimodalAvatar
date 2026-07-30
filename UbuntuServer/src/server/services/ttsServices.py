@@ -20,15 +20,6 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 load_dotenv()
 HF_TOKEN = os.environ["HF_TOKEN"]
 
-def custom_setup_engine(self):
-        engine_args = AsyncEngineArgs(
-            model=self.model_name,
-            dtype=self.dtype,
-            max_model_len=2048,
-            gpu_memory_utilization=0.5,     # Enable Audio2Face to run along with Orpheus3B : default is 0.9
-        )
-        return AsyncLLMEngine.from_engine_args(engine_args)
-
 class ttsController:
     def __init__(self):
         self.queue = asyncio.Queue(maxsize = 50)

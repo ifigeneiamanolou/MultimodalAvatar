@@ -14,10 +14,11 @@ type useRecorderProps = {
     setErrorPopUp : (show : boolean) => void;
     setSuccessPopUp : (show : boolean) => void;
     emotion : RefObject<string>;
+    setAudio : (audio : any) => void;
 }
 
 
-export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSuccessPopUp, emotion} : useRecorderProps){
+export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSuccessPopUp, emotion, setAudio} : useRecorderProps){
     const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
     const recorderState = useAudioRecorderState(audioRecorder);
 
@@ -25,10 +26,13 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
         (async () => { 
             const status = await AudioModule.getRecordingPermissionsAsync();
             if(!status.granted){
-                Alert.alert('Attention', 'Permission is needed');
+                const request = await AudioModule.requestRecordingPermissionsAsync();
+                if(!request.granted){
+                    Alert.alert('Attention', 'Permission is needed');
+                }
             }
 
-            setAudioModeAsync({
+            await setAudioModeAsync({
                 allowsRecording : true,
                 playsInSilentMode : true,
             });
@@ -40,30 +44,39 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
         const response = await fetch(audioRecorder.uri!);       // Extract audio from file
         const audio = await response.blob();                    // Extract raw binary audio data 
 
+        // Fill in the audio to be used for playback by the user
+        setAudio(audio);
+
         // Encode audio into a base64 string
         const arrayBuffer = await audio.arrayBuffer();
         const binary = new Uint8Array(arrayBuffer);
         var base64string = btoa(String.fromCharCode(...binary));
 
         // Emotion recognition
-        const res = await fetch("http://3.129.236.140:8000/emotion2vec", {              // Elastic IP address 
-            method : "POST",
-            body : JSON.stringify({
-                model : "iic/emotion2vec_plus_seed",
-                audio : base64string,
-                language : "en",
-            }),
-            headers : {
-                "Content-Type" : "application/json"
-            }
-        });
+        try{
+            const res = await fetch("http://3.129.236.140:8000/emotion2vec", {              // Elastic IP address 
+                method : "POST",
+                body : JSON.stringify({
+                    model : "iic/emotion2vec_plus_seed",
+                    audio : base64string,
+                    language : "en",
+                }),
+                headers : {
+                    "Content-Type" : "application/json"
+                }
+            });
 
-        // Handle the response from emotion recognition endpoint
-        if(res.ok){
-            const emotionData = await res.json();
-            emotion.current = emotionData.data;
-        } else{
-            setMessagePopUp("Error during emotion recognition");
+            // Handle the response from emotion recognition endpoint
+            if(res.ok){
+                const emotionData = await res.json();
+                emotion.current = emotionData.data;
+            } else{
+                setMessagePopUp("Error during emotion recognition");
+                setErrorPopUp(true);
+                return;
+            }
+        } catch (e){
+            setMessagePopUp("Error connecting to the Windows server");
             setErrorPopUp(true);
             return;
         }

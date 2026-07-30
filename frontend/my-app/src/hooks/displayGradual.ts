@@ -1,4 +1,4 @@
-import { Int32 } from "react-native/Libraries/Types/CodegenTypes";
+
 
 type displayProps = {
     text : string | null;
@@ -30,8 +30,8 @@ const runReveal = (messageID : string, setMessages : displayProps['setMessages']
 
     // Drop emotional tags
     const emotions = ["<laugh>", "<chuckle>", "<sigh>", "<cough>", "<sniffle>", "<groan>", "<yawn>", "<gasp>"];
-    for(var i = 0; i < emotions.length; i ++){
-      s.content.replace(emotions[i], "");
+    for(let i = 0; i < emotions.length; i ++){
+      s.content = s.content.replace(emotions[i], "");
     }
 
 
@@ -47,6 +47,7 @@ const runReveal = (messageID : string, setMessages : displayProps['setMessages']
     if(s.content.length === 0){
       clearInterval(display);
       s.running = false;
+      queue.delete(messageID);
     }
   
   }, 40);

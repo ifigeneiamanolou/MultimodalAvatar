@@ -34,17 +34,18 @@ export default function Home() {
   const navigate = useNavigate();
 
   // ======================= Hooks =========================
+  const [audio, setAudio] = useState();
   const emotion = useRef('');
   const {
     stopRecording,
     record,
     recorderState,
-  } = useRecorder({ws, setMessagePopUp, setErrorPopUp, setSuccessPopUp, emotion});
-  const [audio, _] = useState();
+  } = useRecorder({ws, setMessagePopUp, setErrorPopUp, setSuccessPopUp, emotion, setAudio});
 
   // ======================= Web Socket ======================
   useEffect(() => {
     let reconnectTimer: ReturnType<typeof setTimeout>;
+    let keepAliveInterval: ReturnType<typeof setInterval>;
 
     const connectASR = async () => {
       const socket = new WebSocket("ws://3.129.236.140:8000/asr");          // Elastic IP address
@@ -52,7 +53,7 @@ export default function Home() {
       ws.current.onopen = () => {console.log("ASR socket open");}
 
       // Keep sending ping messages to prevent closure
-      setInterval(() => {
+      keepAliveInterval = setInterval(() => {
           if (ws.current?.readyState === WebSocket.OPEN) {
               ws.current?.send('keep-alive');
           }
@@ -102,6 +103,7 @@ export default function Home() {
 
     return () => {    // Cleanup
       clearTimeout(reconnectTimer);  
+      clearInterval(keepAliveInterval);
       ws.current?.close(1000, "unmounted");
     };
   }, []);

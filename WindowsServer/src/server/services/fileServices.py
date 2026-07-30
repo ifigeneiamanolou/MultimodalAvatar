@@ -110,3 +110,9 @@ def save_wav(buffer : list, path : str):
     """
     new_path = next_path(os.path.join(BASE_DIR, path))
     write(new_path, 24_000, np.concatenate(buffer))
+
+def read_audio(path : str):
+    path = os.path.join(BASE_DIR, path)
+    with open(path, "rb") as f:
+        audio = f.read()
+    return audio

@@ -6,7 +6,7 @@
 from fastapi import APIRouter
 from server.models.pydantic import ResponseModel, EmotionInput
 import os
-from server.services.emotionsServices import load_model, emotion_detection, processScores
+from server.services.emotionsServices import emotion_detection, processScores
 import base64
 from server.services.fileServices import save
 
@@ -15,9 +15,6 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 @router.post("/emotion2vec", response_model = ResponseModel)
 async def detectAudioEmotion(input : EmotionInput):
-    # Load the model
-    load_model(input.model)
-
     # Emotion detection
     try:
         scores = emotion_detection(base64.b64decode(input.audio, ' /'), input.language, input.model)

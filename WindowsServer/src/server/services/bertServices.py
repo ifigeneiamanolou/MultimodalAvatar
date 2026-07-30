@@ -64,7 +64,7 @@ def post_process(predictions : list):
 #################################################################
 def load():
     if "tokenizer" not in _models.keys():
-            _models["tokenizer"] = AutoTokenizer.from_pretrained("TuhinG/distilbert-goemotions")
+        _models["tokenizer"] = AutoTokenizer.from_pretrained("TuhinG/distilbert-goemotions")
     if "model" not in _models.keys():
         _models["model"] = AutoModelForSequenceClassification.from_pretrained("TuhinG/distilbert-goemotions")
         

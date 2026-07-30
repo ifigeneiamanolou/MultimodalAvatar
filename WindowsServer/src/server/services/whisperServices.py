@@ -19,6 +19,15 @@ _models = {}
 device = "cuda" if torch.cuda.is_available() else "cpu"
 compute_type = "int8"
 
+def load_model(model_id : str):
+    # Check model id
+    if model_id not in ["small", "tiny", "tiny.en", "base", "base.en", "small", "small.en", "distil-small.en", "medium", "medium.en", "distil-medium.en", "large-v1",
+        "large-v2", "large-v3", "large", "distil-large-v2", "distil-large-v3", "large-v3-turbo", "turbo"]:
+        raise TypeError("No model found")
+    if model_id not in _models.keys():
+            _models[model_id] = WhisperModel(model_size_or_path = model_id, device = device, compute_type = compute_type)  
+
+
 def transcription(model_id : str, path : Path) -> str:
     """ Perform audio transcription 
 
@@ -33,14 +42,8 @@ def transcription(model_id : str, path : Path) -> str:
         str: the transcription of the input audio
     """
 
-    # Check model id
-    if model_id not in ["small", "tiny", "tiny.en", "base", "base.en", "small", "small.en", "distil-small.en", "medium", "medium.en", "distil-medium.en", "large-v1",
-            "large-v2", "large-v3", "large", "distil-large-v2", "distil-large-v3", "large-v3-turbo", "turbo"]:
-        raise TypeError("No model found")
-    
     # Load model
-    if model_id not in _models.keys():
-        _models[model_id] = WhisperModel(model_size_or_path = model_id, device = device, compute_type = compute_type)  
+    load_model(model_id)
 
     # Perform audio transcription
     try:

@@ -26,9 +26,6 @@ def predict(input : BertInput):
 # this is the endpoint for the distilbert model fetched from Hugging Face
 @router.post("/distilbert", response_model = BertOutput)
 def predict(input : BertInput):
-    # Load the model and the tokenizer
-    load()
-
     # Perform inference
     dictionary = bert_ready_inference(input.sentence)
 
