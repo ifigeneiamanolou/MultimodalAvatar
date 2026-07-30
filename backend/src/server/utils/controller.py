@@ -109,7 +109,7 @@ class Controller:
                 # Wait for both tasks to finish to move to the next sentence
                 async with asyncio.TaskGroup() as tg:
                     tg.create_task(self.produce_audio_orpheus(self.current_sentence, id))
-                    # tg.create_task(self.emotion(self.current_sentence, id))
+                    tg.create_task(self.emotion(self.current_sentence, id))
             except Exception as e:
                 logger.error(msg = f"Error processing sentence {id} : {str(e)}")
             finally:   
@@ -224,6 +224,7 @@ class Controller:
 
     async def emotion(self, sentence, id):
         try:
+            logger.info(msg = f"producing emotion for sentence {self.current_sentence} ...")
             emotions = await self.produce_emotion(sentence)
             await self.send_ue5_emotion(emotions, id)
         except Exception as e:
@@ -244,11 +245,11 @@ class Controller:
         data = json.dumps(
             {
                 "type" : "emotion",
-                "sentence_id" : id,                 # indicate id of sentence
-                "sentence" : emotions['sentence'],
-                "emotion" : emotions['emotion'],
-                "predictions" : emotions['predictions'],
-                "maxProb" : emotions['maxProb']
+                "sentence_id" : id,                             # indicate id of sentence
+                "sentence" : emotions['sentence'],              # sentence for which emotion is produced
+                "emotion" : emotions['emotion'],                # leading emotion
+                "predictions" : emotions['predictions'],        # coefficients generated
+                "maxProb" : emotions['maxProb']                 # value of leading emotion
             }
         )     
 
