@@ -30,7 +30,7 @@ class Controller:
         self.queue = asyncio.Queue(maxsize = 50)
         self.current_sentence = ""                  # Sentence currently processed
         self.orpheus_model = "canopylabs/orpheus-tts-0.1-finetune-prod"
-        self.voice = "tara"                         # Voice used in orpheus3b
+        self.voice = "zoe"                         # Voice used in orpheus3b
         self._sequence_id = 0
 
         # Orpheus3B and distilbert
@@ -41,7 +41,6 @@ class Controller:
 
         # Web socket
         self.ws_url = "ws://127.0.0.1:7865"         # replace with ec2 ipv4                           
-        self.chunk_size = 4096
         self._ue5_lock = asyncio.Lock()                                       # Avoid sending both emotion and audio to UE5
         self._ue5_ws = None    # Web socket connection with UE5 app
 
@@ -80,10 +79,13 @@ class Controller:
 
     async def ensure_connection(self):
         if self._ue5_ws is None:
-            logger.warning("UE5 client is not currently connected")
-            return False
-        return True
-        
+            try:
+                self._ue5_ws = await websockets.connect(self.ws_url)
+                logger.info(f"Connected to {self.ws_url}")
+            except Exception as e:
+                self._ue5_ws = None
+                logger.info(f"Unable to connect to {self.ws_url} with error {str(e)}")
+            
     ############################################################
     # Queue management
     ############################################################
@@ -154,20 +156,20 @@ class Controller:
         try:
             logger.info(msg = f"producing audio for sentence {self.current_sentence} ...")
             async with self._session_ubuntu.post(self.ubuntu_url, json = payload) as resp:
-                async for audio_chunk in resp.content.iter_chunked(self.chunk_size):
+                async for audio_chunk in resp.content.iter_any(): 
+                    logger.info(f"Received audio chunk length for {self._sequence_id} / {chunk_index} is {len(audio_chunk)}")
                     if not audio_chunk:
                         continue
                     await self.send_audio_bytes(id, chunk_index, audio_chunk)
                     chunk_index += 1
-
             await self.send_audio_end(id)
         except Exception as e:
-            logger.error(msg = f"Error during orpheus 3b remote upload : {e}")
+            logger.error(msg = f"Error during orpheus 3b remote upload :  {type(e).__name__}: {e}", exc_info=True)
 
     async def send_audio_bytes(self, id : int, chunk_index : int, audio_chunk : bytes):
         await self.ensure_connection()
         if self._ue5_ws is None:
-            logger.info("Unable to send audio chunk. Server is unavailable")
+            logger.info("Unable to send [[DONE]]. Server is unavailable")
             return
 
         header = json.dumps(
@@ -179,10 +181,13 @@ class Controller:
             }
         )
 
+        # Convert raw audio bytes into unsigned 4 byte integers
+        framed_audio = struct.pack("<I", len(audio_chunk)) + audio_chunk
+
         try:
             async with self._ue5_lock:
                 await self._ue5_ws.send(header)
-                await self._ue5_ws.send(audio_chunk)
+                await self._ue5_ws.send(framed_audio)
         except WebSocketDisconnect:
             logger.info("Disconnected from UE5 server")
             self._ue5_ws = None
@@ -193,7 +198,7 @@ class Controller:
     async def send_audio_end(self, id : int):
         await self.ensure_connection()
         if self._ue5_ws is None:
-            logger.info("Unable to send audio chunk. Server is unavailable")
+            logger.info("Unable to send [[DONE]]. Server is unavailable")
             return
 
         header = json.dumps(
@@ -233,9 +238,9 @@ class Controller:
     async def send_ue5_emotion(self, emotions : dict[str, any], id : int):
         await self.ensure_connection()
         if self._ue5_ws is None:
-            logger.info("Unable to send emotion. Server is unavailable")
+            logger.info("Unable to send [[DONE]]. Server is unavailable")
             return
-
+        
         data = json.dumps(
             {
                 "type" : "emotion",
