@@ -8,6 +8,7 @@ from server.services.ttsServices import controller
 async def lifespan(app: FastAPI):
     await controller.start("canopylabs/orpheus-tts-0.1-finetune-prod")
     yield
+    await controller.stop()
 
 app = FastAPI(lifespan = lifespan)
 app.include_router(tts)
@@ -18,7 +19,7 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins = origins,                     
+    allow_origins = ["*"],                     
     allow_headers = ["*"],
     allow_methods = ["*"],
     allow_credentials = True      

@@ -20,13 +20,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 load_dotenv()
 HF_TOKEN = os.environ["HF_TOKEN"]
 
-class ttsController:
-    def __init__(self):
-        self.queue = asyncio.Queue(maxsize = 50)
-        self._models = {}               # in case multiple models are used
-        self.lock = asyncio.Lock()                  
-
-    def custom_setup_engine(self):
+def custom_setup_engine(self):
         engine_args = AsyncEngineArgs(
             model=self.model_name,
             dtype=self.dtype,
@@ -35,14 +29,23 @@ class ttsController:
         )
         return AsyncLLMEngine.from_engine_args(engine_args)
 
-    def start(self, model_name : str):
-        """ Load Orpheus3B model into the models dictionary if not loaded before
+class ttsController:
+    def __init__(self):
+        self.queue = asyncio.Queue(maxsize = 50)
+        self._models = {}               # in case multiple models are used
+        self.lock = asyncio.Lock()                  
+
+    async def close(self):
+        self._models = {}
+
+    async def start(self, model_name : str):
+        """ Load Orpheus3B model into the models dictionary  if not loaded before
         
         Args:
             model_name (str): the ID of the model to load
         """
         # Resolve issue with key max_model_len not found
-        OrpheusModel._setup_engine = self.custom_setup_engine
+        OrpheusModel._setup_engine = custom_setup_engine
         
         try:
             if model_name not in self._models.keys():
@@ -56,7 +59,7 @@ class ttsController:
             logger.info(f"model name not in dictionary")
             raise 
         start = time.perf_counter()
-        syn_tokens = self.model.generate_speech(
+        syn_tokens = self._models[model].generate_speech(
             prompt=sentence,
             voice="tara",
             repetition_penalty=1.1,
@@ -65,16 +68,24 @@ class ttsController:
             temperature=0.4,
             top_p=0.9
         )
+        
+        logger.info(msg = f"generator created in  {time.perf_counter() - start}")
 
         # sample rate => 24000
         # bits per sample => 16
         # mono channel
         # byte rate => 48000
         first = True
-        for chunk in syn_tokens:
-            if first:
-                first = False
-                logger.info(msg = f"TTFT for {sentence} is {time.perf_counter() - start}")
-            yield chunk
+        try:
+            logger.info(f"starting chunk generation")
+            for i, chunk in enumerate(syn_tokens):
+                logger.info(msg = f"received token {i}")
+                if first:
+                    first = False
+                    logger.info(msg = f"TTFT for {sentence} is {time.perf_counter() - start}")
+                yield chunk
+        except Exception:
+            logger.exception("Generation failed")
+        logger.info("done")
 
 controller = ttsController()
