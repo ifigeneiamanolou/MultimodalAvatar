@@ -111,7 +111,7 @@ class Controller:
                     tg.create_task(self.produce_audio_orpheus(self.current_sentence, id))
                     tg.create_task(self.emotion(self.current_sentence, id))
             except Exception as e:
-                logger.error(msg = f"Error processing sentence {id} : {str(e)}")
+                logger.error(msg = f"Error processing sentence {id} : {e}")
             finally:   
                 self.queue.task_done()
 
@@ -136,7 +136,7 @@ class Controller:
             logger.info("Disconnected from UE5 server")
             self._ue5_ws = None
         except Exception as e:
-            logger.error(f"Error from UE5 server : {str(e)}")
+            logger.error(f"Error from UE5 server : {e}")
             self._ue5_ws = None
 
     ############################################################
@@ -192,7 +192,7 @@ class Controller:
             logger.info("Disconnected from UE5 server")
             self._ue5_ws = None
         except Exception as e:
-            logger.error(f"Error from UE5 server : {str(e)}")
+            logger.error(f"Error from UE5 server : {e}")
             self._ue5_ws = None
 
     async def send_audio_end(self, id : int):
@@ -215,7 +215,7 @@ class Controller:
             logger.info("Disconnected from UE5 server")
             self._ue5_ws = None
         except Exception as e:
-            logger.error(f"Error from UE5 server : {str(e)}")
+            logger.error(f"Error from UE5 server : {e}")
             self._ue5_ws = None
 
     ############################################################
@@ -226,10 +226,13 @@ class Controller:
         try:
             logger.info(msg = f"producing emotion for sentence {self.current_sentence} ...")
             emotions = await self.produce_emotion(sentence)
+        except Exception as e:
+            logger.error(f"Error during emotion generation {id} : {e}")
+
+        try:
             await self.send_ue5_emotion(emotions, id)
         except Exception as e:
-            logger.error(f"Error during emotion generation {id} of : {sentence}")
-            raise
+            logger.error(f"Error while sending emotion {id} : {e}")
 
     async def produce_emotion(self, sentence) -> dict[str, any]:
         payload = {"sentence" : sentence}
@@ -246,7 +249,7 @@ class Controller:
             {
                 "type" : "emotion",
                 "sentence_id" : id,                             # indicate id of sentence
-                "sentence" : emotions['sentence'],              # sentence for which emotion is produced
+                "sentence" : emotions['text'],                  # sentence for which emotion is produced
                 "emotion" : emotions['emotion'],                # leading emotion
                 "predictions" : emotions['predictions'],        # coefficients generated
                 "maxProb" : emotions['maxProb']                 # value of leading emotion
@@ -260,7 +263,7 @@ class Controller:
             logger.info("Disconnected from UE5 server")
             self._ue5_ws = None
         except Exception as e:
-            logger.error(f"Error from UE5 server : {str(e)}")
+            logger.error(f"Error from UE5 server : {e}")
             self._ue5_ws = None
 
 controller = Controller()
