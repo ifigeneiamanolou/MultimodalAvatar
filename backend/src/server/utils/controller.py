@@ -69,6 +69,10 @@ class Controller:
             await self._session_ubuntu.close()
             logger.info("Disconnected from ubuntu HTTP session")
 
+        # Empty the queue
+        while not self.queue.empty:
+            self.queue.get()
+
     async def connect_ue5(self):
         try:
             self._ue5_ws = await websockets.connect(self.ws_url)

@@ -44,12 +44,16 @@ def main():
     OrpheusModel._setup_engine = custom_setup_engine
     model =  OrpheusModel(model_name = "canopylabs/orpheus-tts-0.1-finetune-prod")
     
-    index = 0
-    while index < 13:
+    for index, row in db.iterrows():
         # Perform audio transcription
         syn_tokens = model.generate_speech(
-            prompt = db.iloc[index, 0],
-            voice = "zoe"
+            prompt = row.iloc[0],
+            voice = "zoe",
+            repetition_penalty=1.1,
+            stop_token_ids=[128258],
+            max_tokens=2000,
+            temperature=0.4,
+            top_p=0.9
         )
 
         # Save the audio as a wav file in the data folder
@@ -57,13 +61,12 @@ def main():
         with wave.open(path, "wb") as wf:
             wf.setnchannels(1)
             wf.setsampwidth(2)
-            wf.setframerate(16000)
+            wf.setframerate(24000)
 
             for audio_chunk in syn_tokens: # output streaming
                 wf.writeframes(audio_chunk)
         # Logging
-        logger.info(msg = f"Finished sentence {index} : {db.iloc[index, 0]}")
-        index = index + 1
+        logger.info(msg = f"Finished sentence {index} : {row.iloc[0]}")
 
 if __name__ == "__main__": 
     main()
