@@ -26,7 +26,11 @@ class ttsController:
         self._models = {}               # in case multiple models are used                  
 
     async def stop(self):
+        # Empty cached models
         self._models = {}
+        # Empty the queue
+        while not self.queue.empty():
+            self.queue.get()
 
     async def start(self, model_name : str):
         """ Load Orpheus3B model into the models dictionary  if not loaded before

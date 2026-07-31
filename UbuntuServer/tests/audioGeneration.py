@@ -2,7 +2,7 @@ import pandas as pd
 import logging
 from dotenv import load_dotenv
 from vllm import AsyncLLMEngine, AsyncEngineArgs
-from orpheus_tts import OrpheusModel
+from server.services.engine_class import OrpheusModel
 import torch
 import os
 import wave
@@ -43,24 +43,27 @@ def main():
     # Initialize the orpheus model
     OrpheusModel._setup_engine = custom_setup_engine
     model =  OrpheusModel(model_name = "canopylabs/orpheus-tts-0.1-finetune-prod")
+    
+    index = 0
+    while index < 13:
+        # Perform audio transcription
+        syn_tokens = model.generate_speech(
+            prompt = db.iloc[index, 0],
+            voice = "zoe"
+        )
 
-    # Perform audio transcription
-    syn_tokens = model.generate_speech(
-        prompt = db.iloc[10, 0],
-        voice = "tara"
-    )
+        # Save the audio as a wav file in the data folder
+        path = os.path.join(BASE_PATH, f"../data/sentenceAudio{index}.wav")
+        with wave.open(path, "wb") as wf:
+            wf.setnchannels(1)
+            wf.setsampwidth(2)
+            wf.setframerate(16000)
 
-    # Save the audio as a wav file in the data folder
-    path = os.path.join(BASE_PATH, f"../data/sentenceAudio10.wav")
-    with wave.open(path, "wb") as wf:
-        wf.setnchannels(1)
-        wf.setsampwidth(2)
-        wf.setframerate(16000)
-
-        for audio_chunk in syn_tokens: # output streaming
-            wf.writeframes(audio_chunk)
-    # Logging
-    logger.info(msg = "Finished sentence 0")
+            for audio_chunk in syn_tokens: # output streaming
+                wf.writeframes(audio_chunk)
+        # Logging
+        logger.info(msg = f"Finished sentence {index} : {db.iloc[index, 0]}")
+        index = index + 1
 
 if __name__ == "__main__": 
     main()
