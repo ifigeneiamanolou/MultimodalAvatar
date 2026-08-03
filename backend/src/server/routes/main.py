@@ -7,6 +7,8 @@ from server.services.nlpServices import get_answer_router_stream
 from contextlib import asynccontextmanager
 import logging
 import os
+import httpx
+from dotenv import load_dotenv
 
 # Configure basic logging
 logging.basicConfig(
@@ -16,6 +18,9 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+
+load_dotenv()
+OPENROUTER_API_KEY = os.environ["OPENROUTER_API_KEY"]
 
 # Constant
 WARMUP_SENTENCE = "This is a warmup sentence for the machine learning models"
@@ -33,16 +38,16 @@ async def lifespan(app: FastAPI):
 
     # Open router warmup
     try:
-        async for _ in get_answer_router_stream(
-            input = [{"role": "user", "content": "Hello"}],
-            instructions = prompt,
-            emotion = "neutral",
-            model = "openai/gpt-4o-mini" 
-        ):
-            pass
-        logger.info("Open router warm up complete !")
+        async with httpx.AsyncClient() as client:
+            await client.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={"Authorization": f"Bearer {OPENROUTER_API_KEY}"},
+                json={"model": "openai/gpt-4o-mini", "messages": [{"role": "user", "content": "Hi"}], "max_tokens": 5}
+            )
+        logger.info("OpenRouter warm-up complete")
     except Exception as e:
         logger.error(f"OpenRouter warm-up failed: {e}", exc_info=True)
+
     yield
     await controller.close()
 
