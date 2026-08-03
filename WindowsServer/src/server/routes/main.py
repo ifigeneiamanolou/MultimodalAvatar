@@ -12,12 +12,6 @@ from server.services.whisperServices import transcription
 from server.services.bertServices import load as load_distilbert
 from server.services.bertServices import bert_ready_inference
 from server.services.fileServices import read_audio
-import os
-
-app = FastAPI()
-app.include_router(whisper)
-app.include_router(emotion)
-app.include_router(bert)
 
 # Configure basic logging
 logging.basicConfig(
@@ -48,6 +42,11 @@ async def lifespan(app: FastAPI):
 
     # Server closing down
     logger.info("Windows Server shutting down ...")
+    
+app = FastAPI(lifespan=lifespan)
+app.include_router(whisper)
+app.include_router(emotion)
+app.include_router(bert)
 
 
 origins = [
@@ -57,7 +56,7 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins = origins,                     
+    allow_origins = ["*"],                     
     allow_headers = ["*"],
     allow_methods = ["*"],
     allow_credentials = True      
