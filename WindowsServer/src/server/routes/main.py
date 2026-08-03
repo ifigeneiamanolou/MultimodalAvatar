@@ -12,6 +12,7 @@ from server.services.whisperServices import transcription
 from server.services.bertServices import load as load_distilbert
 from server.services.bertServices import bert_ready_inference
 from server.services.fileServices import read_audio
+import os
 
 # Configure basic logging
 logging.basicConfig(
@@ -21,6 +22,8 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
 
 # Constant
 WARMUP_SENTENCE = "This is a warmup sentence for the machine learning models"
@@ -35,7 +38,7 @@ async def lifespan(app: FastAPI):
     # Warm up the ML models
     bert_ready_inference(WARMUP_SENTENCE)
     emotion_detection(read_audio("../../../data/raw/Warmup.m4a"), "en", "iic/emotion2vec_plus_seed")
-    transcription("small", read_audio("../../../data/raw/Warmup.m4a"))
+    transcription("small", os.path.join(BASE_DIR, "../../../data/raw/Warmup.m4a"))
 
     # Run the server
     yield
