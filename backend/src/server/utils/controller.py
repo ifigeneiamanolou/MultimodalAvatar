@@ -98,7 +98,7 @@ class Controller:
         while True:
             sentence = await self.queue.get()
 
-            if sentence == "[DONE]":       
+            if sentence == "[[DONE]]":       
                 await self.signal_end_audio()
                 self.queue.task_done()
                 break
@@ -160,8 +160,8 @@ class Controller:
         try:
             logger.info(msg = f"producing audio for sentence {self.current_sentence} ...")
             async with self._session_ubuntu.post(self.ubuntu_url, json = payload) as resp:
-                async for audio_chunk in resp.content.iter_any(): 
-                    logger.info(f"Received audio chunk length for {self._sequence_id} / {chunk_index} is {len(audio_chunk)}")
+                async for audio_chunk in resp.content.iter_any(4096): 
+                    logger.info(f"Received audio chunk length and sent to a2f for {self._sequence_id} / {chunk_index} is {len(audio_chunk)}")
                     if not audio_chunk:
                         continue
                     await self.send_audio_bytes(id, chunk_index, audio_chunk)
@@ -173,7 +173,7 @@ class Controller:
     async def send_audio_bytes(self, id : int, chunk_index : int, audio_chunk : bytes):
         await self.ensure_connection()
         if self._ue5_ws is None:
-            logger.info("Unable to send [[DONE]]. Server is unavailable")
+            logger.info("Unable to send audio bytes. Server is unavailable")
             return
 
         header = json.dumps(
@@ -199,7 +199,7 @@ class Controller:
     async def send_audio_end(self, id : int):
         await self.ensure_connection()
         if self._ue5_ws is None:
-            logger.info("Unable to send [[DONE]]. Server is unavailable")
+            logger.info("Unable to send done signal. Server is unavailable")
             return
 
         header = json.dumps(
@@ -243,7 +243,7 @@ class Controller:
     async def send_ue5_emotion(self, emotions : dict[str, any], id : int):
         await self.ensure_connection()
         if self._ue5_ws is None:
-            logger.info("Unable to send [[DONE]]. Server is unavailable")
+            logger.info("Unable to send emotion. Server is unavailable")
             return
         
         data = json.dumps(

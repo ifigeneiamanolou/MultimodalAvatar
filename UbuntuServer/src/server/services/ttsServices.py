@@ -81,7 +81,11 @@ class ttsController:
         try:
             logger.info(f"starting chunk generation")
             for i, chunk in enumerate(syn_tokens):
-                logger.info(msg = f"received token {i}")
+                logger.info(
+                    "Yield %d : %d bytes",
+                    i,
+                    len(chunk)
+                )
                 if first:
                     first = False
                     logger.info(msg = f"TTFT for {sentence} is {time.perf_counter() - start}")

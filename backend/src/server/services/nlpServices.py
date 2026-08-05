@@ -72,9 +72,9 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
                 await syncCoordinator.produce(sentence)                 # Pass the remaining data to the Queue if they exist
     except Exception as e:
         logger.error(msg = f"Error during processing of NLP : {e}")
-        await syncCoordinator.produce(None)
     finally:
-        await consumerTask      # Await for the queue to finish consuming the sentences   
+        await syncCoordinator.produce("[[DONE]]")  # Signal the end of the stream   
+        await consumerTask                         # Await for the queue to finish consuming the sentences   
 
 
 def input_processing(input : list, instructions : str, emotion : str, role : str) -> list:

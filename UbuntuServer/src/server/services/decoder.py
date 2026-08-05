@@ -73,6 +73,9 @@ def convert_to_audio(multiframe, count):
   audio_np = detached_audio.numpy()
   audio_int16 = (audio_np * 32767).astype(np.int16)
   audio_bytes = audio_int16.tobytes()
+  print(audio_hat.shape)
+  print(audio_slice.shape)
+  print(len(audio_bytes))
   return audio_bytes
 
 def turn_token_into_id(token_string, index):
