@@ -34,7 +34,6 @@ const runReveal = (messageID : string, setMessages : displayProps['setMessages']
       s.content = s.content.replace(emotions[i], "");
     }
 
-
     // Display the next character
     const nextChar = s.content[0];
     s.content = s.content.slice(1);

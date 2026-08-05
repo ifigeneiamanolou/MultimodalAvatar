@@ -185,13 +185,10 @@ class Controller:
             }
         )
 
-        # Convert raw audio bytes into unsigned 4 byte integers
-        framed_audio = struct.pack("<I", len(audio_chunk)) + audio_chunk
-
         try:
             async with self._ue5_lock:
                 await self._ue5_ws.send(header)
-                await self._ue5_ws.send(framed_audio)
+                await self._ue5_ws.send(audio_chunk)
         except WebSocketDisconnect:
             logger.info("Disconnected from UE5 server")
             self._ue5_ws = None

@@ -7,6 +7,7 @@ import threading
 import queue
 from .decoder import tokens_decoder_sync
 import logging
+import uuid
 
 # Configure basic logging
 logging.basicConfig(
@@ -122,6 +123,7 @@ class OrpheusModel:
         )
 
         token_queue = queue.Queue()
+        request_id = str(uuid.uuid4())  # Generate a unique request ID for each request
         async def async_producer():
             producer_index = 0
             logger.info(f"started producing...")

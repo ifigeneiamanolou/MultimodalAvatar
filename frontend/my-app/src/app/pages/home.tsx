@@ -8,6 +8,7 @@ import MarkDown from 'react-markdown';
 import '../../../global.css';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { PixelStreamingWrapper } from '../components/PixelStreamingWrapper';
+import { getMessages } from '@microsoft/fetch-event-source/lib/cjs/parse';
 
 export default function Home() {
   // ====================== Constants ========================
@@ -84,8 +85,7 @@ export default function Home() {
           return;
         } else {
           // Display the transcripted user audio input
-          const id = startUserMessage(response);
-          displayTextGradual({text : response, messageID : id, setMessages});    
+          const id = startUserMessage(response);   
           // Fetch a response from OpenAI 
           setRecordedText(response);
         }
@@ -109,9 +109,9 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    const ctr = new AbortController();
     const fetchData = async (input : {role : string, content : string}[]) => {
       const interview_type = interviewer ? 1 : 2; 
-      const ctr = new AbortController();
       const msgID = startBotMessage();
       const emotionState = emotion.current ? emotion.current : "neutral";
       await fetchEventSource("http://localhost:8000/response/stream", {
@@ -146,9 +146,11 @@ export default function Home() {
       },)
     };
     if(recordedText){
-      fetchData([...messages, {id : crypto.randomUUID(), role : "user", content : recordedText}]);
-      console.log(messages);
+      fetchData(messages);
     }
+    return(() => {
+      ctr.abort();
+    });
   }, [recordedText]);
 
   const sendText = async () => {
@@ -161,7 +163,6 @@ export default function Home() {
 
     // Show the user input
     const msgID = startUserMessage(inputText);
-    displayTextGradual({text : inputText, messageID : msgID, setMessages});
 
     // Trigger a response
     setRecordedText(inputText);
