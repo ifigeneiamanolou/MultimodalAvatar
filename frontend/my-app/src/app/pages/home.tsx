@@ -17,6 +17,7 @@ export default function Home() {
   // Displayed chat
   const [inputText, setInputText] = useState('');
   const [messages, setMessages] = useState<{id : string, role : string, content : string}[]>([]);
+  const nlpRunning = useRef(false);
 
   // Popups
   const [successPopUp, setSuccessPopUp] = useState(false);
@@ -82,10 +83,18 @@ export default function Home() {
           setMessagePopUp("No voice detected. Try again.");
           return;
         } else {
-          // Display the transcripted user audio input
-          startUserMessage(response);   
+          const updatedMessages = [
+            ...messages,
+            {
+              id: crypto.randomUUID(),
+              role: "user",
+              content: response
+            }
+          ];
+
+          setMessages(updatedMessages);  
           // Fetch a response from OpenAI 
-          fetchData(messages);
+          fetchData(updatedMessages);
         }
       }
       ws.current.onerror = (e) => {console.log("ASR socket error : ", e.target);}
@@ -110,35 +119,48 @@ export default function Home() {
     const interview_type = interviewer ? 1 : 2; 
     const msgID = startBotMessage();
     const emotionState = emotion.current ? emotion.current : "neutral";
-    await fetchEventSource("http://localhost:8000/response/stream", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': "text/event-stream",
-      },
-      body: JSON.stringify({input, interview_type : interview_type, emotion : emotionState}),
-      onopen: async (res : Response) => {
-        if (res.ok && res.status === 200) {
-          console.log("Connection made ", res, " with code ", res.status);
-        } else if (
-          res.status >= 400 &&
-          res.status < 500 &&
-          res.status !== 429
-        ) {
-          console.log("Client side error ", res, "with code ", res.status);
-        }
-      },
-      onmessage(event) {
-        console.log("Data from NLP", event.data);
-        displayTextGradual({text : event.data, messageID : msgID, setMessages});
-      },
-      onclose() {
-        console.log("Connection closed by the server");
-      },
-      onerror(err) {
-        console.log("There was an error from server", err);
-      },
-    },)
+
+    if(nlpRunning.current) {
+      setErrorPopUp(true);
+      setMessagePopUp("NLP is already running. Please wait for the response.");
+      return;
+    }
+
+    nlpRunning.current = true;
+
+    try{
+      await fetchEventSource("http://localhost:8000/response/stream", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': "text/event-stream",
+        },
+        body: JSON.stringify({input, interview_type : interview_type, emotion : emotionState}),
+        onopen: async (res : Response) => {
+          if (res.ok && res.status === 200) {
+            console.log("Connection made ", res, " with code ", res.status);
+          } else if (
+            res.status >= 400 &&
+            res.status < 500 &&
+            res.status !== 429
+          ) {
+            console.log("Client side error ", res, "with code ", res.status);
+          }
+        },
+        onmessage(event) {
+          console.log("Data from NLP", event.data);
+          displayTextGradual({text : event.data, messageID : msgID, setMessages});
+        },
+        onclose() {
+          console.log("Connection closed by the server");
+        },
+        onerror(err) {
+          console.log("There was an error from server", err);
+        },
+      },)
+    } finally {
+      nlpRunning.current = false;
+    }
   };
 
   const sendText = async () => {
@@ -149,11 +171,19 @@ export default function Home() {
       return;
     }
 
-    // Show the user input
-    startUserMessage(inputText);
+    const updatedMessages = [
+      ...messages,
+      {
+        id: crypto.randomUUID(),
+        role: "user",
+        content: inputText
+      }
+    ];
+
+    setMessages(updatedMessages);
 
     // Trigger a response
-    fetchData(messages);
+    fetchData(updatedMessages);
 
     // Clear the input field
     setInputText('');
@@ -161,12 +191,6 @@ export default function Home() {
 
 
   const handleText = (e : React.ChangeEvent<HTMLInputElement>) => setInputText(e.target.value);
-
-  const startUserMessage = (text : string  = "") => {
-    const newID = crypto.randomUUID();
-    setMessages(prev => [...prev, {id : newID, role : "user", content : text}]);
-    return newID;
-  };
 
   const startBotMessage = () => {
     const newID = crypto.randomUUID();
