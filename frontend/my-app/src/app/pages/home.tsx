@@ -8,7 +8,6 @@ import MarkDown from 'react-markdown';
 import '../../../global.css';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { PixelStreamingWrapper } from '../components/PixelStreamingWrapper';
-import { getMessages } from '@microsoft/fetch-event-source/lib/cjs/parse';
 
 export default function Home() {
   // ====================== Constants ========================
@@ -16,7 +15,6 @@ export default function Home() {
   const ws = useRef<WebSocket | null>(null);
 
   // Displayed chat
-  const [recordedText, setRecordedText] = useState('');
   const [inputText, setInputText] = useState('');
   const [messages, setMessages] = useState<{id : string, role : string, content : string}[]>([]);
 
@@ -85,9 +83,9 @@ export default function Home() {
           return;
         } else {
           // Display the transcripted user audio input
-          const id = startUserMessage(response);   
+          startUserMessage(response);   
           // Fetch a response from OpenAI 
-          setRecordedText(response);
+          fetchData(messages);
         }
       }
       ws.current.onerror = (e) => {console.log("ASR socket error : ", e.target);}
@@ -108,50 +106,40 @@ export default function Home() {
     };
   }, []);
 
-  useEffect(() => {
-    const ctr = new AbortController();
-    const fetchData = async (input : {role : string, content : string}[]) => {
-      const interview_type = interviewer ? 1 : 2; 
-      const msgID = startBotMessage();
-      const emotionState = emotion.current ? emotion.current : "neutral";
-      await fetchEventSource("http://localhost:8000/response/stream", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': "text/event-stream",
-        },
-        body: JSON.stringify({input, interview_type : interview_type, emotion : emotionState}),
-        onopen: async (res : Response) => {
-          if (res.ok && res.status === 200) {
-            console.log("Connection made ", res, " with code ", res.status);
-          } else if (
-            res.status >= 400 &&
-            res.status < 500 &&
-            res.status !== 429
-          ) {
-            console.log("Client side error ", res, "with code ", res.status);
-          }
-        },
-        onmessage(event) {
-          console.log("Data from NLP", event.data);
-          displayTextGradual({text : event.data, messageID : msgID, setMessages});
-        },
-        onclose() {
-          console.log("Connection closed by the server");
-        },
-        signal : ctr.signal,
-        onerror(err) {
-          console.log("There was an error from server", err);
-        },
-      },)
-    };
-    if(recordedText){
-      fetchData(messages);
-    }
-    return(() => {
-      ctr.abort();
-    });
-  }, [recordedText]);
+  const fetchData = async (input : {role : string, content : string}[]) => {
+    const interview_type = interviewer ? 1 : 2; 
+    const msgID = startBotMessage();
+    const emotionState = emotion.current ? emotion.current : "neutral";
+    await fetchEventSource("http://localhost:8000/response/stream", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': "text/event-stream",
+      },
+      body: JSON.stringify({input, interview_type : interview_type, emotion : emotionState}),
+      onopen: async (res : Response) => {
+        if (res.ok && res.status === 200) {
+          console.log("Connection made ", res, " with code ", res.status);
+        } else if (
+          res.status >= 400 &&
+          res.status < 500 &&
+          res.status !== 429
+        ) {
+          console.log("Client side error ", res, "with code ", res.status);
+        }
+      },
+      onmessage(event) {
+        console.log("Data from NLP", event.data);
+        displayTextGradual({text : event.data, messageID : msgID, setMessages});
+      },
+      onclose() {
+        console.log("Connection closed by the server");
+      },
+      onerror(err) {
+        console.log("There was an error from server", err);
+      },
+    },)
+  };
 
   const sendText = async () => {
     // Check if the input text is empty
@@ -162,10 +150,10 @@ export default function Home() {
     }
 
     // Show the user input
-    const msgID = startUserMessage(inputText);
+    startUserMessage(inputText);
 
     // Trigger a response
-    setRecordedText(inputText);
+    fetchData(messages);
 
     // Clear the input field
     setInputText('');
