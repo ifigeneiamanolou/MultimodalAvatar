@@ -160,8 +160,10 @@ class Controller:
         try:
             logger.info(msg = f"producing audio for sentence {self.current_sentence} ...")
             async with self._session_ubuntu.post(self.ubuntu_url, json = payload) as resp:
-                async for audio_chunk in resp.content.iter_any(4096): 
-                    logger.info(f"Received audio chunk length and sent to a2f for {self._sequence_id} / {chunk_index} is {len(audio_chunk)}")
+                logger.info(f"Orpheus status: {resp.status}")
+                logger.info(f"Orpheus headers: {resp.headers}")
+                async for audio_chunk in resp.content.iter_any():
+                    logger.info(f"Received audio chunk length and sent to a2f for {id} / {chunk_index} is {len(audio_chunk)}")
                     if not audio_chunk:
                         continue
                     await self.send_audio_bytes(id, chunk_index, audio_chunk)
