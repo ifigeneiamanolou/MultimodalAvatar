@@ -38,7 +38,7 @@ To run the Uvicorn server within an AWS Ubuntu instance follow the following ins
    ```
 
 ## Setting up the EC2 instance
-The recommended setup is to use a g5.2xlarge with a Deep Learning Base AMI with Single CUDA (Ubuntu 24.04) and at least 50 GiB of storage. The inbound rules need to include the TCP ports 52000, 22, 8000, and 80. The corresponding Ubuntu Firewall rules need to be enabled. Also, the following software needs to be installed:
+The recommended setup is to use a g5.2xlarge with a Deep Learning Base AMI with Single CUDA (Ubuntu 24.04) and at least 50 GiB of storage. The inbound rules need to include the TCP ports 52000 (set to the ipv4 of the windows instance), 22, 8000, and 80. The corresponding Ubuntu Firewall rules need to be enabled. Also, the following software needs to be installed:
 * Docker
 * python
 * poetry

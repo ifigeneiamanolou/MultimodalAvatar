@@ -2,6 +2,8 @@ from transformers import DistilBertForSequenceClassification, DistilBertTokenize
 import torch
 import torch.nn.functional as F
 import os
+import time
+import logging
 
 _models = {}
 
@@ -31,6 +33,18 @@ _SOURCE_LABEL_FOR_SLOT = [
 
 _A2F_EMOTIONS = ['amazement', 'anger', 'cheekiness', 'disgust', 'fear', 'grief', 'joy', 'out of breath', 'pain', 'sadness', 'neutral']
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
+LOG_PATH = os.path.join(BASE_DIR, "../../../data/logRuntime.log")
+
+# Configure basic logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    filename=LOG_PATH
+)
+
+logger = logging.getLogger(__name__)
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  
@@ -52,11 +66,14 @@ def bert_inference(inputs : dict):
     return predictions
 
 def post_process(predictions : list):
+    start = time.perf_counter()
     probs = F.softmax(predictions, dim = -1)
     emotions = ['amazement', 'anger', 'cheekiness', 'disgust', 'fear', 'grief', 'joy', 'out of breath', 'pain', 'sadness', 'neutral']
     result = {label: p.item() for label, p in zip(_A2F_EMOTIONS, probs)}
     idx = torch.argmax(predictions, dim = -1).item()
     maxProb = predictions[idx].item()
+    end = time.perf_counter()
+    logger.info(f"time for distilbert post processing : {end - start} seconds")
     return emotions, idx, maxProb, result
 
 #################################################################
@@ -69,6 +86,9 @@ def load():
         _models["model"] = AutoModelForSequenceClassification.from_pretrained("TuhinG/distilbert-goemotions")
         
 def bert_ready_inference(text : str):
+    logger.info(f"passing sentence {text} through distilbert")
+    start = time.perf_counter()
+
     tokenizer = _models["tokenizer"]
     inputs = tokenizer(text, return_tensors="pt")
 
@@ -76,13 +96,18 @@ def bert_ready_inference(text : str):
         model = _models["model"]
         logits = model(**inputs).logits
         probs = torch.sigmoid(logits)[0]
-    
+
+    end = time.perf_counter()
+    logger.info(f"time for distilbert inference : {end - start} seconds")
     return probs
 
 def map(probs):
+    start = time.perf_counter()
     out = torch.zeros(len(_A2F_EMOTIONS), dtype = probs.dtype)
     for slot, label in enumerate(_SOURCE_LABEL_FOR_SLOT):
         if label is not None:
             out[slot] = probs[emotions.index(label)]
+    end = time.perf_counter()
+    logger.info(f"time for distilbert mapping : {end - start} seconds")
     return out 
         

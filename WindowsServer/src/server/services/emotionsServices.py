@@ -4,6 +4,10 @@ import numpy as np
 from dotenv import load_dotenv
 import torch
 import logging
+import time
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
+LOG_PATH = os.path.join(BASE_DIR, "../../../data/logRuntime.log")
 
 _models = {}        # Avoid time consuming model reloading
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -15,6 +19,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
+    filename=LOG_PATH
 )
 
 logger = logging.getLogger(__name__)
@@ -53,8 +58,9 @@ def emotion_detection(
     if model_id in _models.keys():
         model = _models[model_id]
     else:
-        logger.info(msg = "Model not loaded")
+        logger.error(msg = "Model not loaded")
 
+    start = time.perf_counter()
     try:
         result =  model.generate(
             audio, 
@@ -63,7 +69,9 @@ def emotion_detection(
         )
     except Exception as e:
         logger.error(msg = f"Error during emotio2vec inference : {str(e)}")
-        
+
+    end = time.perf_counter()
+    logger.info(f"Time for emotion2vec inference : {end - start} seconds")
     return np.array(result[0]['scores'], dtype = float)
 
 def processScores(scores : np.ndarray) -> str:
@@ -75,6 +83,7 @@ def processScores(scores : np.ndarray) -> str:
     Returns:
         str : emotion label
     """
+    start = time.perf_counter()
 
     # Labels from emotion2vec without unk and other
     labels = ['angry', 'disgusted', 'fearful', 'happy', 'sad', 'surprised', 'neutral']
@@ -86,4 +95,7 @@ def processScores(scores : np.ndarray) -> str:
     # Find the label corresponding to the maximum score
     max_index = np.argmax(scores)
     max_label = labels[max_index]
+
+    end = time.perf_counter()
+    logger.info(f"time for emotion2vec post processing : {end - start} seconds")
     return max_label

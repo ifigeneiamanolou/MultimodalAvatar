@@ -319,7 +319,7 @@ export default function Home() {
                   initialSettings={{
                       AutoPlayVideo: true,
                       AutoConnect: true,
-                      ss: 'ws://127.0.0.1:80',    // replace with ipv4 of windows ec2
+                      ss: 'ws://3.129.236.140:80',    
                       StartVideoMuted: true,
                       HoveringMouse: true,
                       WaitForStreamer: true

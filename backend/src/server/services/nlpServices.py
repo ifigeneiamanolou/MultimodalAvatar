@@ -10,12 +10,17 @@ import re
 import asyncio
 import httpx
 import logging
+import time
 
 # Configure basic logging
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
+LOG_PATH = os.path.join(BASE_DIR, "../../../data/logRuntime.log")
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
+    filename=LOG_PATH
 )
 
 logger = logging.getLogger(__name__)
@@ -59,18 +64,24 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
     buffer = sentenceBuffer()
     bufferSmall = sseBuffer()
     consumerTask = asyncio.create_task(syncCoordinator.consume())
+    start = time.perf_counter()
     try:
         async with http_client.stream(url = url, headers = headers, json = payload, method = "POST") as r:
-            async for chunk in r.aiter_text(chunk_size = 1024):
+            async for index, chunk in enumerate(r.aiter_text(chunk_size = 1024)):
+                logger.info(f"Time until first token from NLP : {time.perf_counter() - start} seconds")
+                if(index != 0 and index % 10 == 0):
+                    logger.info(f"Time until token number {index} is {time.perf_counter() - start} seconds")
                 async for token in bufferSmall.flush_buffer(chunk): 
                     yield f"data: {token}\n\n"                         # Used in the frontend         
                     async for sentence in buffer.add(token):           
+                        logger.info(f"Time until sentence {sentence} from NLP : {time.perf_counter() - start}")
                         await syncCoordinator.produce(sentence)        # Pass the sentence to the asyncio Queue
 
         async for sentence in buffer.flush():
             if(sentence):
                 await syncCoordinator.produce(sentence)                 # Pass the remaining data to the Queue if they exist
-                await syncCoordinator.produce("[[DONE]]")  # Signal the end of the stream
+            await syncCoordinator.produce("[[DONE]]")  # Signal the end of the stream
+            logger.info(f"Full NLP response in {time.perf_counter() - start}")
     except Exception as e:
         logger.error(msg = f"Error during processing of NLP : {e}")
     finally:   

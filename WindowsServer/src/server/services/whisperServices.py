@@ -2,12 +2,18 @@ from faster_whisper import WhisperModel
 from pathlib import Path
 import torch
 import logging
+import time
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
+LOG_PATH = os.path.join(BASE_DIR, "../../../data/logRuntime.log")
 
 # Configure basic logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
+    filename=LOG_PATH
 )
 
 logger = logging.getLogger(__name__)
@@ -44,6 +50,7 @@ def transcription(model_id : str, path : Path) -> str:
 
     # Load model
     load_model(model_id)
+    start = time.perf_counter()
 
     # Perform audio transcription
     try:
@@ -62,4 +69,6 @@ def transcription(model_id : str, path : Path) -> str:
         logger.error(msg = f"Error during whisper inference : {str(e)}")
     
     text = " ".join([segment.text for segment in segments])
+    end = time.perf_counter()
+    logger.info(f"time for whisper inference : {end - start} seconds")
     return text

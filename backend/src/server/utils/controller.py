@@ -13,13 +13,17 @@ import logging
 from typing import Optional
 import aiohttp
 import json
-import struct
+import time
+import os
 
 # Configure basic logging
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
+LOG_PATH = os.path.join(BASE_DIR, "../../../data/logRuntime.log")
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
+    filename=LOG_PATH
 )
 
 logger = logging.getLogger(__name__)
@@ -40,7 +44,7 @@ class Controller:
         self._session_ubuntu : Optional[aiohttp.ClientSession] = None        # Asychronous HTTP requests to Ubuntuserver
 
         # Web socket
-        self.ws_url = "ws://127.0.0.1:7865"         # replace with ec2 ipv4                           
+        self.ws_url = "ws://3.129.236.140:7865"         # replace with ec2 ipv4                           
         self._ue5_lock = asyncio.Lock()                                       # Avoid sending both emotion and audio to UE5
         self._ue5_ws = None    # Web socket connection with UE5 app
 
@@ -76,7 +80,6 @@ class Controller:
     async def connect_ue5(self):
         try:
             self._ue5_ws = await websockets.connect(self.ws_url)
-            logger.info(f"Connected to {self.ws_url}")
         except Exception as e:
             self._ue5_ws = None
             logger.info(f"Unable to connect to {self.ws_url} with error {str(e)}")
@@ -85,7 +88,6 @@ class Controller:
         if self._ue5_ws is None:
             try:
                 self._ue5_ws = await websockets.connect(self.ws_url)
-                logger.info(f"Connected to {self.ws_url}")
             except Exception as e:
                 self._ue5_ws = None
                 logger.info(f"Unable to connect to {self.ws_url} with error {str(e)}")
@@ -111,9 +113,12 @@ class Controller:
 
             try:
                 # Wait for both tasks to finish to move to the next sentence
+                start = time.perf_counter()
                 async with asyncio.TaskGroup() as tg:
                     tg.create_task(self.produce_audio_orpheus(self.current_sentence, id))
                     tg.create_task(self.emotion(self.current_sentence, id))
+                end = time.perf_counter()
+                logger.info(f"Total processing time of sentence [{sentence}] is {end - start} seconds")
             except Exception as e:
                 logger.error(msg = f"Error processing sentence {id} : {e}")
             finally:   
@@ -158,17 +163,17 @@ class Controller:
         chunk_index = 0
         # Send the sentence to Orpheus3B
         try:
-            logger.info(msg = f"producing audio for sentence {self.current_sentence} ...")
+            start = time.perf_counter()
             async with self._session_ubuntu.post(self.ubuntu_url, json = payload) as resp:
-                logger.info(f"Orpheus status: {resp.status}")
-                logger.info(f"Orpheus headers: {resp.headers}")
-                async for audio_chunk in resp.content.iter_any():
-                    logger.info(f"Received audio chunk length and sent to a2f for {id} / {chunk_index} is {len(audio_chunk)}")
+                async for i, audio_chunk in enumerate(resp.content.iter_any()):
+                    if i % 10 == 0:
+                        logger.info(f"Time until token {i} is received in the controller from Oprheus3B is {time.perf_counter() - start}")
                     if not audio_chunk:
                         continue
                     await self.send_audio_bytes(id, chunk_index, audio_chunk)
                     chunk_index += 1
             await self.send_audio_end(id)
+            logger.info(f"Time sentence [{sentence}] is finished from Oprheus is {time.perf_counter() - start}")
         except Exception as e:
             logger.error(msg = f"Error during orpheus 3b remote upload :  {type(e).__name__}: {e}", exc_info=True)
 
@@ -226,11 +231,13 @@ class Controller:
     ############################################################
 
     async def emotion(self, sentence, id):
+        start = time.perf_counter()
         try:
-            logger.info(msg = f"producing emotion for sentence {self.current_sentence} ...")
             emotions = await self.produce_emotion(sentence)
         except Exception as e:
             logger.error(f"Error during emotion generation {id} : {e}")
+        end = time.perf_counter()
+        logger.info(f"Time for emotion generation of [{sentence}] is {time.perf_counter() - start}")
 
         try:
             await self.send_ue5_emotion(emotions, id)

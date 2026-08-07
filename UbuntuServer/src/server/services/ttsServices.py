@@ -6,12 +6,17 @@ import logging
 from vllm import AsyncLLMEngine, AsyncEngineArgs
 import asyncio
 import time
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
+LOG_PATH = os.path.join(BASE_DIR, "../../../data/logRuntime.log")
 
 # Configure basic logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
+    filename = LOG_PATH
 )
 
 logger = logging.getLogger(__name__)
@@ -49,12 +54,9 @@ class ttsController:
             raise
         
         # Warm up
-        warmup = 'Hey there, looks like you forgot to provide a prompt! Please provide one that will help us generate speech'
-        first = True       
+        warmup = 'Hey there, looks like you forgot to provide a prompt! Please provide one that will help us generate speech'   
         async for chunk in self.generate_audio_stream(warmup, "zoe", model_name):
-           if first:           
-               logger.info(f"length of audio chunk is {len(chunk)}")
-               first = False
+           pass
 
     async def generate_audio_stream(self, sentence : str, voice : str, model : str):
         if model not in self._models.keys():
@@ -70,8 +72,6 @@ class ttsController:
             temperature=0.4,
             top_p=0.9
         )
-        
-        logger.info(msg = f"generator created in  {time.perf_counter() - start}")
 
         # sample rate => 24000
         # bits per sample => 16
@@ -79,19 +79,15 @@ class ttsController:
         # byte rate => 48000
         first = True
         try:
-            logger.info(f"starting chunk generation")
             for i, chunk in enumerate(syn_tokens):
-                logger.info(
-                    "Yield %d : %d bytes",
-                    i,
-                    len(chunk)
-                )
+                if(i % 10 == 0):
+                    logger.info(msg = f"Token {i} : {len(chunk)} bytes in {time.perf_counter() - start} seconds")
                 if first:
                     first = False
                     logger.info(msg = f"TTFT for {sentence} is {time.perf_counter() - start}")
                 yield chunk
+            logger.info(msg = f"Time for sentence {sentence} : {time.perf_counter() - start}")
         except Exception:
             logger.exception("Generation failed")
-        logger.info("done")
 
 controller = ttsController()
