@@ -38,8 +38,7 @@ Make sure the NodeJS version is at least v18.0.0
    ```
 
 This will also provide a QR to view the app in Android or iOS but the Expo app needs to be downloaded on the phone on 
-which the mobile application is intended to be viewed. For the application to run properly, the backend server needs to be 
-simultaneously running, as described in the README of the backend folder.
+which the mobile application is intended to be viewed. Right now the application only supports web development.
 
 # Frontend structure
 The source code is located into the "src" folder, which is divided into the "app" folder and the "hooks" folder. The first one contains all the pages ("pages" folder) and the components used in them ("components" folder), like pop ups. The second one contains importable functions, that do not render content, but are used from the pages and the components, to improve readability.

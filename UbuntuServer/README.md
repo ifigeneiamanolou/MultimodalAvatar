@@ -2,7 +2,7 @@
 
 This folder will be used to create a FastAPI application deployed through Uvicorn to run the Orpheus3B model locally, using the orpheus-speech library. This library allows us to run inference along with a SNAC decoder to produce audio waveforms instead of pure audio tokens, so that they can be used in Audio2Face. The need to isolate Orpheus3B in the Ubuntu AWS instance comes from the dependancy vllm used within orpheus-speech, to speed up inference. This supports only Linux operating systems and can be potentially installed within a Windows OS, but the process is very complicated.
 
-# Set up instructions
+# Developer instructions
 
 To run the Uvicorn server within an AWS Ubuntu instance follow the following instructions:
 
@@ -36,3 +36,10 @@ To run the Uvicorn server within an AWS Ubuntu instance follow the following ins
    ```bash
    poetry run python -m src.server.routes.main
    ```
+
+## Setting up the EC2 instance
+The recommended setup is to use a g5.2xlarge with a Deep Learning Base AMI with Single CUDA (Ubuntu 24.04) and at least 50 GiB of storage. The inbound rules need to include the TCP ports 52000, 22, 8000, and 80. The corresponding Ubuntu Firewall rules need to be enabled. Also, the following software needs to be installed:
+* Docker
+* python
+* poetry
+* git

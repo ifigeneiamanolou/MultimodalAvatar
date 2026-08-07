@@ -9,7 +9,7 @@ The src/server folder is structured into the following folders:
 1) models : custom web socket manager and pydantic models
 2) routes : FastAPI application, endpoints and web socket connectins
 3) services : business logic used in the routes
-4) utils : utilities such as a consumer-producer class for an asyncio queue and custom buffers
+4) utils : utilities such as a consumer-producer class based on an asyncio queue and custom buffers
 The src/tests folder contains scripts to test specific parts of the application.
 
 # Poetry
