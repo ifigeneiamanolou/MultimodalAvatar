@@ -59,8 +59,9 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
         index = 0
         async with http_client.stream(url = url, headers = headers, json = payload, method = "POST") as r:
             async for chunk in r.aiter_text(chunk_size = 1024):
+                if index == 0:
+                    logger.info(f"Time until chunk token from NLP : {time.perf_counter() - start} seconds")
                 index = index + 1
-                logger.info(f"Time until first token from NLP : {time.perf_counter() - start} seconds")
                 if(index != 0 and index % 10 == 0):
                     logger.info(f"Time until token number {index} is {time.perf_counter() - start} seconds")
                 async for token in bufferSmall.flush_buffer(chunk): 
