@@ -24,6 +24,7 @@ logging.basicConfig(
     filename=LOG_PATH,
     force=True
 )
+logger = logging.getLogger(__name__)
 
 # Environment variables
 load_dotenv()
@@ -49,7 +50,7 @@ async def lifespan(app: FastAPI):
             await client.post(
                 "https://openrouter.ai/api/v1/chat/completions",
                 headers={"Authorization": f"Bearer {OPENROUTER_API_KEY}"},
-                json={"model": "openai/gpt-4o-mini", "messages": [{"role": "user", "content": "Hi"}], "max_tokens": 5}
+                json={"model": "openai/gpt-5-nano", "messages": [{"role": "user", "content": "Hi"}], "max_tokens": 5}
             )
         logger.info("OpenRouter warm-up complete")
     except Exception as e:

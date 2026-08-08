@@ -1,0 +1,60 @@
+2026-08-08 16:33:13 - server.utils.controller - INFO - starting http sessions
+2026-08-08 16:33:13 - server.utils.controller - INFO - connected to ws://3.129.236.140:7865
+2026-08-08 16:33:14 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-08 16:33:16 - __main__ - INFO - OpenRouter warm-up complete
+2026-08-08 16:34:19 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-08 16:34:20 - server.services.nlpServices - INFO - Time until chunk token from NLP : 4.941199299995787 seconds
+2026-08-08 16:34:20 - server.services.nlpServices - INFO - Time until token number 10 is 5.184557700064033 seconds
+2026-08-08 16:34:20 - server.services.nlpServices - INFO - Time until token number 20 is 5.386340699973516 seconds
+2026-08-08 16:34:21 - server.services.nlpServices - INFO - Time until token number 30 is 5.614579500048421 seconds
+2026-08-08 16:34:22 - server.services.nlpServices - INFO - Time until token number 40 is 6.5361299000214785 seconds
+2026-08-08 16:34:22 - server.services.nlpServices - INFO - Time until token number 50 is 7.293629299965687 seconds
+2026-08-08 16:34:23 - server.services.nlpServices - INFO - Time until token number 60 is 7.894810999976471 seconds
+2026-08-08 16:34:23 - server.services.nlpServices - INFO - Time until token number 70 is 7.9866817999864 seconds
+2026-08-08 16:34:24 - server.services.nlpServices - INFO - Time until token number 80 is 8.718010200071149 seconds
+2026-08-08 16:34:24 - server.services.nlpServices - INFO - Time until token number 90 is 8.987507599988021 seconds
+2026-08-08 16:34:24 - server.services.nlpServices - INFO - Time until token number 100 is 9.27855340007227 seconds
+2026-08-08 16:34:25 - server.services.nlpServices - INFO - Time until token number 110 is 9.77894590003416 seconds
+2026-08-08 16:34:25 - server.services.nlpServices - INFO - Time until token number 120 is 10.311439700075425 seconds
+2026-08-08 16:34:26 - server.services.nlpServices - INFO - Time until token number 130 is 10.674576299963519 seconds
+2026-08-08 16:34:26 - server.services.nlpServices - INFO - Time until token number 140 is 10.834780600038357 seconds
+2026-08-08 16:34:29 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-08 16:34:33 - server.services.nlpServices - INFO - Time until chunk token from NLP : 5.234829299966805 seconds
+2026-08-08 16:34:34 - server.services.nlpServices - INFO - Time until token number 10 is 5.475652800058015 seconds
+2026-08-08 16:34:34 - server.services.nlpServices - INFO - Time until token number 20 is 5.654803500045091 seconds
+2026-08-08 16:34:34 - server.services.nlpServices - INFO - Time until token number 30 is 6.020509700058028 seconds
+2026-08-08 16:34:35 - server.services.nlpServices - INFO - Time until token number 40 is 6.65902909997385 seconds
+2026-08-08 16:34:35 - server.services.nlpServices - INFO - Time until token number 50 is 6.734246399952099 seconds
+2026-08-08 16:34:35 - server.services.nlpServices - INFO - Time until token number 60 is 6.996537100058049 seconds
+2026-08-08 16:34:35 - server.services.nlpServices - INFO - Time until token number 70 is 7.231309900060296 seconds
+2026-08-08 16:34:36 - server.services.nlpServices - INFO - Time until token number 80 is 7.442952099954709 seconds
+2026-08-08 16:34:36 - server.services.nlpServices - INFO - Time until sentence Hello, great to have you here. from NLP : 7.524574400042184
+2026-08-08 16:34:36 - server.utils.controller - INFO - Produced sentence in the queue : Hello, great to have you here.
+2026-08-08 16:34:36 - server.services.nlpServices - INFO - Time until sentence  To start, please give a brief introduction: from NLP : 7.5815644999966025
+2026-08-08 16:34:36 - server.utils.controller - INFO - Produced sentence in the queue :  To start, please give a brief introduction:
+2026-08-08 16:34:36 - server.services.nlpServices - INFO - Time until token number 90 is 7.6394411999499425 seconds
+2026-08-08 16:34:36 - server.services.nlpServices - INFO - Time until sentence  your recent experience, the role you’re pursuing, and what attracts you to this opportunity. from NLP : 7.643792700022459
+2026-08-08 16:34:36 - server.utils.controller - INFO - Produced sentence in the queue :  your recent experience, the role you’re pursuing, and what attracts you to this opportunity.
+2026-08-08 16:34:36 - server.utils.controller - INFO - Current sentence consumed is 0 : Hello, great to have you here.
+2026-08-08 16:34:36 - server.utils.controller - INFO - Time for emotion generation of [Hello, great to have you here.] is 0.5484725999413058
+2026-08-08 16:34:39 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 2.821627700002864
+2026-08-08 16:34:41 - server.utils.controller - INFO - Time until token 10 is received in the controller from Oprheus3B is 5.449833599966951
+2026-08-08 16:34:41 - server.utils.controller - INFO - Time sentence [Hello, great to have you here.] is finished from Oprheus is 5.456323900027201
+2026-08-08 16:34:41 - server.utils.controller - INFO - Total processing time of sentence [Hello, great to have you here.] is 5.46519699995406 seconds
+2026-08-08 16:34:41 - server.utils.controller - INFO - Current sentence consumed is 1 :  To start, please give a brief introduction:
+2026-08-08 16:34:42 - server.utils.controller - INFO - Time for emotion generation of [ To start, please give a brief introduction:] is 0.5723049999214709
+2026-08-08 16:34:44 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 2.9620126999216154
+2026-08-08 16:34:48 - server.utils.controller - INFO - Time until token 10 is received in the controller from Oprheus3B is 6.390406199963763
+2026-08-08 16:34:48 - server.utils.controller - INFO - Time sentence [ To start, please give a brief introduction:] is finished from Oprheus is 6.545205699978396
+2026-08-08 16:34:48 - server.utils.controller - INFO - Total processing time of sentence [ To start, please give a brief introduction:] is 6.548950599972159 seconds
+2026-08-08 16:34:48 - server.utils.controller - INFO - Current sentence consumed is 2 :  your recent experience, the role you’re pursuing, and what attracts you to this opportunity.
+2026-08-08 16:34:48 - server.utils.controller - INFO - Time for emotion generation of [ your recent experience, the role you’re pursuing, and what attracts you to this opportunity.] is 0.551315899938345
+2026-08-08 16:34:51 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 2.9831390000181273
+2026-08-08 16:34:53 - server.utils.controller - INFO - Time until token 10 is received in the controller from Oprheus3B is 5.0940126000205055
+2026-08-08 16:34:55 - server.utils.controller - INFO - Time until token 20 is received in the controller from Oprheus3B is 7.363792099989951
+2026-08-08 16:34:59 - server.utils.controller - INFO - Time until token 30 is received in the controller from Oprheus3B is 11.450355499982834
+2026-08-08 16:35:00 - server.utils.controller - INFO - Time sentence [ your recent experience, the role you’re pursuing, and what attracts you to this opportunity.] is finished from Oprheus is 12.025427100015804
+2026-08-08 16:35:00 - server.utils.controller - INFO - Total processing time of sentence [ your recent experience, the role you’re pursuing, and what attracts you to this opportunity.] is 12.028970899991691 seconds
+2026-08-08 16:35:50 - server.utils.controller - INFO - Disconnected from UE5 server
+2026-08-08 16:35:50 - server.utils.controller - INFO - Disconnected from windows HTTP session
+2026-08-08 16:35:50 - server.utils.controller - INFO - Disconnected from ubuntu HTTP session
