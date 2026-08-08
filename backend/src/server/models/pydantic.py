@@ -13,7 +13,7 @@ class LLMInput(BaseModel):
     emotion : Literal['angry', 'disgusted', 'fearful', 'happy', 'sad', 'surprised', 'neutral'] = 'neutral'
     input : list[Message]
     interview_type : int             # 1 corresponds to user being the interviewer and 2 to user being the interviewee   
-    model : str | None = "openai/gpt-4o-mini" 
+    model : str | None = "openai/gpt-5-nano:batch" 
 
 class TTSInput(BaseModel):
     text : str
