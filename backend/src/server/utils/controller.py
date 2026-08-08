@@ -16,16 +16,7 @@ import json
 import time
 import os
 
-# Configure basic logging
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
-LOG_PATH = os.path.join(BASE_DIR, "../../../data/logRuntime.log")
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    filename=LOG_PATH
-)
-
+# Configure logging
 logger = logging.getLogger(__name__)
 
 class Controller:
@@ -54,6 +45,7 @@ class Controller:
 
     async def start(self):
         # Start sessions for http requests
+        logger.info("starting http sessions")
         self._session_windows = aiohttp.ClientSession()
         self._session_ubuntu = aiohttp.ClientSession()
 
@@ -80,6 +72,7 @@ class Controller:
     async def connect_ue5(self):
         try:
             self._ue5_ws = await websockets.connect(self.ws_url)
+            logger.info(f"connected to {self.ws_url}")
         except Exception as e:
             self._ue5_ws = None
             logger.info(f"Unable to connect to {self.ws_url} with error {str(e)}")
@@ -141,7 +134,7 @@ class Controller:
         try:
             async with self._ue5_lock:
                 await self._ue5_ws.send("[[DONE]]")
-        except WebSocketDisconnect:
+        except websockets.exceptions.ConnectionClosed:
             logger.info("Disconnected from UE5 server")
             self._ue5_ws = None
         except Exception as e:
@@ -165,13 +158,15 @@ class Controller:
         try:
             start = time.perf_counter()
             async with self._session_ubuntu.post(self.ubuntu_url, json = payload) as resp:
-                async for i, audio_chunk in enumerate(resp.content.iter_any()):
-                    if i % 10 == 0:
-                        logger.info(f"Time until token {i} is received in the controller from Oprheus3B is {time.perf_counter() - start}")
+                index = 0
+                async for audio_chunk in resp.content.iter_any():
+                    if index % 10 == 0:
+                        logger.info(f"Time until token {index} is received in the controller from Oprheus3B is {time.perf_counter() - start}")
                     if not audio_chunk:
                         continue
                     await self.send_audio_bytes(id, chunk_index, audio_chunk)
                     chunk_index += 1
+                    index += 1
             await self.send_audio_end(id)
             logger.info(f"Time sentence [{sentence}] is finished from Oprheus is {time.perf_counter() - start}")
         except Exception as e:
@@ -196,7 +191,7 @@ class Controller:
             async with self._ue5_lock:
                 await self._ue5_ws.send(header)
                 await self._ue5_ws.send(audio_chunk)
-        except WebSocketDisconnect:
+        except websockets.exceptions.ConnectionClosed:
             logger.info("Disconnected from UE5 server")
             self._ue5_ws = None
         except Exception as e:
@@ -219,7 +214,7 @@ class Controller:
         try:
             async with self._ue5_lock:
                 await self._ue5_ws.send(header)
-        except WebSocketDisconnect:
+        except websockets.exceptions.ConnectionClosed:
             logger.info("Disconnected from UE5 server")
             self._ue5_ws = None
         except Exception as e:
@@ -269,7 +264,7 @@ class Controller:
         try:
             async with self._ue5_lock:
                 await self._ue5_ws.send(data)
-        except WebSocketDisconnect:
+        except websockets.exceptions.ConnectionClosed:
             logger.info("Disconnected from UE5 server")
             self._ue5_ws = None
         except Exception as e:

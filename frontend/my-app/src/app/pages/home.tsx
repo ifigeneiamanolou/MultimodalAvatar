@@ -116,6 +116,7 @@ export default function Home() {
   }, []);
 
   const fetchData = async (input : {role : string, content : string}[]) => {
+     console.log("CALLING NLP", new Date(), input);
     const interview_type = interviewer ? 1 : 2; 
     const msgID = startBotMessage();
     const emotionState = emotion.current ? emotion.current : "neutral";

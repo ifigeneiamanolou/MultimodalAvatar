@@ -3,6 +3,24 @@ from fastapi.middleware.cors import CORSMiddleware
 from server.routes.tts import router as tts
 from contextlib import asynccontextmanager
 from server.services.ttsServices import controller
+import os
+import logging
+
+# Configure basic logging
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+LOG_PATH = os.path.abspath(
+    os.path.join(BASE_DIR, "../../../data/logRuntime.log")
+)
+
+os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    filename=LOG_PATH,
+    force=True
+)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

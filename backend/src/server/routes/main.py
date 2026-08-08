@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from server.routes.feedbackNew import router as feedback
 from server.routes.response import router as response
 from server.utils.controller import controller
-from server.services.nlpServices import get_answer_router_stream
 from contextlib import asynccontextmanager
 import logging
 import os
@@ -11,25 +10,33 @@ import httpx
 from dotenv import load_dotenv
 
 # Configure basic logging
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+LOG_PATH = os.path.abspath(
+    os.path.join(BASE_DIR, "../../../data/logRuntime.log")
+)
+
+os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
+    filename=LOG_PATH,
+    force=True
 )
 
-logger = logging.getLogger(__name__)
-
+# Environment variables
 load_dotenv()
 OPENROUTER_API_KEY = os.environ["OPENROUTER_API_KEY"]
 
 # Constant
 WARMUP_SENTENCE = "This is a warmup sentence for the machine learning models"
 
+# Prompt file
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))    
 template_path1 = os.path.join(BASE_DIR, "../../../data/templates/interview1.md")      # Bot : interviewer
 with open(template_path1, "r") as f:
     prompt = f.read()
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -65,7 +72,6 @@ app.add_middleware(
     allow_credentials = True      
 )
     
-
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host = "127.0.0.1", port = 8000, ws_ping_interval = 20, ws_ping_timeout = 60)

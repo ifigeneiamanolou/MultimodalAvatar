@@ -7,13 +7,7 @@ import queue
 import os
 import logging
 
-# Configure basic logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-
+# Configure logging
 logger = logging.getLogger(__name__)
 
 model = SNAC.from_pretrained("hubertsiuzdak/snac_24khz").eval()
@@ -152,7 +146,8 @@ def tokens_decoder_sync(syn_token_gen):
         audio = audio_queue.get()
         if audio is None:
             break
-        logger.info(f"getting audio chunk {numAudio} from decoder queue consumer to stream to the backend")
+        if (numAudio % 100 == 0):
+            logger.info(f"getting audio chunk {numAudio} from decoder queue consumer to stream to the backend")
         numAudio = numAudio + 1
         yield audio
 

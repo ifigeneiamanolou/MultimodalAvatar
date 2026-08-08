@@ -6,24 +6,13 @@ import torch
 import logging
 import time
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
-LOG_PATH = os.path.join(BASE_DIR, "../../../data/logRuntime.log")
-
 _models = {}        # Avoid time consuming model reloading
 device = "cuda" if torch.cuda.is_available() else "cpu"
 load_dotenv()
 HF_TOKEN = os.environ["HF_TOKEN"]
 
-# Configure basic logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    filename=LOG_PATH
-)
-
+# Configure logging
 logger = logging.getLogger(__name__)
-
 
 def load_model(model_id : str):
     """ Load model with ID given with GPU acceleration if possible

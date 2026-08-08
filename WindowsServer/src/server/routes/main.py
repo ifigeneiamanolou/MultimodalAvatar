@@ -15,15 +15,20 @@ from server.services.fileServices import read_audio
 import os
 
 # Configure basic logging
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+LOG_PATH = os.path.abspath(
+    os.path.join(BASE_DIR, "../../../data/logRuntime.log")
+)
+
+os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
+    filename=LOG_PATH,
+    force=True
 )
-
-logger = logging.getLogger(__name__)
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
 
 # Constant
 WARMUP_SENTENCE = "This is a warmup sentence for the machine learning models"

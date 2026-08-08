@@ -12,17 +12,7 @@ import httpx
 import logging
 import time
 
-# Configure basic logging
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
-LOG_PATH = os.path.join(BASE_DIR, "../../../data/logRuntime.log")
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    filename=LOG_PATH
-)
-
+# Configure logging
 logger = logging.getLogger(__name__)
 
 # Environment variables
@@ -66,8 +56,10 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
     consumerTask = asyncio.create_task(syncCoordinator.consume())
     start = time.perf_counter()
     try:
+        index = 0
         async with http_client.stream(url = url, headers = headers, json = payload, method = "POST") as r:
-            async for index, chunk in enumerate(r.aiter_text(chunk_size = 1024)):
+            async for chunk in r.aiter_text(chunk_size = 1024):
+                index = index + 1
                 logger.info(f"Time until first token from NLP : {time.perf_counter() - start} seconds")
                 if(index != 0 and index % 10 == 0):
                     logger.info(f"Time until token number {index} is {time.perf_counter() - start} seconds")
@@ -81,6 +73,7 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
             if(sentence):
                 await syncCoordinator.produce(sentence)                 # Pass the remaining data to the Queue if they exist
             await syncCoordinator.produce("[[DONE]]")  # Signal the end of the stream
+            yield "data: [[DONE]]\n\n"                         # Signal to the frontend the end of SSE events
             logger.info(f"Full NLP response in {time.perf_counter() - start}")
     except Exception as e:
         logger.error(msg = f"Error during processing of NLP : {e}")

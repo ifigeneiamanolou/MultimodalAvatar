@@ -9,13 +9,7 @@ from .decoder import tokens_decoder_sync
 import logging
 import uuid
 
-# Configure basic logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-
+# Configure logging
 logger = logging.getLogger(__name__)
 
 class OrpheusModel:
@@ -40,8 +34,6 @@ class OrpheusModel:
             else:
                 return AutoTokenizer.from_pretrained(tokenizer_path)
         except Exception as e:
-            print(f"Error loading tokenizer: {e}")
-            print(f"Falling back to default tokenizer")
             return AutoTokenizer.from_pretrained("gpt2")
     
     def _map_model_params(self, model_name):
@@ -85,7 +77,6 @@ class OrpheusModel:
                 raise ValueError(f"Voice {voice} is not available for model {self.model_name}")
     
     def _format_prompt(self, prompt, voice="tara", model_type="larger"):
-        logger.info("formatting the input..")
         if model_type == "smaller":
             if voice:
                 return f"<custom_token_3>{prompt}[{voice}]<custom_token_4><custom_token_5>"
@@ -126,9 +117,6 @@ class OrpheusModel:
         request_id = str(uuid.uuid4())  # Generate a unique request ID for each request
         async def async_producer():
             producer_index = 0
-            logger.info(f"started producing...")
-            logger.info(f"sampling params are {sampling_params}")
-            logger.info(f"string is {prompt_string}")
             try:
                 async for result in self.engine.generate(prompt=prompt_string, sampling_params=sampling_params, request_id=request_id):
                     # Place each token text into the queue.

@@ -15,13 +15,7 @@ elevenlabs = ElevenLabs(
     api_key=ELEVENLABS_API_KEY,
 )
 
-# Configure basic logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-
+# Configure logging
 logger = logging.getLogger(__name__)
 
 async def textToSpeechStreaming(text : str, voice_id : str, model_id : str):
