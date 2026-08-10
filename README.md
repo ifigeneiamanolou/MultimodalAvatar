@@ -7,6 +7,16 @@ This project explores how AI can be used to render conversational agents capable
 * WindowsServer -> Used in the remote AWS Windows server to host Emotion2Vec, Distilert Whisper through a Uvicorn server
 * UbuntuServer -> Used in the remote AWS Ubuntu server to host Orpheus3B through a Uvicorn server
 
+
+## Third-party code
+
+This project includes modified portions of Oprheus-TTS (https://github.com/canopyai/Orpheus-TTS.git). The following files are based on this repository:
+* UbuntuServer/src/server/services/decoder.py
+* UbuntuServer/src/server/services/engine_class.py
+
+Original code is Copyright © canopylabs.ai. Licensed under the Apache License 2.0.
+
+
 # Developer instructions
 To locally start contributing to the repository the following components need to be set up:
 1. AWS Windows EC2 instance with Uvicorn server, Signaling server with a CoTURN implementation and a packaged UE5 application
