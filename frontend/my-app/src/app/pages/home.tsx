@@ -326,6 +326,7 @@ export default function Home() {
                       WaitForStreamer: true,
                       HideUI : false,
                   }}
+
               />
           </div>
 

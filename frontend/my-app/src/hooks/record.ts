@@ -44,13 +44,13 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
         const response = await fetch(audioRecorder.uri!);       // Extract audio from file
         const audio = await response.blob();                    // Extract raw binary audio data 
 
-        // Fill in the audio to be used for playback by the user
-        setAudio(audio);
-
         // Encode audio into a base64 string
         const arrayBuffer = await audio.arrayBuffer();
         const binary = new Uint8Array(arrayBuffer);
         var base64string = btoa(String.fromCharCode(...binary));
+
+        // Fill in the audio to be used for playback by the user
+        setAudio(arrayBuffer);
 
         // Emotion recognition
         try{

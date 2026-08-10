@@ -8,10 +8,9 @@ from server.models.pydantic import ResponseModel, EmotionInput
 import os
 from server.services.emotionsServices import emotion_detection, processScores
 import base64
-from server.services.fileServices import save
+from server.services.fileServices import save_emotion2vec
 
 router = APIRouter()
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
 
 @router.post("/emotion2vec", response_model = ResponseModel)
 async def detectAudioEmotion(input : EmotionInput):
@@ -27,7 +26,7 @@ async def detectAudioEmotion(input : EmotionInput):
 
     # Post processing
     try:
-        emotion = processScores(scores)
+        emotion, scoresNew = processScores(scores)
 
     except (KeyError, TypeError, ValueError) as e:
         return{
@@ -36,8 +35,8 @@ async def detectAudioEmotion(input : EmotionInput):
             "message" : f"Error during post processing : {e}"
         }
     
-    # Save the emotion to a file
-    # save(emotion, "../../data/processed/emotion-%s.txt")
+    # Save the emotion scores and final prediction to a file
+    save_emotion2vec(scoresNew, emotion)
 
     # Return the emotion detected
     return{

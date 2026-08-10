@@ -24,49 +24,6 @@ def next_path(path_pattern : str) -> str:
 
     return path_pattern % b
 
-def saveFeedback(messages : dict, path : str):
-    """ Writes the content of a dictionary into a file in utf-8 encoding, with indentation
-
-    Args:
-        messages (dict): dictionary to write to a file
-        path (str): location of the target file
-    """
-
-    path = next_path(os.path.join(BASE_DIR, path))
-
-    with open(path, "w", encoding = "utf-8") as json_file:
-        json.dump(messages, json_file, indent = 4, )
-
-def save_stream(input : str, path : str):
-    """ Append the input text to the next available path in the specified location avoiding overwriting
-
-    Args:
-        input (str): input text
-        path (str): relative path to the current directory to save the audio
-    """
-
-    path = next_path(os.path.join(BASE_DIR, path))
-
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-
-    with open(path, "a") as f:      # Avoid overwriting
-        f.write(input)
-
-def save_audio_stream(audio_bytes : bytes, path : str):
-    """ Write audio encoded in base64 as an mp3 file
-
-    Args:
-        audio_bytes (bytes): base64 encoded bytes
-        path (str): file path to save the audio
-    """
-
-    path = next_path(os.path.join(BASE_DIR, path))
-
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-
-    with open(path, "ab") as f:     # Avoid overwriting
-        f.write(audio_bytes)
-
 def save_audio(audio_bytes : bytes, path : str):
     """ Saves the input audio bytes to the next available path in the specified location
 
@@ -86,6 +43,47 @@ def save_audio(audio_bytes : bytes, path : str):
 
     return path
 
+def save_emotion2vec(scores : np.ndarray, emotion : str):
+    labels = ['angry', 'disgusted', 'fearful', 'happy', 'sad', 'surprised', 'neutral']
+
+    # Create directory if needed
+    path = next_path(os.path.join(BASE_DIR, "../../../data/processed/emotion2vec-%s.txt"))
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+
+    # Write inference results
+    with open(path, "w") as f:
+        f.write("Explicit scores : \n\n")
+
+        # Write emotion scores
+        for i, score in enumerate(scores):
+            f.write(f"{labels[i]} : {score} \n")
+
+        # Write final prediction
+        f.write(f"Final prediction is : {emotion}")
+
+def save_distilbert(sentence : str, emotion : str, maxProb : float, result : dict):
+    # Create directory if needed
+    path = next_path(os.path.join(BASE_DIR, "../../../data/processed/distilbert-%s.txt"))
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+
+    # Write inference results
+    with open(path, "w") as f:
+        # Write emotion scores
+        f.write("Explicit scores : \n\n")
+
+        for emotion in result.keys():
+            score = result[emotion]
+            f.write(f"{emotion} : {score} /n")
+
+        # Write final predictions
+        f.write(f"Final prediction is {emotion} with probability {maxProb}")
+        
+def read_audio(path : str):
+    path = os.path.join(BASE_DIR, path)
+    with open(path, "rb") as f:
+        audio = f.read()
+    return audio
+
 def save(input : str, path : str):
     """ Saves the input text to the next available path in the specified location
 
@@ -100,19 +98,3 @@ def save(input : str, path : str):
 
     with open(path, "w") as f:
         f.write(input)
-
-def save_wav(buffer : list, path : str):
-    """ Saves input audio into a wav file using scipy
-
-    Args:
-        buffer (list): list containing the audio chunks
-        path (str): relative path to save the audio produced
-    """
-    new_path = next_path(os.path.join(BASE_DIR, path))
-    write(new_path, 24_000, np.concatenate(buffer))
-
-def read_audio(path : str):
-    path = os.path.join(BASE_DIR, path)
-    with open(path, "rb") as f:
-        audio = f.read()
-    return audio
