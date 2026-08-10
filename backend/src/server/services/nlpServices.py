@@ -1,10 +1,10 @@
 from dotenv import load_dotenv
 from openai import OpenAI, RateLimitError
 import os
-from server.services.fileServices import save_stream, load_template, load_json
 from server.utils.sentenceBuffer import sentenceBuffer
 from server.utils.sseBuffer import sseBuffer
 from server.utils.controller import controller as syncCoordinator
+from server.services.fileServices import save_response
 import requests
 import re
 import asyncio
@@ -55,24 +55,27 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
     bufferSmall = sseBuffer()
     consumerTask = asyncio.create_task(syncCoordinator.consume())
     start = time.perf_counter()
+    path = None         # Used to save the response from the LLM
     try:
         index = 0
         async with http_client.stream(url = url, headers = headers, json = payload, method = "POST") as r:
             async for chunk in r.aiter_text(chunk_size = 1024):
                 if index == 0:
-                    logger.info(f"Time until chunk token from NLP : {time.perf_counter() - start} seconds")
+                    logger.info(f"Time until first chunk from NLP : {time.perf_counter() - start} seconds")
                 index = index + 1
                 if(index != 0 and index % 10 == 0):
                     logger.info(f"Time until token number {index} is {time.perf_counter() - start} seconds")
                 async for token in bufferSmall.flush_buffer(chunk): 
                     yield f"data: {token}\n\n"                         # Used in the frontend         
-                    async for sentence in buffer.add(token):           
+                    async for sentence in buffer.add(token):       
+                        path = save_response(path, sentence)    
                         logger.info(f"Time until sentence {sentence} from NLP : {time.perf_counter() - start}")
                         await syncCoordinator.produce(sentence)        # Pass the sentence to the asyncio Queue
 
         async for sentence in buffer.flush():
             if(sentence):
                 await syncCoordinator.produce(sentence)                 # Pass the remaining data to the Queue if they exist
+                path = save_response(path, sentence)   
             await syncCoordinator.produce("[[DONE]]")  # Signal the end of the stream
             yield "data: [[DONE]]\n\n"                         # Signal to the frontend the end of SSE events
             logger.info(f"Full NLP response in {time.perf_counter() - start}")
@@ -80,7 +83,6 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
         logger.error(msg = f"Error during processing of NLP : {e}")
     finally:   
         await consumerTask                         # Await for the queue to finish consuming the sentences   
-
 
 def input_processing(input : list, instructions : str, emotion : str, role : str) -> list:
     """ Preprocess the user input to include emotion detected and instructions

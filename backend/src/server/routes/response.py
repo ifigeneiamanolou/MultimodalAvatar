@@ -1,21 +1,14 @@
 from fastapi import APIRouter
-import os
 from fastapi.responses import StreamingResponse
 from server.services.nlpServices import get_answer_router, get_answer_router_stream
 from server.models.pydantic import LLMInput, ResponseModel
-from server.services.fileServices import save
+from server.services.fileServices import save, load_template
 
-router = APIRouter()
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))     
+router = APIRouter()     
 
 # Templates
-template_path1 = os.path.join(BASE_DIR, "../../../data/templates/interview1.md")      # Bot : interviewer
-with open(template_path1, "r") as f:
-    prompt1 = f.read()
-
-template_path2= os.path.join(BASE_DIR, "../../../data/templates/interview2.md")       # Bot : interviewee
-with open(template_path2, "r") as f:
-    prompt2 = f.read()
+prompt1 = load_template("interview1")
+prompt2 = load_template("interview2")
     
 @router.post("/response", response_model = ResponseModel)
 async def generateTextResponse(user_input : LLMInput):

@@ -25,21 +25,6 @@ def next_path(path_pattern : str) -> str:
 
     return path_pattern % b
 
-def load_json(path : str):
-    """ Reads a json file from the data folder
-
-    Args:
-        path (str) : relative location of target file
-
-    Returns:
-        dict : the json formatted dictionary read
-    """
-      
-    pathNew = os.path.join(BASE_DIR, path)
-    with open(pathNew, "r") as f: 
-        schema = json.load(f)
-    return schema
-
 
 def saveJSON(messages : dict, path : str):
     """ Writes the content of a dictionary into a file in utf-8 encoding, with indentation
@@ -52,56 +37,7 @@ def saveJSON(messages : dict, path : str):
     path = next_path(os.path.join(BASE_DIR, path))
 
     with open(path, "w", encoding = "utf-8") as json_file:
-        json.dump(messages, json_file, indent = 4, )
-
-def save_stream(input : str, path : str):
-    """ Append the input text to the next available path in the specified location avoiding overwriting
-
-    Args:
-        input (str): input text
-        path (str): relative path to the current directory to save the audio
-    """
-
-    path = next_path(os.path.join(BASE_DIR, path))
-
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-
-    with open(path, "a") as f:      # Avoid overwriting
-        f.write(input)
-
-def save_audio_stream(audio_bytes : bytes, path : str):
-    """ Write audio encoded in base64 as an mp3 file
-
-    Args:
-        audio_bytes (bytes): base64 encoded bytes
-        path (str): file path to save the audio
-    """
-
-    path = next_path(os.path.join(BASE_DIR, path))
-
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-
-    with open(path, "ab") as f:     # Avoid overwriting
-        f.write(audio_bytes)
-
-def save_audio(audio_bytes : bytes, path : str):
-    """ Saves the input audio bytes to the next available path in the specified location
-
-    Args:
-        audio_bytes (bytes): input audio bytes 
-        path (str): relative path to the current directory to save the audio
-
-    Returns:
-        path (str) : absolute path where audio was saved
-    """
-
-    path = next_path(os.path.join(BASE_DIR, path))
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-
-    with open(path, "wb") as f:
-        f.write(audio_bytes)
-
-    return path
+        json.dump(messages, json_file, indent = 4)
 
 def save(input : str, path : str):
     """ Saves the input text to the next available path in the specified location
@@ -118,16 +54,6 @@ def save(input : str, path : str):
     with open(path, "w") as f:
         f.write(input)
 
-def save_wav(buffer : list, path : str):
-    """ Saves input audio into a wav file using scipy
-
-    Args:
-        buffer (list): list containing the audio chunks
-        path (str): relative path to save the audio produced
-    """
-    new_path = next_path(os.path.join(BASE_DIR, path))
-    write(new_path, 24_000, np.concatenate(buffer))
-
 def load_template(template : str = ["feedback1", "feedback2", "emotions", "interview1", "interview2"]):
     """ Reads a template needed for prompt engineering
 
@@ -138,3 +64,22 @@ def load_template(template : str = ["feedback1", "feedback2", "emotions", "inter
     with open(template_path , "r") as f:
         prompt = f.read()
     return prompt
+
+def save_response(path : str | None, response : str):
+    """_summary_
+
+    Args:
+        path (str | None): _description_
+        response (str): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    # Checks if a new file needs to be opened
+    if path is None:
+        path = os.path.join(BASE_DIR, next_path("../../../data/raw/response-%s.txt"))
+
+    with open(path, "a") as f:
+        f.write(response)
+
+    return path

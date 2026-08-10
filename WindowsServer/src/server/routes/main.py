@@ -17,7 +17,7 @@ import os
 # Configure basic logging
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_PATH = os.path.abspath(
-    os.path.join(BASE_DIR, next_path("../../../data/logRuntime-%s.log"))
+    os.path.join(BASE_DIR, next_path("../../../data/processed/logRuntime-%s.log"))
 )
 
 os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
