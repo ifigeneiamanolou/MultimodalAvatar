@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from server.routes.feedbackNew import router as feedback
 from server.routes.response import router as response
+from server.services.fileServices import next_path
 from server.utils.controller import controller
 from contextlib import asynccontextmanager
 import logging
@@ -12,7 +13,7 @@ from dotenv import load_dotenv
 # Configure basic logging
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_PATH = os.path.abspath(
-    os.path.join(BASE_DIR, "../../../data/logRuntime.log")
+    os.path.join(BASE_DIR, next_path("../../../data/logRuntime-%s.log"))
 )
 
 os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)

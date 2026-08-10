@@ -3,13 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from server.routes.tts import router as tts
 from contextlib import asynccontextmanager
 from server.services.ttsServices import controller
+from server.services.fileServices import next_path
 import os
 import logging
 
 # Configure basic logging
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_PATH = os.path.abspath(
-    os.path.join(BASE_DIR, "../../../data/logRuntime.log")
+    os.path.join(BASE_DIR, next_path("../../../data/logRuntime-%s.log"))
 )
 
 os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)

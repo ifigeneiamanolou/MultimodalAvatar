@@ -22,16 +22,16 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(BASE_DIR, "../../../data/raw/output-%s.wav")
 
 class ttsController:
+    """ Controls interaction with Orpheus3B allowing model loading, cache clean-up and inference
+    """
     def __init__(self):
-        self.queue = asyncio.Queue(maxsize = 50)
         self._models = {}               # in case multiple models are used                  
 
     async def stop(self):
+        """ Perform cleanup by emptying the cached Orpheus3B models
+        """
         # Empty cached models
         self._models = {}
-        # Empty the queue
-        while not self.queue.empty():
-            self.queue.get()
 
     async def start(self, model_name : str):
         """ Load Orpheus3B model into the models dictionary  if not loaded before
@@ -55,10 +55,20 @@ class ttsController:
            pass
 
     async def generate_audio_stream(self, sentence : str, voice : str, model : str):
+        """ Perform Orpheus3B inference and return the result as a streaming response
+
+        Args:
+            sentence (str): the sentence for which we want to perform TTS
+            voice (str): the voice used in Orpheus3B
+            model (str): the model used from the variants of Orpheus3B
+
+        Yields:
+            bytes : audio chunks generated
+        """
         if model not in self._models.keys():
             logger.info(f"model name not in dictionary")
             raise 
-        
+
         start = time.perf_counter()
         syn_tokens = self._models[model].generate_speech(
             prompt=sentence,

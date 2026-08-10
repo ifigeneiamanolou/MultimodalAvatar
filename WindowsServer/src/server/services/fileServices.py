@@ -44,6 +44,13 @@ def save_audio(audio_bytes : bytes, path : str):
     return path
 
 def save_emotion2vec(scores : np.ndarray, emotion : str):
+    """ Saves locally the results of emotion2vec inference
+
+    Args:
+        scores (np.ndarray): the emotion scores for the emotions angry, disgusted, fearful, happy, sad, surprised
+        and neutral
+        emotion (str): the emotion label with the maximum score
+    """
     labels = ['angry', 'disgusted', 'fearful', 'happy', 'sad', 'surprised', 'neutral']
 
     # Create directory if needed
@@ -62,6 +69,14 @@ def save_emotion2vec(scores : np.ndarray, emotion : str):
         f.write(f"Final prediction is : {emotion}")
 
 def save_distilbert(sentence : str, emotion : str, maxProb : float, result : dict):
+    """ Saves locally the results of distilbert inference
+
+    Args:
+        sentence (str): the sentence for which inference was performed
+        emotion (str): the emotion label with the maximum score
+        maxProb (float): maximum score from distilbert
+        result (dict): dictionary with keys the labels needed for Audio2Face and values their scores after mapping
+    """
     # Create directory if needed
     path = next_path(os.path.join(BASE_DIR, "../../../data/processed/distilbert-%s.txt"))
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -76,9 +91,17 @@ def save_distilbert(sentence : str, emotion : str, maxProb : float, result : dic
             f.write(f"{emotion} : {score} /n")
 
         # Write final predictions
-        f.write(f"Final prediction is {emotion} with probability {maxProb}")
-        
+        f.write(f"Final prediction for {sentence} is {emotion} with probability {maxProb}")
+
 def read_audio(path : str):
+    """ Reads and return the raw audio stored in a file specified
+
+    Args:
+        path (str): the relative path where the audio is stored
+
+    Returns:
+        bytes: the audio read
+    """
     path = os.path.join(BASE_DIR, path)
     with open(path, "rb") as f:
         audio = f.read()

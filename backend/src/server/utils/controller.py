@@ -1,25 +1,23 @@
-""""
-    Handles incoming sentences from the sentence buffer, maintaining a queue of sentences. These are forwarded for TTS and emotion
-    detection asychronously using an asyncio Task Group, that handles ongoing tasks cleaning automatically. Once both tasks are 
-    finished, emotion probabilities by distilbert and audio chunks (in raw binary format) are forwarded to Audio2Face via the UE5 
-    application.
-
-"""
-
 import asyncio
-from fastapi import WebSocketDisconnect
 import websockets
 import logging
 from typing import Optional
 import aiohttp
 import json
 import time
-import os
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
 class Controller:
+    """ Handles incoming sentences from the sentence buffer, maintaining a queue of sentences using an Asyncio queue 
+        with the consumer-producer pattern. These are forwarded for TTS and emotion detection asychronously using an 
+        asyncio Task Group, that handles ongoing tasks cleaning automatically. As soon as emotion probailities from 
+        distilbert or audio chunk (in raw binary format) are received, they are sent to A2F, with the latter 
+        accompanied with an audio header containing information like the length of the audio chunk and the number of 
+        the sentence or the audio chunk. Once both tasks have finished, the consumer forwards the next sentence to 
+        Orpheus3B and DistilBert.
+    """
     def __init__(self):
         # General attributes
         self.queue = asyncio.Queue(maxsize = 50)
@@ -29,21 +27,24 @@ class Controller:
         self._sequence_id = 0
 
         # Orpheus3B and distilbert
-        self.windows_url = "http://3.129.236.140:8000/distilbert"                      # DistilBert (elastip ip)
-        self.ubuntu_url = "http://3.151.224.227:8000/orpheus"                          # Orpheus3B (elastic ip)
+        self.windows_url = "http://3.129.236.140:8000/distilbert"             # DistilBert (elastip ip)
+        self.ubuntu_url = "http://3.151.224.227:8000/orpheus"                 # Orpheus3B (elastic ip)
         self._session_windows : Optional[aiohttp.ClientSession] = None        # Asychronous HTTP requests to Windows server
-        self._session_ubuntu : Optional[aiohttp.ClientSession] = None        # Asychronous HTTP requests to Ubuntuserver
+        self._session_ubuntu : Optional[aiohttp.ClientSession] = None         # Asychronous HTTP requests to Ubuntuserver
 
         # Web socket
         self.ws_url = "ws://3.129.236.140:7865"         # replace with ec2 ipv4                           
-        self._ue5_lock = asyncio.Lock()                                       # Avoid sending both emotion and audio to UE5
-        self._ue5_ws = None    # Web socket connection with UE5 app
+        self._ue5_lock = asyncio.Lock()                 # Avoid sending both emotion and audio to UE5
+        self._ue5_ws = None                             # Web socket connection with UE5 app
 
     ############################################################
     # Lifecycle
     ############################################################
 
     async def start(self):
+        """ 
+            Starts aiohttp sessions with the Uvicorn servers in the AWS instances and connects to the UE5 app via a web socket
+        """
         # Start sessions for http requests
         logger.info("starting http sessions")
         self._session_windows = aiohttp.ClientSession()
@@ -53,6 +54,9 @@ class Controller:
         await self.connect_ue5()
 
     async def close(self):
+        """ 
+            Stops the aiohttp sessions, empties the asyncio queue and disconnects from the UE5 app 
+        """
         if self._ue5_ws:
             await self._ue5_ws.close()
             logger.info("Disconnected from UE5 server")
@@ -70,6 +74,9 @@ class Controller:
             self.queue.get()
 
     async def connect_ue5(self):
+        """ 
+            Establishes a websocket connection with the websocket server in the UE5 app
+        """
         try:
             self._ue5_ws = await websockets.connect(self.ws_url)
             logger.info(f"connected to {self.ws_url}")
@@ -78,6 +85,9 @@ class Controller:
             logger.info(f"Unable to connect to {self.ws_url} with error {str(e)}")
 
     async def ensure_connection(self):
+        """ 
+            Attempts to connect to the UE5 web server before sending any data
+        """
         if self._ue5_ws is None:
             try:
                 self._ue5_ws = await websockets.connect(self.ws_url)
@@ -90,6 +100,9 @@ class Controller:
     ############################################################
 
     async def consume(self):
+        """ 
+            Consumer for the asyncio queue containing the NLP produced sentence
+        """
         while True:
             sentence = await self.queue.get()
 
@@ -118,6 +131,11 @@ class Controller:
                 self.queue.task_done()
 
     async def produce(self, data : str):
+        """ Producer for the asyncio queue containing the NLP produced sentences
+
+        Args:
+            data (str): the sentence to be placed in the queue
+        """
         logger.info(msg = f"Produced sentence in the queue : {data}")
         await self.queue.put(data)
 
@@ -126,6 +144,9 @@ class Controller:
     ############################################################
     
     async def signal_end_audio(self):
+        """ 
+            Sends a text signal "[[DONE]]" to the UE5 WebServer to signal the end of an NLP response
+        """
         await self.ensure_connection()
         if self._ue5_ws is None:
             logger.info("Unable to send [[DONE]]. Server is unavailable")
@@ -146,6 +167,12 @@ class Controller:
     ############################################################
 
     async def produce_audio_orpheus(self, sentence : str, id : int):
+        """ Forwards a sentence to Orpheus3B and forwards the output chunks to UE5 along with informative headers
+
+        Args:
+            sentence (str): the sentence to send to A2F
+            id (int): the id of the sentence
+        """
         # Configure payload 
         payload ={
             "sentence" : sentence,
@@ -173,6 +200,13 @@ class Controller:
             logger.error(msg = f"Error during orpheus 3b remote upload :  {type(e).__name__}: {e}", exc_info=True)
 
     async def send_audio_bytes(self, id : int, chunk_index : int, audio_chunk : bytes):
+        """ Sends the audio chunk received by Oprheus3B to A2F along with informative headers
+
+        Args:
+            id (int): the id of the sentence the chunk belongs to
+            chunk_index (int): the id of the chunk
+            audio_chunk (bytes): the audio chunk received by Oprheus3B
+        """
         await self.ensure_connection()
         if self._ue5_ws is None:
             logger.info("Unable to send audio bytes. Server is unavailable")
@@ -199,6 +233,11 @@ class Controller:
             self._ue5_ws = None
 
     async def send_audio_end(self, id : int):
+        """ Sends a signal to the UE5 app to notify about the end of a sentence
+
+        Args:
+            id (int): the id of the sentence that just ended
+        """
         await self.ensure_connection()
         if self._ue5_ws is None:
             logger.info("Unable to send done signal. Server is unavailable")
@@ -225,7 +264,13 @@ class Controller:
     # Distilbert emotion generation
     ############################################################
 
-    async def emotion(self, sentence, id):
+    async def emotion(self, sentence : str, id : int):
+        """ Performs distilbert inference for a sentence and sends the results to the UE5 WebServer
+
+        Args:
+            sentence (str): the sentence for which we perform inference
+            id (int): the id of the sentence
+        """
         start = time.perf_counter()
         try:
             emotions = await self.produce_emotion(sentence)
@@ -245,6 +290,12 @@ class Controller:
             return await resp.json()
 
     async def send_ue5_emotion(self, emotions : dict[str, any], id : int):
+        """ Sends the result of distilbert inference to A2F
+
+        Args:
+            emotions (dict[str, any]): results from distilbert (scores, maximum score and corresponding emotion label)
+            id (int): id of the sentence
+        """
         await self.ensure_connection()
         if self._ue5_ws is None:
             logger.info("Unable to send emotion. Server is unavailable")
