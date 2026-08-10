@@ -20,9 +20,6 @@ export const PixelStreamingWrapper = ({
 
     // Pixel streaming library instance is stored into this state variable after initialization:
     const pixelStreaming = useRef<PixelStreaming | null>(null);
-    
-    // A boolean state variable that determines if the Click to play overlay is shown:
-    const [clickToPlayVisible, setClickToPlayVisible] = useState(false);
 
     // A boolean state variable that determines if no WebRTC connection is shown:
     const [noConnection, setNoConnection] = useState(false);
@@ -38,14 +35,12 @@ export const PixelStreamingWrapper = ({
             
             // register a playStreamRejected handler to show Click to play overlay if needed
             streaming.addEventListener('playStreamRejected', () => {  // stream was rejected, redisplay click button
-                setClickToPlayVisible(true);
                 setNoConnection(false);
                 console.log('Pixel stream rejected');
             });
 
             // register a webrtcconnected handler to show click every time a user loads the page
             streaming.addEventListener('webRtcConnected', () => {
-                setClickToPlayVisible(true);
                 setNoConnection(false);
                 console.log('Connected to signaling server');
             });
@@ -53,21 +48,18 @@ export const PixelStreamingWrapper = ({
             // register a webRtcDisconnected handler to show No WebRTC connection if needed
             streaming.addEventListener('webRtcDisconnected', () => {
                 setNoConnection(true);
-                setClickToPlayVisible(false);
                 console.log("Disconnected from signaling server");
             });
 
             // register a webRtcConnecting handler to show current state on the console
             streaming.addEventListener('webRtcConnecting', () => {
                 setNoConnection(false);
-                setClickToPlayVisible(true);
                 console.log("connecting ...");
             })
 
             // register a webRtcFailed handler to show WebRTC failed if need
             streaming.addEventListener('webRtcFailed', () => {
                 setNoConnection(true);
-                setClickToPlayVisible(false);
                 console.log("WebRTC connection failed");
             });
 
@@ -86,26 +78,18 @@ export const PixelStreamingWrapper = ({
 
     const connect = () => {
         pixelStreaming.current?.play();
-        setClickToPlayVisible(false);
     };
 
     return (
         <div className= 'w-full h-full relative place-content-center'>
             {noConnection ? (
                 <div className = "w-full h-full place-content-center">
-                    <p className = "p-6" > No WebRTC connection </p> 
+                    <p className = "p-6" > No WebRTC connection established </p> 
                 </div>
             ): (
                 <>
                     {/* Mount the component */}
-                    <div className = "w-full h-full" ref={videoParent}/>  
-
-                    {clickToPlayVisible ? (
-                        <div className = "absolute top-0 left-0 w-full h-full flex items-center justofy-center bg-black cursor-pointer" 
-                             onClick = {connect}>
-                            <p className = 'p-6 text-white font-bold'> Click to play </p>
-                        </div>
-                    ) : null }
+                    <div className = "w-full h-full" ref={videoParent}/> 
                 </>
             )}
         </div>

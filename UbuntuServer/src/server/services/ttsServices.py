@@ -7,6 +7,8 @@ from vllm import AsyncLLMEngine, AsyncEngineArgs
 import asyncio
 import time
 import os
+import wave
+from server.services.fileServices import next_path
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -14,6 +16,10 @@ logger = logging.getLogger(__name__)
 device = "cuda" if torch.cuda.is_available() else "cpu"
 load_dotenv()
 HF_TOKEN = os.environ["HF_TOKEN"]
+
+# Base directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
+DATA_PATH = os.path.join(BASE_DIR, "../../../data/raw/output-%s.wav")
 
 class ttsController:
     def __init__(self):
@@ -52,6 +58,7 @@ class ttsController:
         if model not in self._models.keys():
             logger.info(f"model name not in dictionary")
             raise 
+        
         start = time.perf_counter()
         syn_tokens = self._models[model].generate_speech(
             prompt=sentence,
@@ -69,15 +76,27 @@ class ttsController:
         # byte rate => 48000
         first = True
         try:
-            for i, chunk in enumerate(syn_tokens):
-                if(i % 10 == 0):
-                    logger.info(msg = f"Token {i} : {len(chunk)} bytes in {time.perf_counter() - start} seconds")
-                if first:
-                    first = False
-                    logger.info(msg = f"TTFT for {sentence} is {time.perf_counter() - start}")
-                yield chunk
-            logger.info(msg = f"Time for sentence {sentence} : {time.perf_counter() - start}")
+            with wave.open(DATA_PATH, "wb") as wf:
+                wf.setnchannels(1)
+                wf.setsampwidth(2)
+                wf.setframerate(24000)
+                for i, chunk in enumerate(syn_tokens):
+                    # Time logging
+                    if(i % 10 == 0):
+                        logger.info(msg = f"Token {i} : {len(chunk)} bytes in {time.perf_counter() - start} seconds")
+                    if first:
+                        first = False
+                        logger.info(msg = f"TTFT for {sentence} is {time.perf_counter() - start}")
+
+                    # Return to the central backend server
+                    yield chunk
+
+                    # Local audio logging
+                    wf.writeframes(chunk)
+                logger.info(msg = f"Time for sentence {sentence} : {time.perf_counter() - start}")
         except Exception:
             logger.exception("Generation failed")
 
 controller = ttsController()
+
+
