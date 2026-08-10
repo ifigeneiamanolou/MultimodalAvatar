@@ -30,6 +30,8 @@ logging.basicConfig(
     force=True
 )
 
+logger = logging.getLogger(__name__)
+
 # Constant
 WARMUP_SENTENCE = "This is a warmup sentence for the machine learning models"
 
