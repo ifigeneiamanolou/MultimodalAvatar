@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from openai import OpenAI, RateLimitError
+from openai import OpenAI
 import os
 from server.utils.sentenceBuffer import sentenceBuffer
 from server.utils.sseBuffer import sseBuffer

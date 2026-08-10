@@ -3,12 +3,9 @@ import torch
 from dotenv import load_dotenv
 from server.services.engine_class import OrpheusModel
 import logging
-from vllm import AsyncLLMEngine, AsyncEngineArgs
-import asyncio
 import time
 import os
-import wave
-from server.services.fileServices import next_path
+from server.services.fileServices import save_audio
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -16,10 +13,6 @@ logger = logging.getLogger(__name__)
 device = "cuda" if torch.cuda.is_available() else "cpu"
 load_dotenv()
 HF_TOKEN = os.environ["HF_TOKEN"]
-
-# Base directory
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
-DATA_PATH = os.path.join(BASE_DIR, "../../../data/raw/output-%s.wav")
 
 class ttsController:
     """ Controls interaction with Orpheus3B allowing model loading, cache clean-up and inference
@@ -51,7 +44,7 @@ class ttsController:
         
         # Warm up
         warmup = 'Hey there, looks like you forgot to provide a prompt! Please provide one that will help us generate speech'   
-        async for chunk in self.generate_audio_stream(warmup, "zoe", model_name):
+        async for _ in self.generate_audio_stream(warmup, "zoe", model_name):
            pass
 
     async def generate_audio_stream(self, sentence : str, voice : str, model : str):
@@ -85,25 +78,26 @@ class ttsController:
         # mono channel
         # byte rate => 48000
         first = True
+        buffer = bytearray()
         try:
-            with wave.open(DATA_PATH, "wb") as wf:
-                wf.setnchannels(1)
-                wf.setsampwidth(2)
-                wf.setframerate(24000)
-                for i, chunk in enumerate(syn_tokens):
-                    # Time logging
-                    if(i % 10 == 0):
-                        logger.info(msg = f"Token {i} : {len(chunk)} bytes in {time.perf_counter() - start} seconds")
-                    if first:
-                        first = False
-                        logger.info(msg = f"TTFT for {sentence} is {time.perf_counter() - start}")
+            for i, chunk in enumerate(syn_tokens):
+                # Time logging
+                if(i % 10 == 0):
+                    logger.info(msg = f"Token {i} : {len(chunk)} bytes in {time.perf_counter() - start} seconds")
+                if first:
+                    first = False
+                    logger.info(msg = f"TTFT for {sentence} is {time.perf_counter() - start}")
 
-                    # Local audio logging
-                    wf.writeframes(chunk)
+                # Add the chunk to the buffer
+                buffer.extend(chunk)
 
-                    # Return to the central backend server
-                    yield chunk
-                logger.info(msg = f"Time for sentence {sentence} : {time.perf_counter() - start}")
+                # Return to the central backend server
+                yield chunk
+
+            # Save the audio buffer locally
+            save_audio(buffer)
+
+            logger.info(msg = f"Time for sentence {sentence} : {time.perf_counter() - start}")
         except Exception:
             logger.exception("Generation failed")
 
