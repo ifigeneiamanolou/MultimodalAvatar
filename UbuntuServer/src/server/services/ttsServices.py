@@ -98,11 +98,11 @@ class ttsController:
                         first = False
                         logger.info(msg = f"TTFT for {sentence} is {time.perf_counter() - start}")
 
-                    # Return to the central backend server
-                    yield chunk
-
                     # Local audio logging
                     wf.writeframes(chunk)
+
+                    # Return to the central backend server
+                    yield chunk
                 logger.info(msg = f"Time for sentence {sentence} : {time.perf_counter() - start}")
         except Exception:
             logger.exception("Generation failed")
