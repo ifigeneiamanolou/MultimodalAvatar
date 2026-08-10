@@ -1,0 +1,215 @@
+2026-08-08 13:00:43 - server.services.engine_class - INFO - placed item 0 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:00:43 - server.services.engine_class - INFO - consuming token of length 18 of id 0
+2026-08-08 13:00:44 - server.services.decoder - INFO - putting chunk generated from the decoder with index 0 in decoder queue
+2026-08-08 13:00:44 - server.services.decoder - INFO - getting audio chunk 0 from decoder queue consumer to stream to the backend
+2026-08-08 13:00:44 - server.services.ttsServices - INFO - Token 0 : 4096 bytes in 1.3258630980008093 seconds
+2026-08-08 13:00:44 - server.services.ttsServices - INFO - TTFT for Hey there, looks like you forgot to provide a prompt! Please provide one that will help us generate speech is 1.3259123690004344
+2026-08-08 13:00:44 - server.services.ttsServices - INFO - Token 10 : 4096 bytes in 1.9394414800008235 seconds
+2026-08-08 13:00:44 - server.services.engine_class - INFO - placed item 100 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:00:44 - server.services.engine_class - INFO - consuming token of length 1980 of id 100
+2026-08-08 13:00:46 - server.services.ttsServices - INFO - Token 20 : 4096 bytes in 3.257749602000331 seconds
+2026-08-08 13:00:46 - server.services.engine_class - INFO - placed item 200 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:00:46 - server.services.engine_class - INFO - consuming token of length 3941 of id 200
+2026-08-08 13:00:47 - server.services.ttsServices - INFO - Token 30 : 4096 bytes in 4.570348193999962 seconds
+2026-08-08 13:00:48 - server.services.engine_class - INFO - placed item 300 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:00:48 - server.services.engine_class - INFO - consuming token of length 5904 of id 300
+2026-08-08 13:00:48 - server.services.ttsServices - INFO - Token 40 : 4096 bytes in 5.8906334250004875 seconds
+2026-08-08 13:00:50 - server.services.ttsServices - INFO - Token 50 : 4096 bytes in 7.216403039999932 seconds
+2026-08-08 13:00:50 - server.services.engine_class - INFO - placed item 400 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:00:50 - server.services.engine_class - INFO - consuming token of length 7861 of id 400
+2026-08-08 13:00:51 - server.services.ttsServices - INFO - Token 60 : 4096 bytes in 8.538335701000506 seconds
+2026-08-08 13:00:52 - server.services.engine_class - INFO - placed item 500 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:00:52 - server.services.engine_class - INFO - consuming token of length 9825 of id 500
+2026-08-08 13:00:52 - server.services.ttsServices - INFO - Token 70 : 4096 bytes in 9.869136130000697 seconds
+2026-08-08 13:00:54 - server.services.ttsServices - INFO - Time for sentence Hey there, looks like you forgot to provide a prompt! Please provide one that will help us generate speech : 11.153252393000002
+2026-08-08 13:09:28 - server.services.engine_class - INFO - placed item 0 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:09:28 - server.services.engine_class - INFO - consuming token of length 18 of id 0
+2026-08-08 13:09:29 - server.services.decoder - INFO - putting chunk generated from the decoder with index 0 in decoder queue
+2026-08-08 13:09:29 - server.services.decoder - INFO - getting audio chunk 0 from decoder queue consumer to stream to the backend
+2026-08-08 13:09:29 - server.services.ttsServices - INFO - Token 0 : 4096 bytes in 1.3257523940001192 seconds
+2026-08-08 13:09:29 - server.services.ttsServices - INFO - TTFT for Hey there, looks like you forgot to provide a prompt! Please provide one that will help us generate speech is 1.3258053150002524
+2026-08-08 13:09:30 - server.services.ttsServices - INFO - Token 10 : 4096 bytes in 1.9418876849995286 seconds
+2026-08-08 13:09:30 - server.services.engine_class - INFO - placed item 100 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:09:30 - server.services.engine_class - INFO - consuming token of length 1980 of id 100
+2026-08-08 13:09:31 - server.services.ttsServices - INFO - Token 20 : 4096 bytes in 3.266079050999906 seconds
+2026-08-08 13:09:32 - server.services.engine_class - INFO - placed item 200 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:09:32 - server.services.engine_class - INFO - consuming token of length 3940 of id 200
+2026-08-08 13:09:32 - server.services.ttsServices - INFO - Token 30 : 4096 bytes in 4.58414677699966 seconds
+2026-08-08 13:09:34 - server.services.engine_class - INFO - placed item 300 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:09:34 - server.services.engine_class - INFO - consuming token of length 5903 of id 300
+2026-08-08 13:09:34 - server.services.ttsServices - INFO - Token 40 : 4096 bytes in 5.907398418999946 seconds
+2026-08-08 13:09:35 - server.services.ttsServices - INFO - Token 50 : 4096 bytes in 7.230129806999685 seconds
+2026-08-08 13:09:36 - server.services.engine_class - INFO - placed item 400 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:09:36 - server.services.engine_class - INFO - consuming token of length 7863 of id 400
+2026-08-08 13:09:36 - server.services.ttsServices - INFO - Token 60 : 4096 bytes in 8.560735879999811 seconds
+2026-08-08 13:09:37 - server.services.engine_class - INFO - placed item 500 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:09:37 - server.services.engine_class - INFO - consuming token of length 9828 of id 500
+2026-08-08 13:09:38 - server.services.ttsServices - INFO - Token 70 : 4096 bytes in 9.916806965999967 seconds
+2026-08-08 13:09:39 - server.services.ttsServices - INFO - Token 80 : 4096 bytes in 11.237820852999903 seconds
+2026-08-08 13:09:39 - server.services.engine_class - INFO - placed item 600 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:09:39 - server.services.engine_class - INFO - consuming token of length 11789 of id 600
+2026-08-08 13:09:40 - server.services.ttsServices - INFO - Time for sentence Hey there, looks like you forgot to provide a prompt! Please provide one that will help us generate speech : 12.268741072999546
+2026-08-08 13:17:30 - server.services.engine_class - INFO - placed item 0 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:17:30 - server.services.engine_class - INFO - consuming token of length 18 of id 0
+2026-08-08 13:17:31 - server.services.decoder - INFO - putting chunk generated from the decoder with index 0 in decoder queue
+2026-08-08 13:17:31 - server.services.decoder - INFO - getting audio chunk 0 from decoder queue consumer to stream to the backend
+2026-08-08 13:17:31 - server.services.ttsServices - INFO - Token 0 : 4096 bytes in 0.5410750710007051 seconds
+2026-08-08 13:17:31 - server.services.ttsServices - INFO - TTFT for Thanks for confirming. is 0.5411170520001178
+2026-08-08 13:17:32 - server.services.ttsServices - INFO - Token 10 : 4096 bytes in 1.8371344410006714 seconds
+2026-08-08 13:17:32 - server.services.engine_class - INFO - placed item 100 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:17:32 - server.services.engine_class - INFO - consuming token of length 1976 of id 100
+2026-08-08 13:17:33 - server.services.ttsServices - INFO - Token 20 : 4096 bytes in 3.153999601000578 seconds
+2026-08-08 13:17:34 - server.services.engine_class - INFO - placed item 200 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:17:34 - server.services.engine_class - INFO - consuming token of length 3541 of id 200
+2026-08-08 13:17:34 - server.services.ttsServices - INFO - Time for sentence Thanks for confirming. : 4.035519850000128
+2026-08-08 13:17:34 - server.services.engine_class - INFO - placed item 0 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:17:34 - server.services.engine_class - INFO - consuming token of length 18 of id 0
+2026-08-08 13:17:35 - server.services.decoder - INFO - putting chunk generated from the decoder with index 0 in decoder queue
+2026-08-08 13:17:35 - server.services.decoder - INFO - getting audio chunk 0 from decoder queue consumer to stream to the backend
+2026-08-08 13:17:35 - server.services.ttsServices - INFO - Token 0 : 4096 bytes in 0.5572793169994839 seconds
+2026-08-08 13:17:35 - server.services.ttsServices - INFO - TTFT for  let's move to the next question. is 0.5573468089996823
+2026-08-08 13:17:36 - server.services.ttsServices - INFO - Token 10 : 4096 bytes in 1.8499306939993403 seconds
+2026-08-08 13:17:36 - server.services.engine_class - INFO - placed item 100 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:17:36 - server.services.engine_class - INFO - consuming token of length 1978 of id 100
+2026-08-08 13:17:37 - server.services.ttsServices - INFO - Token 20 : 4096 bytes in 3.172283308999795 seconds
+2026-08-08 13:17:38 - server.services.engine_class - INFO - placed item 200 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:17:38 - server.services.engine_class - INFO - consuming token of length 3943 of id 200
+2026-08-08 13:17:38 - server.services.ttsServices - INFO - Time for sentence  let's move to the next question. : 4.307589141999415
+2026-08-08 13:17:38 - server.services.engine_class - INFO - placed item 0 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:17:38 - server.services.engine_class - INFO - consuming token of length 18 of id 0
+2026-08-08 13:17:39 - server.services.decoder - INFO - putting chunk generated from the decoder with index 0 in decoder queue
+2026-08-08 13:17:39 - server.services.decoder - INFO - getting audio chunk 0 from decoder queue consumer to stream to the backend
+2026-08-08 13:17:39 - server.services.ttsServices - INFO - Token 0 : 4096 bytes in 0.5359494750000522 seconds
+2026-08-08 13:17:39 - server.services.ttsServices - INFO - TTFT for  Please give a brief introduction: is 0.5359882360007759
+2026-08-08 13:17:40 - server.services.ttsServices - INFO - Token 10 : 4096 bytes in 1.8197041540006467 seconds
+2026-08-08 13:17:40 - server.services.engine_class - INFO - placed item 100 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:17:40 - server.services.engine_class - INFO - consuming token of length 1980 of id 100
+2026-08-08 13:17:42 - server.services.ttsServices - INFO - Token 20 : 4096 bytes in 3.131336125999951 seconds
+2026-08-08 13:17:42 - server.services.engine_class - INFO - placed item 200 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:17:42 - server.services.engine_class - INFO - consuming token of length 3943 of id 200
+2026-08-08 13:17:43 - server.services.ttsServices - INFO - Token 30 : 4096 bytes in 4.447952956000336 seconds
+2026-08-08 13:17:44 - server.services.ttsServices - INFO - Time for sentence  Please give a brief introduction: : 5.222500409000531
+2026-08-08 13:23:20 - server.services.engine_class - INFO - placed item 0 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:23:20 - server.services.engine_class - INFO - consuming token of length 18 of id 0
+2026-08-08 13:23:21 - server.services.decoder - INFO - putting chunk generated from the decoder with index 0 in decoder queue
+2026-08-08 13:23:21 - server.services.decoder - INFO - getting audio chunk 0 from decoder queue consumer to stream to the backend
+2026-08-08 13:23:21 - server.services.ttsServices - INFO - Token 0 : 4096 bytes in 0.5365772949999155 seconds
+2026-08-08 13:23:21 - server.services.ttsServices - INFO - TTFT for Hello, welcome. is 0.53661820599973
+2026-08-08 13:23:22 - server.services.ttsServices - INFO - Token 10 : 4096 bytes in 1.829825396999695 seconds
+2026-08-08 13:23:22 - server.services.engine_class - INFO - placed item 100 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:23:22 - server.services.engine_class - INFO - consuming token of length 1977 of id 100
+2026-08-08 13:23:23 - server.services.ttsServices - INFO - Token 20 : 4096 bytes in 3.1494262440000966 seconds
+2026-08-08 13:23:24 - server.services.engine_class - INFO - placed item 200 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:23:24 - server.services.engine_class - INFO - consuming token of length 3759 of id 200
+2026-08-08 13:23:24 - server.services.ttsServices - INFO - Time for sentence Hello, welcome. : 4.131583458000023
+2026-08-08 13:23:25 - server.services.engine_class - INFO - placed item 0 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:23:25 - server.services.engine_class - INFO - consuming token of length 18 of id 0
+2026-08-08 13:23:25 - server.services.decoder - INFO - putting chunk generated from the decoder with index 0 in decoder queue
+2026-08-08 13:23:25 - server.services.decoder - INFO - getting audio chunk 0 from decoder queue consumer to stream to the backend
+2026-08-08 13:23:25 - server.services.ttsServices - INFO - Token 0 : 4096 bytes in 0.7817519509999329 seconds
+2026-08-08 13:23:25 - server.services.ttsServices - INFO - TTFT for  To tailor the interview, please confirm the role and level you’re applying for. is 0.7817925520002973
+2026-08-08 13:23:27 - server.services.ttsServices - INFO - Token 10 : 4096 bytes in 2.0703689909996683 seconds
+2026-08-08 13:23:27 - server.services.engine_class - INFO - placed item 100 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:23:27 - server.services.engine_class - INFO - consuming token of length 1976 of id 100
+2026-08-08 13:23:28 - server.services.ttsServices - INFO - Token 20 : 4096 bytes in 3.3797551179995935 seconds
+2026-08-08 13:23:29 - server.services.engine_class - INFO - placed item 200 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:23:29 - server.services.engine_class - INFO - consuming token of length 3942 of id 200
+2026-08-08 13:23:29 - server.services.ttsServices - INFO - Token 30 : 4096 bytes in 4.705952045999766 seconds
+2026-08-08 13:23:31 - server.services.engine_class - INFO - placed item 300 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:23:31 - server.services.engine_class - INFO - consuming token of length 5901 of id 300
+2026-08-08 13:23:31 - server.services.ttsServices - INFO - Token 40 : 4096 bytes in 6.672257430999707 seconds
+2026-08-08 13:23:32 - server.services.engine_class - INFO - placed item 400 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:23:32 - server.services.engine_class - INFO - consuming token of length 7858 of id 400
+2026-08-08 13:23:33 - server.services.ttsServices - INFO - Token 50 : 4096 bytes in 8.001304409999648 seconds
+2026-08-08 13:23:33 - server.services.ttsServices - INFO - Time for sentence  To tailor the interview, please confirm the role and level you’re applying for. : 8.744002225999793
+2026-08-08 13:23:33 - server.services.engine_class - INFO - placed item 0 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:23:33 - server.services.engine_class - INFO - consuming token of length 18 of id 0
+2026-08-08 13:23:34 - server.services.decoder - INFO - putting chunk generated from the decoder with index 0 in decoder queue
+2026-08-08 13:23:34 - server.services.decoder - INFO - getting audio chunk 0 from decoder queue consumer to stream to the backend
+2026-08-08 13:23:34 - server.services.ttsServices - INFO - Token 0 : 4096 bytes in 0.5409214310002426 seconds
+2026-08-08 13:23:34 - server.services.ttsServices - INFO - TTFT for  Could you also share a brief background summary and what draws you to this position? is 0.5409616819997609
+2026-08-08 13:23:35 - server.services.ttsServices - INFO - Token 10 : 4096 bytes in 1.819363300999612 seconds
+2026-08-08 13:23:35 - server.services.engine_class - INFO - placed item 100 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:23:35 - server.services.engine_class - INFO - consuming token of length 1977 of id 100
+2026-08-08 13:23:37 - server.services.engine_class - INFO - placed item 200 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:23:37 - server.services.engine_class - INFO - consuming token of length 3942 of id 200
+2026-08-08 13:23:38 - server.services.ttsServices - INFO - Token 20 : 4096 bytes in 4.441822937000325 seconds
+2026-08-08 13:23:39 - server.services.engine_class - INFO - placed item 300 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:23:39 - server.services.engine_class - INFO - consuming token of length 5902 of id 300
+2026-08-08 13:23:39 - server.services.ttsServices - INFO - Token 30 : 4096 bytes in 5.772332450999784 seconds
+2026-08-08 13:23:41 - server.services.ttsServices - INFO - Token 40 : 4096 bytes in 7.101159654000185 seconds
+2026-08-08 13:23:41 - server.services.engine_class - INFO - placed item 400 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:23:41 - server.services.engine_class - INFO - consuming token of length 7860 of id 400
+2026-08-08 13:23:42 - server.services.ttsServices - INFO - Token 50 : 4096 bytes in 8.433915782999975 seconds
+2026-08-08 13:23:43 - server.services.engine_class - INFO - placed item 500 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:23:43 - server.services.engine_class - INFO - consuming token of length 9828 of id 500
+2026-08-08 13:23:44 - server.services.ttsServices - INFO - Time for sentence  Could you also share a brief background summary and what draws you to this position? : 10.340070866000133
+2026-08-08 13:23:44 - server.services.engine_class - INFO - placed item 0 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:23:44 - server.services.engine_class - INFO - consuming token of length 18 of id 0
+2026-08-08 13:23:44 - server.services.decoder - INFO - putting chunk generated from the decoder with index 0 in decoder queue
+2026-08-08 13:23:44 - server.services.decoder - INFO - getting audio chunk 0 from decoder queue consumer to stream to the backend
+2026-08-08 13:23:44 - server.services.ttsServices - INFO - Token 0 : 4096 bytes in 0.5415338980001252 seconds
+2026-08-08 13:23:44 - server.services.ttsServices - INFO - TTFT for  Once confirmed, Question 1: is 0.5415728580001087
+2026-08-08 13:23:46 - server.services.ttsServices - INFO - Token 10 : 4096 bytes in 1.8347492709999642 seconds
+2026-08-08 13:23:46 - server.services.engine_class - INFO - placed item 100 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:23:46 - server.services.engine_class - INFO - consuming token of length 1978 of id 100
+2026-08-08 13:23:47 - server.services.ttsServices - INFO - Token 20 : 4096 bytes in 3.188227065999854 seconds
+2026-08-08 13:23:48 - server.services.engine_class - INFO - placed item 200 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:23:48 - server.services.engine_class - INFO - consuming token of length 3944 of id 200
+2026-08-08 13:23:49 - server.services.ttsServices - INFO - Time for sentence  Once confirmed, Question 1: : 5.170192789999419
+2026-08-08 13:34:36 - server.services.engine_class - INFO - placed item 0 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:34:36 - server.services.engine_class - INFO - consuming token of length 18 of id 0
+2026-08-08 13:34:36 - server.services.decoder - INFO - putting chunk generated from the decoder with index 0 in decoder queue
+2026-08-08 13:34:36 - server.services.decoder - INFO - getting audio chunk 0 from decoder queue consumer to stream to the backend
+2026-08-08 13:34:36 - server.services.ttsServices - INFO - Token 0 : 4096 bytes in 0.5409388269999909 seconds
+2026-08-08 13:34:36 - server.services.ttsServices - INFO - TTFT for Hello, great to have you here. is 0.5409846180000386
+2026-08-08 13:34:38 - server.services.ttsServices - INFO - Token 10 : 4096 bytes in 1.8326546329999474 seconds
+2026-08-08 13:34:38 - server.services.engine_class - INFO - placed item 100 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:34:38 - server.services.engine_class - INFO - consuming token of length 1976 of id 100
+2026-08-08 13:34:39 - server.services.ttsServices - INFO - Token 20 : 4096 bytes in 3.156271051000658 seconds
+2026-08-08 13:34:39 - server.services.engine_class - INFO - placed item 200 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:34:39 - server.services.engine_class - INFO - consuming token of length 3935 of id 200
+2026-08-08 13:34:41 - server.services.ttsServices - INFO - Time for sentence Hello, great to have you here. : 4.827081314000679
+2026-08-08 13:34:41 - server.services.engine_class - INFO - placed item 0 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:34:41 - server.services.engine_class - INFO - consuming token of length 18 of id 0
+2026-08-08 13:34:42 - server.services.decoder - INFO - putting chunk generated from the decoder with index 0 in decoder queue
+2026-08-08 13:34:42 - server.services.decoder - INFO - getting audio chunk 0 from decoder queue consumer to stream to the backend
+2026-08-08 13:34:42 - server.services.ttsServices - INFO - Token 0 : 4096 bytes in 0.8478138889995535 seconds
+2026-08-08 13:34:42 - server.services.ttsServices - INFO - TTFT for  To start, please give a brief introduction: is 0.8478638199994748
+2026-08-08 13:34:43 - server.services.ttsServices - INFO - Token 10 : 4096 bytes in 2.1386137179997604 seconds
+2026-08-08 13:34:43 - server.services.engine_class - INFO - placed item 100 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:34:43 - server.services.engine_class - INFO - consuming token of length 1975 of id 100
+2026-08-08 13:34:45 - server.services.engine_class - INFO - placed item 200 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:34:45 - server.services.engine_class - INFO - consuming token of length 3941 of id 200
+2026-08-08 13:34:45 - server.services.ttsServices - INFO - Token 20 : 4096 bytes in 4.09752603600009 seconds
+2026-08-08 13:34:46 - server.services.ttsServices - INFO - Token 30 : 4096 bytes in 5.41455561299972 seconds
+2026-08-08 13:34:47 - server.services.engine_class - INFO - placed item 300 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:34:47 - server.services.engine_class - INFO - consuming token of length 5427 of id 300
+2026-08-08 13:34:47 - server.services.ttsServices - INFO - Time for sentence  To start, please give a brief introduction: : 6.06995379899945
+2026-08-08 13:34:48 - server.services.engine_class - INFO - placed item 0 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:34:48 - server.services.engine_class - INFO - consuming token of length 18 of id 0
+2026-08-08 13:34:48 - server.services.decoder - INFO - putting chunk generated from the decoder with index 0 in decoder queue
+2026-08-08 13:34:48 - server.services.decoder - INFO - getting audio chunk 0 from decoder queue consumer to stream to the backend
+2026-08-08 13:34:48 - server.services.ttsServices - INFO - Token 0 : 4096 bytes in 0.8545216630000141 seconds
+2026-08-08 13:34:48 - server.services.ttsServices - INFO - TTFT for  your recent experience, the role you’re pursuing, and what attracts you to this opportunity. is 0.8545615240000188
+2026-08-08 13:34:50 - server.services.ttsServices - INFO - Token 10 : 4096 bytes in 2.144490410999424 seconds
+2026-08-08 13:34:50 - server.services.engine_class - INFO - placed item 100 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:34:50 - server.services.engine_class - INFO - consuming token of length 1978 of id 100
+2026-08-08 13:34:51 - server.services.ttsServices - INFO - Token 20 : 4096 bytes in 3.462191953999536 seconds
+2026-08-08 13:34:52 - server.services.engine_class - INFO - placed item 200 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:34:52 - server.services.engine_class - INFO - consuming token of length 3940 of id 200
+2026-08-08 13:34:52 - server.services.ttsServices - INFO - Token 30 : 4096 bytes in 4.781282261999877 seconds
+2026-08-08 13:34:54 - server.services.engine_class - INFO - placed item 300 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:34:54 - server.services.engine_class - INFO - consuming token of length 5901 of id 300
+2026-08-08 13:34:54 - server.services.ttsServices - INFO - Token 40 : 4096 bytes in 6.107572986999912 seconds
+2026-08-08 13:34:55 - server.services.ttsServices - INFO - Token 50 : 4096 bytes in 7.423539577000156 seconds
+2026-08-08 13:34:55 - server.services.engine_class - INFO - placed item 400 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:34:55 - server.services.engine_class - INFO - consuming token of length 7863 of id 400
+2026-08-08 13:34:56 - server.services.ttsServices - INFO - Token 60 : 4096 bytes in 8.751244989999577 seconds
+2026-08-08 13:34:57 - server.services.engine_class - INFO - placed item 500 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:34:57 - server.services.engine_class - INFO - consuming token of length 9828 of id 500
+2026-08-08 13:34:58 - server.services.ttsServices - INFO - Token 70 : 4096 bytes in 10.081235609000032 seconds
+2026-08-08 13:34:59 - server.services.ttsServices - INFO - Token 80 : 4096 bytes in 11.402786910000032 seconds
+2026-08-08 13:34:59 - server.services.engine_class - INFO - placed item 600 in the queue waiting to be dispatched to the decoder
+2026-08-08 13:34:59 - server.services.engine_class - INFO - consuming token of length 11606 of id 600
+2026-08-08 13:34:59 - server.services.ttsServices - INFO - Time for sentence  your recent experience, the role you’re pursuing, and what attracts you to this opportunity. : 11.844831462000002

@@ -7,6 +7,8 @@ from vllm import AsyncLLMEngine, AsyncEngineArgs
 import asyncio
 import time
 import os
+import wave
+from server.services.fileServices import next_path
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -15,17 +17,21 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 load_dotenv()
 HF_TOKEN = os.environ["HF_TOKEN"]
 
+# Base directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
+DATA_PATH = os.path.join(BASE_DIR, "../../../data/raw/output-%s.wav")
+
 class ttsController:
+    """ Controls interaction with Orpheus3B allowing model loading, cache clean-up and inference
+    """
     def __init__(self):
-        self.queue = asyncio.Queue(maxsize = 50)
         self._models = {}               # in case multiple models are used                  
 
     async def stop(self):
+        """ Perform cleanup by emptying the cached Orpheus3B models
+        """
         # Empty cached models
         self._models = {}
-        # Empty the queue
-        while not self.queue.empty():
-            self.queue.get()
 
     async def start(self, model_name : str):
         """ Load Orpheus3B model into the models dictionary  if not loaded before
@@ -49,9 +55,20 @@ class ttsController:
            pass
 
     async def generate_audio_stream(self, sentence : str, voice : str, model : str):
+        """ Perform Orpheus3B inference and return the result as a streaming response
+
+        Args:
+            sentence (str): the sentence for which we want to perform TTS
+            voice (str): the voice used in Orpheus3B
+            model (str): the model used from the variants of Orpheus3B
+
+        Yields:
+            bytes : audio chunks generated
+        """
         if model not in self._models.keys():
             logger.info(f"model name not in dictionary")
             raise 
+
         start = time.perf_counter()
         syn_tokens = self._models[model].generate_speech(
             prompt=sentence,
@@ -69,15 +86,27 @@ class ttsController:
         # byte rate => 48000
         first = True
         try:
-            for i, chunk in enumerate(syn_tokens):
-                if(i % 10 == 0):
-                    logger.info(msg = f"Token {i} : {len(chunk)} bytes in {time.perf_counter() - start} seconds")
-                if first:
-                    first = False
-                    logger.info(msg = f"TTFT for {sentence} is {time.perf_counter() - start}")
-                yield chunk
-            logger.info(msg = f"Time for sentence {sentence} : {time.perf_counter() - start}")
+            with wave.open(DATA_PATH, "wb") as wf:
+                wf.setnchannels(1)
+                wf.setsampwidth(2)
+                wf.setframerate(24000)
+                for i, chunk in enumerate(syn_tokens):
+                    # Time logging
+                    if(i % 10 == 0):
+                        logger.info(msg = f"Token {i} : {len(chunk)} bytes in {time.perf_counter() - start} seconds")
+                    if first:
+                        first = False
+                        logger.info(msg = f"TTFT for {sentence} is {time.perf_counter() - start}")
+
+                    # Return to the central backend server
+                    yield chunk
+
+                    # Local audio logging
+                    wf.writeframes(chunk)
+                logger.info(msg = f"Time for sentence {sentence} : {time.perf_counter() - start}")
         except Exception:
             logger.exception("Generation failed")
 
 controller = ttsController()
+
+

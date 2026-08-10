@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from server.models.pydantic import BertInput, BertOutput
 from server.services.bertServices import post_process, bert_inference, tokenize_input, load, bert_ready_inference, map
+from server.services.fileServices import save_distilbert
 router = APIRouter()
 
 # this is the endpoint for custom finutuned distilbert model
@@ -15,6 +16,9 @@ def predict(input : BertInput):
 
     # Post process outputs
     emotions, idx, maxProb, result = post_process(predictions)
+
+    # Save inference results
+    save_distilbert(input.sentence, emotions[idx], maxProb, result)
 
     return {
         "text": input.sentence, 

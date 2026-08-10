@@ -1,3 +1,13 @@
+# 
+#  Based on code from Orpheus-TTS
+#  https://github.com/canopyai/Orpheus-TTS.git
+#  
+#  Original copyright © canopylabs.ai.
+#  Licensed under the Apache License 2.0.
+#  
+#  Modified for MultimodalAvatar project.
+#  
+
 import asyncio
 import torch
 import os

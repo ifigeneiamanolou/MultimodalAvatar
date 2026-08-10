@@ -7,7 +7,6 @@ import {
 } from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.8';
 import '../../../global.css';
 
-
 export interface PixelStreamingWrapperProps {
     initialSettings?: Partial<AllSettings>;
 }
@@ -20,12 +19,6 @@ export const PixelStreamingWrapper = ({
 
     // Pixel streaming library instance is stored into this state variable after initialization:
     const pixelStreaming = useRef<PixelStreaming | null>(null);
-    
-    // A boolean state variable that determines if the Click to play overlay is shown:
-    const [clickToPlayVisible, setClickToPlayVisible] = useState(false);
-
-    // A boolean state variable that determines if no WebRTC connection is shown:
-    const [noConnection, setNoConnection] = useState(false);
 
     // Run on component mount:
     useEffect(() => {
@@ -35,79 +28,53 @@ export const PixelStreamingWrapper = ({
             const streaming = new PixelStreaming(config, {
                 videoElementParent: videoParent.current         // The parent DOM element
             });
+            pixelStreaming.current = streaming;
             
             // register a playStreamRejected handler to show Click to play overlay if needed
             streaming.addEventListener('playStreamRejected', () => {  // stream was rejected, redisplay click button
-                setClickToPlayVisible(true);
-                setNoConnection(false);
-                console.log('Pixel stream rejected');
+                console.log('PLAY STREAM REJECTED');
             });
 
             // register a webrtcconnected handler to show click every time a user loads the page
             streaming.addEventListener('webRtcConnected', () => {
-                setClickToPlayVisible(true);
-                setNoConnection(false);
-                console.log('Connected to signaling server');
+                console.log('STREAM REJECTED');
             });
 
             // register a webRtcDisconnected handler to show No WebRTC connection if needed
             streaming.addEventListener('webRtcDisconnected', () => {
-                setNoConnection(true);
-                setClickToPlayVisible(false);
-                console.log("Disconnected from signaling server");
+                console.log('DISCONNECTED');
             });
 
             // register a webRtcConnecting handler to show current state on the console
             streaming.addEventListener('webRtcConnecting', () => {
-                setNoConnection(false);
-                setClickToPlayVisible(true);
-                console.log("connecting ...");
+                console.log('CONNECTING');
             })
 
             // register a webRtcFailed handler to show WebRTC failed if need
             streaming.addEventListener('webRtcFailed', () => {
-                setNoConnection(true);
-                setClickToPlayVisible(false);
-                console.log("WebRTC connection failed");
+                console.log('FAILED');
+                
             });
 
-            // Save the library instance into component state so that it can be accessed later even if pixel streaming hasn't started
-            pixelStreaming.current = streaming;
+            // Start the stream
+            pixelStreaming.current.play();
 
             // Clean up on component unmount:
             return () => {
                 try {
                     streaming.disconnect();
+                } catch (error){
+                    console.log(error);
+                } finally {
                     pixelStreaming.current = null;
-                } catch {}
+                }
             };
         }
-    }, []);
-
-    const connect = () => {
-        pixelStreaming.current?.play();
-        setClickToPlayVisible(false);
-    };
+    }, [initialSettings]);
 
     return (
-        <div className= 'w-full h-full relative place-content-center'>
-            {noConnection ? (
-                <div className = "w-full h-full place-content-center">
-                    <p className = "p-6" > No WebRTC connection </p> 
-                </div>
-            ): (
-                <>
-                    {/* Mount the component */}
-                    <div className = "w-full h-full" ref={videoParent}/>  
-
-                    {clickToPlayVisible ? (
-                        <div className = "absolute top-0 left-0 w-full h-full flex items-center justofy-center bg-black cursor-pointer" 
-                             onClick = {connect}>
-                            <p className = 'p-6 text-white font-bold'> Click to play </p>
-                        </div>
-                    ) : null }
-                </>
-            )}
+        <div className="relative w-full h-full">
+            <div ref={videoParent} className="w-full h-full"/>
         </div>
     );
 };

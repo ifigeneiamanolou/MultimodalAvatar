@@ -19,6 +19,14 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 compute_type = "int8"
 
 def load_model(model_id : str):
+    """ Load a whisper model and cache locally
+
+    Args:
+        model_id (str): the id of the whisper model
+
+    Raises:
+        TypeError: when the model with the given id does not exist
+    """
     # Check model id
     if model_id not in ["small", "tiny", "tiny.en", "base", "base.en", "small", "small.en", "distil-small.en", "medium", "medium.en", "distil-medium.en", "large-v1",
         "large-v2", "large-v3", "large", "distil-large-v2", "distil-large-v3", "large-v3-turbo", "turbo"]:

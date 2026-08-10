@@ -87,4 +87,4 @@ def processScores(scores : np.ndarray) -> str:
 
     end = time.perf_counter()
     logger.info(f"time for emotion2vec post processing : {end - start} seconds")
-    return max_label
+    return max_label, scores

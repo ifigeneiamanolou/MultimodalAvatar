@@ -323,8 +323,10 @@ export default function Home() {
                       ss: 'ws://3.129.236.140:80',    
                       StartVideoMuted: true,
                       HoveringMouse: true,
-                      WaitForStreamer: true
+                      WaitForStreamer: true,
+                      HideUI : false,
                   }}
+
               />
           </div>
 

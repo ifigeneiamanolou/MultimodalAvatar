@@ -11,13 +11,13 @@ from server.services.whisperServices import load_model as load_whisper
 from server.services.whisperServices import transcription
 from server.services.bertServices import load as load_distilbert
 from server.services.bertServices import bert_ready_inference
-from server.services.fileServices import read_audio
+from server.services.fileServices import read_audio, next_path
 import os
 
 # Configure basic logging
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_PATH = os.path.abspath(
-    os.path.join(BASE_DIR, "../../../data/logRuntime.log")
+    os.path.join(BASE_DIR, next_path("../../../data/processed/logRuntime-%s.log"))
 )
 
 os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)

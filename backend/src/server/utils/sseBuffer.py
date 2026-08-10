@@ -1,12 +1,22 @@
 import json
 
 class sseBuffer:
+    """ Buffer for the SSE events from the OpenAI request
+    """
     def __init__(self):
         self.buffer = ""                                        # Buffer for SSE events data
 
-    async def flush_buffer(self, chunk):                       # Async generator
+    async def flush_buffer(self, chunk : str):                       # Async generator
+        """ Extracts SSE events fron the response buffer and yields sentences as a generator
+
+        Args:
+            chunk (str):  a single SSE
+
+        Yields:
+            str: the data sent in the SSE
+        """
         self.buffer += chunk
-        """ Extracts SSE events fron the response buffer and yields sentences as a generator """
+        
         while True:
             try:
                 line_end = self.buffer.find('\n')

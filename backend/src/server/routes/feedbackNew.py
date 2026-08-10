@@ -1,19 +1,12 @@
 from fastapi import APIRouter
 from server.models.pydantic import ResponseModel, UserInput
-from server.services.fileServices import save, saveJSON
-import os
+from server.services.fileServices import save, saveJSON, load_template
 from server.services.nlpServices import get_answer_router
 
 router = APIRouter()
-BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
 
-feedback_path1 = os.path.join(BASE_DIR, "../../../data/templates/feedback1.md")         # Bot : interviewer
-with open(feedback_path1, "r") as f:
-    feedback_prompt1 = f.read()
-
-feedback_path2 = os.path.join(BASE_DIR, "../../../data/templates/feedback2.md")         # Bot : interviewee
-with open(feedback_path2, "r") as f:
-    feedback_prompt2 = f.read()
+feedback_prompt1 = load_template("feedback1")
+feedback_prompt2 = load_template("feedback2")
 
 @router.post("/reset", response_model = ResponseModel)
 async def resetConversation(user_input : UserInput):
