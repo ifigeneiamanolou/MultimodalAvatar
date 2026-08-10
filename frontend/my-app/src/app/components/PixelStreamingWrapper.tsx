@@ -57,7 +57,7 @@ export const PixelStreamingWrapper = ({
             });
 
             // Start the stream
-            pixelStreaming.current.play();
+            pixelStreaming.current?.play();
 
             // Clean up on component unmount:
             return () => {
