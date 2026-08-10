@@ -30,6 +30,7 @@ def save_audio(buffer : bytearray):
         buffer (bytearray): Orpheus3B output
     """
     path = os.path.join(BASE_DIR, next_path("../../../data/raw/output-%s.wav"))
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     with wave.open(path, "wb") as wf:
         wf.setnchannels(1)
         wf.setsampwidth(2)
