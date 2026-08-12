@@ -1,0 +1,229 @@
+2026-08-12 12:40:46 - root - INFO - download models from model hub: hf
+2026-08-12 12:40:47 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/emotion2vec/emotion2vec_plus_seed/revision/main "HTTP/1.1 200 OK"
+2026-08-12 12:40:47 - root - WARNING - trust_remote_code: False
+2026-08-12 12:40:48 - root - INFO - Loading pretrained params from C:\Users\Administrator\.cache\huggingface\hub\models--emotion2vec--emotion2vec_plus_seed\snapshots\7be9a30d52bdc793cc24e6f7d25358d6648927c1\model.pt
+2026-08-12 12:40:48 - root - INFO - ckpt: C:\Users\Administrator\.cache\huggingface\hub\models--emotion2vec--emotion2vec_plus_seed\snapshots\7be9a30d52bdc793cc24e6f7d25358d6648927c1\model.pt
+2026-08-12 12:40:52 - root - INFO - scope_map: ['d2v_model.', 'none', 'module.', 'None']
+2026-08-12 12:40:52 - root - INFO - excludes: None
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.extra_tokens from d2v_model.modality_encoders.AUDIO.extra_tokens in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.alibi_scale from d2v_model.modality_encoders.AUDIO.alibi_scale in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.0.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.0.0.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.1.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.1.0.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.2.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.2.0.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.3.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.3.0.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.4.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.4.0.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.5.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.5.0.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.6.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.6.0.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.project_features.1.weight from d2v_model.modality_encoders.AUDIO.project_features.1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.project_features.1.bias from d2v_model.modality_encoders.AUDIO.project_features.1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.project_features.2.weight from d2v_model.modality_encoders.AUDIO.project_features.2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.project_features.2.bias from d2v_model.modality_encoders.AUDIO.project_features.2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.1.0.weight from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.1.0.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.1.0.bias from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.1.0.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.2.0.weight from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.2.0.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.2.0.bias from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.2.0.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.3.0.weight from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.3.0.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.3.0.bias from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.3.0.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.4.0.weight from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.4.0.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.4.0.bias from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.4.0.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.5.0.weight from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.5.0.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.5.0.bias from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.5.0.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.norm.weight from d2v_model.modality_encoders.AUDIO.context_encoder.norm.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.norm.bias from d2v_model.modality_encoders.AUDIO.context_encoder.norm.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.0.norm1.weight from d2v_model.blocks.0.norm1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.0.norm1.bias from d2v_model.blocks.0.norm1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.0.attn.qkv.weight from d2v_model.blocks.0.attn.qkv.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.0.attn.qkv.bias from d2v_model.blocks.0.attn.qkv.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.0.attn.proj.weight from d2v_model.blocks.0.attn.proj.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.0.attn.proj.bias from d2v_model.blocks.0.attn.proj.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.0.norm2.weight from d2v_model.blocks.0.norm2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.0.norm2.bias from d2v_model.blocks.0.norm2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.0.mlp.fc1.weight from d2v_model.blocks.0.mlp.fc1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.0.mlp.fc1.bias from d2v_model.blocks.0.mlp.fc1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.0.mlp.fc2.weight from d2v_model.blocks.0.mlp.fc2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.0.mlp.fc2.bias from d2v_model.blocks.0.mlp.fc2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.1.norm1.weight from d2v_model.blocks.1.norm1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.1.norm1.bias from d2v_model.blocks.1.norm1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.1.attn.qkv.weight from d2v_model.blocks.1.attn.qkv.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.1.attn.qkv.bias from d2v_model.blocks.1.attn.qkv.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.1.attn.proj.weight from d2v_model.blocks.1.attn.proj.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.1.attn.proj.bias from d2v_model.blocks.1.attn.proj.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.1.norm2.weight from d2v_model.blocks.1.norm2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.1.norm2.bias from d2v_model.blocks.1.norm2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.1.mlp.fc1.weight from d2v_model.blocks.1.mlp.fc1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.1.mlp.fc1.bias from d2v_model.blocks.1.mlp.fc1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.1.mlp.fc2.weight from d2v_model.blocks.1.mlp.fc2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.1.mlp.fc2.bias from d2v_model.blocks.1.mlp.fc2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.2.norm1.weight from d2v_model.blocks.2.norm1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.2.norm1.bias from d2v_model.blocks.2.norm1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.2.attn.qkv.weight from d2v_model.blocks.2.attn.qkv.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.2.attn.qkv.bias from d2v_model.blocks.2.attn.qkv.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.2.attn.proj.weight from d2v_model.blocks.2.attn.proj.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.2.attn.proj.bias from d2v_model.blocks.2.attn.proj.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.2.norm2.weight from d2v_model.blocks.2.norm2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.2.norm2.bias from d2v_model.blocks.2.norm2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.2.mlp.fc1.weight from d2v_model.blocks.2.mlp.fc1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.2.mlp.fc1.bias from d2v_model.blocks.2.mlp.fc1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.2.mlp.fc2.weight from d2v_model.blocks.2.mlp.fc2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.2.mlp.fc2.bias from d2v_model.blocks.2.mlp.fc2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.3.norm1.weight from d2v_model.blocks.3.norm1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.3.norm1.bias from d2v_model.blocks.3.norm1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.3.attn.qkv.weight from d2v_model.blocks.3.attn.qkv.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.3.attn.qkv.bias from d2v_model.blocks.3.attn.qkv.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.3.attn.proj.weight from d2v_model.blocks.3.attn.proj.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.3.attn.proj.bias from d2v_model.blocks.3.attn.proj.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.3.norm2.weight from d2v_model.blocks.3.norm2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.3.norm2.bias from d2v_model.blocks.3.norm2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.3.mlp.fc1.weight from d2v_model.blocks.3.mlp.fc1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.3.mlp.fc1.bias from d2v_model.blocks.3.mlp.fc1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.3.mlp.fc2.weight from d2v_model.blocks.3.mlp.fc2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.3.mlp.fc2.bias from d2v_model.blocks.3.mlp.fc2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.4.norm1.weight from d2v_model.blocks.4.norm1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.4.norm1.bias from d2v_model.blocks.4.norm1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.4.attn.qkv.weight from d2v_model.blocks.4.attn.qkv.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.4.attn.qkv.bias from d2v_model.blocks.4.attn.qkv.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.4.attn.proj.weight from d2v_model.blocks.4.attn.proj.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.4.attn.proj.bias from d2v_model.blocks.4.attn.proj.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.4.norm2.weight from d2v_model.blocks.4.norm2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.4.norm2.bias from d2v_model.blocks.4.norm2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.4.mlp.fc1.weight from d2v_model.blocks.4.mlp.fc1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.4.mlp.fc1.bias from d2v_model.blocks.4.mlp.fc1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.4.mlp.fc2.weight from d2v_model.blocks.4.mlp.fc2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.4.mlp.fc2.bias from d2v_model.blocks.4.mlp.fc2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.5.norm1.weight from d2v_model.blocks.5.norm1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.5.norm1.bias from d2v_model.blocks.5.norm1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.5.attn.qkv.weight from d2v_model.blocks.5.attn.qkv.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.5.attn.qkv.bias from d2v_model.blocks.5.attn.qkv.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.5.attn.proj.weight from d2v_model.blocks.5.attn.proj.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.5.attn.proj.bias from d2v_model.blocks.5.attn.proj.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.5.norm2.weight from d2v_model.blocks.5.norm2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.5.norm2.bias from d2v_model.blocks.5.norm2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.5.mlp.fc1.weight from d2v_model.blocks.5.mlp.fc1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.5.mlp.fc1.bias from d2v_model.blocks.5.mlp.fc1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.5.mlp.fc2.weight from d2v_model.blocks.5.mlp.fc2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.5.mlp.fc2.bias from d2v_model.blocks.5.mlp.fc2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.6.norm1.weight from d2v_model.blocks.6.norm1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.6.norm1.bias from d2v_model.blocks.6.norm1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.6.attn.qkv.weight from d2v_model.blocks.6.attn.qkv.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.6.attn.qkv.bias from d2v_model.blocks.6.attn.qkv.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.6.attn.proj.weight from d2v_model.blocks.6.attn.proj.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.6.attn.proj.bias from d2v_model.blocks.6.attn.proj.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.6.norm2.weight from d2v_model.blocks.6.norm2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.6.norm2.bias from d2v_model.blocks.6.norm2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.6.mlp.fc1.weight from d2v_model.blocks.6.mlp.fc1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.6.mlp.fc1.bias from d2v_model.blocks.6.mlp.fc1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.6.mlp.fc2.weight from d2v_model.blocks.6.mlp.fc2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.6.mlp.fc2.bias from d2v_model.blocks.6.mlp.fc2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.7.norm1.weight from d2v_model.blocks.7.norm1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.7.norm1.bias from d2v_model.blocks.7.norm1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.7.attn.qkv.weight from d2v_model.blocks.7.attn.qkv.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.7.attn.qkv.bias from d2v_model.blocks.7.attn.qkv.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.7.attn.proj.weight from d2v_model.blocks.7.attn.proj.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.7.attn.proj.bias from d2v_model.blocks.7.attn.proj.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.7.norm2.weight from d2v_model.blocks.7.norm2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.7.norm2.bias from d2v_model.blocks.7.norm2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.7.mlp.fc1.weight from d2v_model.blocks.7.mlp.fc1.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.7.mlp.fc1.bias from d2v_model.blocks.7.mlp.fc1.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.7.mlp.fc2.weight from d2v_model.blocks.7.mlp.fc2.weight in ckpt
+2026-08-12 12:40:52 - root - INFO - init param, map: blocks.7.mlp.fc2.bias from d2v_model.blocks.7.mlp.fc2.bias in ckpt
+2026-08-12 12:40:52 - root - INFO - Loading ckpt: C:\Users\Administrator\.cache\huggingface\hub\models--emotion2vec--emotion2vec_plus_seed\snapshots\7be9a30d52bdc793cc24e6f7d25358d6648927c1\model.pt, status: <All keys matched successfully>
+2026-08-12 12:40:52 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/Systran/faster-whisper-small/revision/main "HTTP/1.1 200 OK"
+2026-08-12 12:40:56 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/TuhinG/distilbert-goemotions/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-08-12 12:40:56 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/TuhinG/distilbert-goemotions/99ec431ef1d64e02e3428740cef20dd8d1752f87/config.json "HTTP/1.1 200 OK"
+2026-08-12 12:40:56 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/TuhinG/distilbert-goemotions/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-08-12 12:40:56 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/TuhinG/distilbert-goemotions/99ec431ef1d64e02e3428740cef20dd8d1752f87/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-08-12 12:40:56 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/TuhinG/distilbert-goemotions/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-08-12 12:40:56 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/TuhinG/distilbert-goemotions/99ec431ef1d64e02e3428740cef20dd8d1752f87/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-08-12 12:40:56 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/TuhinG/distilbert-goemotions/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-08-12 12:40:56 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/TuhinG/distilbert-goemotions/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-08-12 12:40:56 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/TuhinG/distilbert-goemotions/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-08-12 12:40:56 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/TuhinG/distilbert-goemotions/99ec431ef1d64e02e3428740cef20dd8d1752f87/config.json "HTTP/1.1 200 OK"
+2026-08-12 12:40:57 - server.services.bertServices - INFO - passing sentence This is a warmup sentence for the machine learning models through distilbert
+2026-08-12 12:40:58 - server.services.bertServices - INFO - time for distilbert inference : 1.8493555999999671 seconds
+2026-08-12 12:40:59 - server.services.emotionsServices - INFO - Time for emotion2vec inference : 0.8872245000000021 seconds
+2026-08-12 12:41:00 - faster_whisper - INFO - Processing audio with duration 00:08.533
+2026-08-12 12:41:00 - faster_whisper - INFO - VAD filter removed 00:02.101 of audio
+2026-08-12 12:41:03 - server.services.whisperServices - INFO - time for whisper inference : 3.4101038000000017 seconds
+2026-08-12 12:43:48 - server.services.bertServices - INFO - passing sentence Hello, nice to meet you. through distilbert
+2026-08-12 12:43:48 - server.services.bertServices - INFO - time for distilbert inference : 0.03398709999999028 seconds
+2026-08-12 12:43:48 - server.services.bertServices - INFO - time for distilbert mapping : 0.00032260000000405853 seconds
+2026-08-12 12:43:48 - server.services.bertServices - INFO - time for distilbert post processing : 0.011781999999925574 seconds
+2026-08-12 12:43:52 - server.services.bertServices - INFO - passing sentence  To tailor the interview, please tell me: through distilbert
+2026-08-12 12:43:53 - server.services.bertServices - INFO - time for distilbert inference : 0.03143840000007003 seconds
+2026-08-12 12:43:53 - server.services.bertServices - INFO - time for distilbert mapping : 9.269999998195999e-05 seconds
+2026-08-12 12:43:53 - server.services.bertServices - INFO - time for distilbert post processing : 0.0002025999999659689 seconds
+2026-08-12 12:43:58 - server.services.bertServices - INFO - passing sentence  1) the role you’re interviewing for (title and industry), 2) a brief snapshot of your relevant experience, and 3) any specific strengths you want to highlight. through distilbert
+2026-08-12 12:43:58 - server.services.bertServices - INFO - time for distilbert inference : 0.057259900000076414 seconds
+2026-08-12 12:43:58 - server.services.bertServices - INFO - time for distilbert mapping : 0.00010080000004109024 seconds
+2026-08-12 12:43:58 - server.services.bertServices - INFO - time for distilbert post processing : 0.00011110000002645393 seconds
+2026-08-12 12:44:17 - server.services.bertServices - INFO - passing sentence  If you’d like, we can start with a classic opener: through distilbert
+2026-08-12 12:44:17 - server.services.bertServices - INFO - time for distilbert inference : 0.027897400000028938 seconds
+2026-08-12 12:44:17 - server.services.bertServices - INFO - time for distilbert mapping : 8.409999998093554e-05 seconds
+2026-08-12 12:44:17 - server.services.bertServices - INFO - time for distilbert post processing : 8.319999994910177e-05 seconds
+2026-08-12 12:44:26 - server.services.bertServices - INFO - passing sentence  “Tell me about yourself.” through distilbert
+2026-08-12 12:44:26 - server.services.bertServices - INFO - time for distilbert inference : 0.020173500000055355 seconds
+2026-08-12 12:44:26 - server.services.bertServices - INFO - time for distilbert mapping : 0.00011099999994712562 seconds
+2026-08-12 12:44:26 - server.services.bertServices - INFO - time for distilbert post processing : 9.399999999004649e-05 seconds
+2026-08-12 13:05:47 - __main__ - INFO - Windows Server shutting down ...

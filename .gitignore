@@ -28,7 +28,6 @@ backend/src/services/__pycache__/
 backend/src/utils/__pycache__/
 
 # Working data
-backend/data/processed/
 backend/data/raw/
 backend/data/feedback/
 
