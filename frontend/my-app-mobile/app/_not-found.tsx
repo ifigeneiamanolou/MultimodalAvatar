@@ -6,7 +6,7 @@ export default function NotFound(){
         <>
             <Stack.Screen options = {{'title' : "404-Not Found"}}/>
             <View>
-                <Link href = "/(tabs)/index">
+                <Link href = "/(tabs)">
                     Go to home page
                 </Link>
             </View>
