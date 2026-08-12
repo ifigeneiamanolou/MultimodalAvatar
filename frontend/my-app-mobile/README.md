@@ -1,50 +1,54 @@
-# Welcome to your Expo app 👋
+# Introduction
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+The app is build using the Expo framework intended for mobile applications (iOs and Android). It is based on Typescript, along with React and tailwind css. NativeWind and react-native are used to cater for mobile application needs. To render the pixel streaming application, a web view is used, since the library pixel-streaming-frontend-ue5.8 can only be used within web applications. A pre-made frontend based on typescript is spinned up when the Expo server starts. This is fetched from the official Pixel Streaming Infrastructure
+repository from Epic Games.
 
-## Get started
+# Get started
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
+1. Redirect to the folder "my-app-mobile" after cloning the repository
 
    ```bash
-   npx expo start
+   cd frontend/my-app-mobile
    ```
 
-In the output, you'll find options to open the app in a
+2. Ensure NodeJS and npm are installed through:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+   ```bash
+   node --version
+   npm --version
+   ```
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Make sure the NodeJS version is at least v18.0.0
 
-## Get a fresh project
+3. Install expo
 
-When you're ready, run:
+   ```bash
+   npm install expo
+   ```
 
-```bash
-npm run reset-project
-```
+4. Clone the epic games repository, install the necessary dependancies and build the frontend
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+   ```bash
+   npm run setup
+   ```
 
-## Learn more
+4. If you wish to start the frontend server in development mode, along with the web page used for pixel streaming, run:
 
-To learn more about developing your project with Expo, look at the following resources:
+   ```bash
+   npm run dev
+   ```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+This will provide a QR code for the mobile app that can be used to view the mobile app.
 
-## Join the community
+5. To run the two servers in production mode use:
 
-Join our community of developers creating universal apps.
+   ```bash
+   npm run prod
+   ```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+# Frontend structure
+The source code is located into the following folders:
+* app : central code for all the pages of the mobile application
+* constants : custom color pallette
+* hooks : custom hooks (to allow recording through expo audio)
+

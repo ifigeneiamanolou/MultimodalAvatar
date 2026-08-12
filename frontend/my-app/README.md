@@ -1,6 +1,6 @@
 # Introduction
 
-The app is build using the Expo framework in order to enable both Android/ios installation and web applications. It is based on Typescript, along with React, tailwind css and nativewind to accomodate for mobile apps' appearance.
+The app is build using the Expo framework intended for web applications. It is based on Typescript, along with React and tailwind css.
 
 # Get started
 
@@ -37,8 +37,7 @@ Make sure the NodeJS version is at least v18.0.0
    npx expo start
    ```
 
-This will also provide a QR to view the app in Android or iOS but the Expo app needs to be downloaded on the phone on 
-which the mobile application is intended to be viewed. Right now the application only supports web development.
+This will also provide a QR code for the mobile app but the mobile app is supported by the Expo app "my-app-mobile".
 
 # Frontend structure
 The source code is located into the "src" folder, which is divided into the "app" folder and the "hooks" folder. The first one contains all the pages ("pages" folder) and the components used in them ("components" folder), like pop ups. The second one contains importable functions, that do not render content, but are used from the pages and the components, to improve readability.
