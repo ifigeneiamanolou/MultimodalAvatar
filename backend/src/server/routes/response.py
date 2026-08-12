@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
-from server.services.nlpServices import get_answer_router, get_answer_router_stream
+from server.services.nlpServices import get_answer_router, get_answer_router_stream, get_answer_router_stream_mobile
 from server.models.pydantic import LLMInput, ResponseModel
 from server.services.fileServices import save, load_template
 
@@ -68,5 +68,18 @@ async def generateTextResponse(user_input :LLMInput):
         media_type = "text/event-stream",
         headers = headers
     )
- 
-    
+
+@router.post("/response/stream/mobile")
+async def generateTextResponse(user_input :LLMInput):
+    """ Generates a response from the LLM, streams it to Orpheus and returns it at once to the frontend
+    Args:
+        user_input (LLMInput): Contains the user text query and the type of the interviewee
+    """
+    # Generate response from OpenAI
+    result = await get_answer_router_stream_mobile(
+        input = [m.model_dump() for m in user_input.input],
+        instructions = prompt1 if user_input.interview_type == 1 else prompt2,
+        emotion = user_input.emotion,
+        model = user_input.model,
+    )
+    return result

@@ -60,7 +60,7 @@ def load_template(template : str = ["feedback1", "feedback2", "emotions", "inter
     Args:
         template (str) : name of template file in local storage
     """
-    template_path = os.path.join(BASE_DIR, f"../../data/templates/{template}.md")         # Bot : interviewee
+    template_path = os.path.join(BASE_DIR, f"../../../data/templates/{template}.md")         # Bot : interviewee
     with open(template_path , "r") as f:
         prompt = f.read()
     return prompt

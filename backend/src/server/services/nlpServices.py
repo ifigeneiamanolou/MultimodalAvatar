@@ -82,7 +82,68 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
     except Exception as e:
         logger.error(msg = f"Error during processing of NLP : {e}")
     finally:   
-        await consumerTask                         # Await for the queue to finish consuming the sentences   
+        await consumerTask                         # Await for the queue to finish consuming the sentences  
+
+async def get_answer_router_stream_mobile(input : list, instructions : str, emotion : str, model : str):
+    """ Stream the model's streaming response through OpenRouter API through SSEs
+
+    Args:
+        input (str): Input of the user
+        instructions (str): Default instructions used in every prompt
+        emotion (str) : emotion label
+        model (str) : model name to use for inference
+    """
+    url = "https://openrouter.ai/api/v1/chat/completions"
+
+    # Authorization headers for OpenRouter API
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    # Input processing
+    input = input_processing(input, instructions, emotion, "developer")
+
+    # Request payload
+    payload = {
+        "model": model,
+        "messages": input,
+        "stream": True
+    }
+
+    buffer = sentenceBuffer()
+    bufferSmall = sseBuffer()
+    consumerTask = asyncio.create_task(syncCoordinator.consume())
+    start = time.perf_counter()
+    path = None         # Used to save the response from the LLM
+    response = ""
+    try:
+        index = 0
+        async with http_client.stream(url = url, headers = headers, json = payload, method = "POST") as r:
+            async for chunk in r.aiter_text(chunk_size = 1024):
+                if index == 0:
+                    logger.info(f"Time until first chunk from NLP : {time.perf_counter() - start} seconds")
+                index = index + 1
+                if(index != 0 and index % 10 == 0):
+                    logger.info(f"Time until token number {index} is {time.perf_counter() - start} seconds")
+                async for token in bufferSmall.flush_buffer(chunk):    
+                    async for sentence in buffer.add(token):  
+                        response += sentence     
+                        path = save_response(path, sentence)    
+                        logger.info(f"Time until sentence {sentence} from NLP : {time.perf_counter() - start}")
+                        await syncCoordinator.produce(sentence)        # Pass the sentence to the asyncio Queue
+
+        async for sentence in buffer.flush():
+            if(sentence):
+                await syncCoordinator.produce(sentence)                 # Pass the remaining data to the Queue if they exist
+                path = save_response(path, sentence)   
+        await syncCoordinator.produce("[[DONE]]")  # Signal the end of the stream
+        logger.info(f"Full NLP response in {time.perf_counter() - start}")
+        return sentence
+    except Exception as e:
+        logger.error(msg = f"Error during processing of NLP : {e}")
+    finally:   
+        await consumerTask                         # Await for the queue to finish consuming the sentences  
 
 def input_processing(input : list, instructions : str, emotion : str, role : str) -> list:
     """ Preprocess the user input to include emotion detected and instructions

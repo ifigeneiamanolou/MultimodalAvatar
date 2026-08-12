@@ -68,7 +68,7 @@ origins = ["http://localhost:8081"]             # Fronted expo server
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins = origins,          # Change in production    
+    allow_origins = ["*"],          # Change in production    
     allow_headers = ["*"],
     allow_methods = ["*"],
     allow_credentials = True      
@@ -76,4 +76,4 @@ app.add_middleware(
     
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host = "127.0.0.1", port = 8000, ws_ping_interval = 20, ws_ping_timeout = 60)
+    uvicorn.run(app, host = "0.0.0.0", port = 8000, ws_ping_interval = 20, ws_ping_timeout = 60)

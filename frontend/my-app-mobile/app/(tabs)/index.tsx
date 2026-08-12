@@ -4,7 +4,6 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useRef, useState, useEffect, } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import useRecorder from '@/hooks/record';
-import { fetchEventSource } from '@microsoft/fetch-event-source';
 import uuid from 'react-native-uuid';
 import WebView from 'react-native-webview';
 
@@ -21,7 +20,7 @@ const showAlert = (title : string, message : string) => {
 export default function Index(){
     // Placeholder for input text
     const [text, onChangeText] = useState('');
-    const [messages, setMessages] = useState<Map<string, {role : string, content : string}>>();
+    const [messages, setMessages] = useState<Map<string, {role : string, content : string}>>(new Map());
     const nlpRunning = useRef(false);
 
     // Web socket connection with whisper
@@ -68,9 +67,7 @@ export default function Index(){
               showAlert('Error', 'No voice detected. Try again.');
             } else {
               const id = uuid.v4();
-              messages?.set(id, {role : 'user', content : response});
-
-              // Fetch a response from OpenAI 
+              setMessages(messages.set(id, {role : 'user', content : response}));
               fetchData();
             }
           }
@@ -102,7 +99,7 @@ export default function Index(){
 
         // Update the map of sentences
         const id = uuid.v4();
-        messages?.set(id, {role : 'user', content : text});
+        setMessages(messages.set(id, {role : 'user', content : text}));
 
         // Fetch a response from OpenAI 
         fetchData();
@@ -114,7 +111,7 @@ export default function Index(){
     // Fetch an NLP response
     const fetchData = async () => {
         const emotionState = emotion.current ? emotion.current : "neutral";
-        const input = messages?.values().toArray();
+        const input = Array.from(messages.values());
 
         if(nlpRunning.current) {
             showAlert('Error', 'Waiting for the bot to respond first!')
@@ -122,57 +119,35 @@ export default function Index(){
 
         nlpRunning.current = true;
 
+        var id = ""
         try{
-            var id = ""
-            await fetchEventSource("http://localhost:8000/response/stream", {
+            const res = await fetch("http:/192.168.1.188:8000/response/stream/mobile", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': "text/event-stream",
                 },
-                body: JSON.stringify({input, interview_type : 1, emotion : emotionState}),
-                onopen: async (res : Response) => {
-                    if (res.ok && res.status === 200) {
-                        console.log("Connection made ", res, " with code ", res.status);
+                body: JSON.stringify({emotion : emotionState, input : input, interview_type : 1})
+            });
 
-                        // Create a new entry in the array messages
-                        id = crypto.randomUUID();
-                        messages?.set(id, {role : 'user', content : ""});
-                        
-                    } else if (
-                        res.status >= 400 &&
-                        res.status < 500 &&
-                        res.status !== 429
-                    ) {
-                        console.log("Client side error ", res, "with code ", res.status);
-                        showAlert('Error', 'Cannot produce a valid nlp response');
-                    }
-                },
-                onmessage(event) {
-                    console.log("Data from NLP", event.data);
+            // Handle the response from emotion recognition endpoint
+            if(res.ok && res.status == 200){
+                const nlpResponse  = await res.json();
+                console.log("Connection made ", res, " with code ", res.status);
 
-                    // Update the list of messages
-                    var message = messages?.get(id);
-                    if(message?.content){
-                        message.content += event.data;
-                        messages?.set(id, message);
-                    };
-                },
-                onclose() {
-                    console.log("Connection closed by the server");
-                },
-                onerror(err) {
-                    console.log("There was an error from server", err);
-                    showAlert('Error', 'Server error while generating a response');
-                },
-            },)
-        } catch (err){
-            console.log("fetchData error:", err);
-            showAlert('Error', 'Could not reach the server');
+                // Create a new entry in the array messages
+                id = crypto.randomUUID();
+                setMessages(messages.set(id, {role : 'user', content : nlpResponse}));
+            } else{
+                console.log('Error during nlp response generation with status ', res.status);
+                showAlert('Error', 'Error during nlp response');
+            }
+        } catch (e){
+            console.log('Error connecting to the local backend server ', e);
+            showAlert('Error', 'Server connection issue');
         } finally {
             nlpRunning.current = false;
         }
-    };
+    }; 
 
     const handleFeedback = async () => {
         // Ensure the conversation has started
@@ -186,7 +161,7 @@ export default function Index(){
         const type = 1;
         var response = "";
         try{
-            const res = await fetch("http://localhost:8000/feedback", {
+            const res = await fetch("http:/192.168.1.188:8000/feedback", {
                 method : "POST",
                 body : JSON.stringify({input : messages, interview_type : type}),
                 headers: {"Content-Type": "application/json"}
@@ -197,15 +172,13 @@ export default function Index(){
             console.log("fetchData error:", err);
             showAlert('Error', 'Could not reach the server');
             return;
-        }   
-
-        
-    }
+        }  
+    };
 
     const handleNew = async () => {
         const type = 1;
         try{
-            await fetch("http://localhost:8000/reset", {
+            await fetch("http:/192.168.1.188:8000/reset", {
                 method : "POST",
                 body : JSON.stringify({interview_type : type, input : messages}),
                 headers: {"Content-Type": "application/json"}
