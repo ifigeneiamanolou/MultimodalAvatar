@@ -34,3 +34,6 @@ backend/data/feedback/
 
 # Orpheus
 Orpheus-TTS/
+
+# Pixel streaming repository
+frontend/PixelStreamingInfrastructure/
