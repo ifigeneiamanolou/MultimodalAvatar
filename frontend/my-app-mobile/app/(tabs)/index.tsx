@@ -231,7 +231,9 @@ export default function Index(){
             <SafeAreaView  className = 'flex-1'>
                 <View className = "flex-1">
                     <WebView
-                        source={{ uri: 'http://localhost:8080/player.html' }}
+                        // REPLACE WITH YOUR IPV4 (passing the elastic ip of the windows instance where the 
+                        // signaling server is hosted)
+                        source={{ uri: 'http:/192.168.1.188:8080/player.html?ss=ws://3.129.236.140:80' }}        
                         style={{ flex: 1 }}
                         onError={(syntheticEvent) => {
                             const { nativeEvent } = syntheticEvent;

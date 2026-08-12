@@ -38,7 +38,10 @@ Make sure the NodeJS version is at least v18.0.0
    npm run dev
    ```
 
-This will provide a QR code for the mobile app that can be used to view the mobile app.
+This will provide a QR code for the mobile app that can be used to view the mobile app. If when trying to connect
+to the application, the connection is refused or timed out check that:
+* the uri provided in the WebView component in app/(tabs)/index.tsx is the ipv4 address under 'Wireless LAN adapter Wi-Fi' when running 'ipconfig' in windows powershell
+* port 8080 is included in the inbound ports in Windows firewall
 
 5. To run the two servers in production mode use:
 
