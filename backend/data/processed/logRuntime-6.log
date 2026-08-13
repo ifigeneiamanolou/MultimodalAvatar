@@ -28,13 +28,13 @@
 2026-08-12 15:43:49 - server.services.nlpServices - INFO - Time until sentence  To tailor the interview, please tell me: from NLP : 9.584804099999928
 2026-08-12 15:43:49 - server.utils.controller - INFO - Produced sentence in the queue :  To tailor the interview, please tell me:
 2026-08-12 15:43:49 - server.services.nlpServices - INFO - Time until token number 190 is 9.743249200000037 seconds
-2026-08-12 15:43:49 - server.services.nlpServices - INFO - Time until sentence  1) the role you’re interviewing for (title and industry), 2) a brief snapshot of your relevant experience, and 3) any specific strengths you want to highlight. from NLP : 10.003127100000029
-2026-08-12 15:43:49 - server.utils.controller - INFO - Produced sentence in the queue :  1) the role you’re interviewing for (title and industry), 2) a brief snapshot of your relevant experience, and 3) any specific strengths you want to highlight.
+2026-08-12 15:43:49 - server.services.nlpServices - INFO - Time until sentence  1) the role youï¿½re interviewing for (title and industry), 2) a brief snapshot of your relevant experience, and 3) any specific strengths you want to highlight. from NLP : 10.003127100000029
+2026-08-12 15:43:49 - server.utils.controller - INFO - Produced sentence in the queue :  1) the role youï¿½re interviewing for (title and industry), 2) a brief snapshot of your relevant experience, and 3) any specific strengths you want to highlight.
 2026-08-12 15:43:49 - server.utils.controller - INFO - Time for emotion generation of [Hello, nice to meet you.] is 0.5860709999999472
-2026-08-12 15:43:49 - server.services.nlpServices - INFO - Time until sentence  If you’d like, we can start with a classic opener: from NLP : 10.159961899999871
-2026-08-12 15:43:49 - server.utils.controller - INFO - Produced sentence in the queue :  If you’d like, we can start with a classic opener:
+2026-08-12 15:43:49 - server.services.nlpServices - INFO - Time until sentence  If youï¿½d like, we can start with a classic opener: from NLP : 10.159961899999871
+2026-08-12 15:43:49 - server.utils.controller - INFO - Produced sentence in the queue :  If youï¿½d like, we can start with a classic opener:
 2026-08-12 15:43:49 - server.services.nlpServices - INFO - Time until token number 200 is 10.177719099999877 seconds
-2026-08-12 15:43:49 - server.utils.controller - INFO - Produced sentence in the queue :  “Tell me about yourself.”
+2026-08-12 15:43:49 - server.utils.controller - INFO - Produced sentence in the queue :  ï¿½Tell me about yourself.ï¿½
 2026-08-12 15:43:49 - server.utils.controller - INFO - Produced sentence in the queue : [[DONE]]
 2026-08-12 15:43:49 - server.services.nlpServices - INFO - Full NLP response in 10.337267999999995
 2026-08-12 15:43:51 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 2.8508518000001004
@@ -49,8 +49,8 @@
 2026-08-12 15:43:59 - server.utils.controller - INFO - Time until token 20 is received in the controller from Oprheus3B is 5.566299600000093
 2026-08-12 15:43:59 - server.utils.controller - INFO - Time sentence [ To tailor the interview, please tell me:] is finished from Oprheus is 5.567454600000019
 2026-08-12 15:43:59 - server.utils.controller - INFO - Total processing time of sentence [ To tailor the interview, please tell me:] is 5.568175899999915 seconds
-2026-08-12 15:43:59 - server.utils.controller - INFO - Current sentence consumed is 2 :  1) the role you’re interviewing for (title and industry), 2) a brief snapshot of your relevant experience, and 3) any specific strengths you want to highlight.
-2026-08-12 15:43:59 - server.utils.controller - INFO - Time for emotion generation of [ 1) the role you’re interviewing for (title and industry), 2) a brief snapshot of your relevant experience, and 3) any specific strengths you want to highlight.] is 0.5622874000000593
+2026-08-12 15:43:59 - server.utils.controller - INFO - Current sentence consumed is 2 :  1) the role youï¿½re interviewing for (title and industry), 2) a brief snapshot of your relevant experience, and 3) any specific strengths you want to highlight.
+2026-08-12 15:43:59 - server.utils.controller - INFO - Time for emotion generation of [ 1) the role youï¿½re interviewing for (title and industry), 2) a brief snapshot of your relevant experience, and 3) any specific strengths you want to highlight.] is 0.5622874000000593
 2026-08-12 15:44:02 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 2.9817215000000488
 2026-08-12 15:44:02 - server.utils.controller - INFO - Time until token 10 is received in the controller from Oprheus3B is 3.3180114000001595
 2026-08-12 15:44:04 - server.utils.controller - INFO - Time until token 20 is received in the controller from Oprheus3B is 5.269399000000021
@@ -61,20 +61,20 @@
 2026-08-12 15:44:13 - server.utils.controller - INFO - Time until token 70 is received in the controller from Oprheus3B is 13.702619200000072
 2026-08-12 15:44:15 - server.utils.controller - INFO - Time until token 80 is received in the controller from Oprheus3B is 15.666813400000137
 2026-08-12 15:44:15 - server.utils.controller - INFO - Time until token 90 is received in the controller from Oprheus3B is 15.991875400000026
-2026-08-12 15:44:17 - server.utils.controller - INFO - Time sentence [ 1) the role you’re interviewing for (title and industry), 2) a brief snapshot of your relevant experience, and 3) any specific strengths you want to highlight.] is finished from Oprheus is 18.31330650000018
-2026-08-12 15:44:17 - server.utils.controller - INFO - Total processing time of sentence [ 1) the role you’re interviewing for (title and industry), 2) a brief snapshot of your relevant experience, and 3) any specific strengths you want to highlight.] is 18.31366009999988 seconds
-2026-08-12 15:44:17 - server.utils.controller - INFO - Current sentence consumed is 3 :  If you’d like, we can start with a classic opener:
-2026-08-12 15:44:18 - server.utils.controller - INFO - Time for emotion generation of [ If you’d like, we can start with a classic opener:] is 0.5369989000000714
+2026-08-12 15:44:17 - server.utils.controller - INFO - Time sentence [ 1) the role youï¿½re interviewing for (title and industry), 2) a brief snapshot of your relevant experience, and 3) any specific strengths you want to highlight.] is finished from Oprheus is 18.31330650000018
+2026-08-12 15:44:17 - server.utils.controller - INFO - Total processing time of sentence [ 1) the role youï¿½re interviewing for (title and industry), 2) a brief snapshot of your relevant experience, and 3) any specific strengths you want to highlight.] is 18.31366009999988 seconds
+2026-08-12 15:44:17 - server.utils.controller - INFO - Current sentence consumed is 3 :  If youï¿½d like, we can start with a classic opener:
+2026-08-12 15:44:18 - server.utils.controller - INFO - Time for emotion generation of [ If youï¿½d like, we can start with a classic opener:] is 0.5369989000000714
 2026-08-12 15:44:21 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 4.019438900000068
 2026-08-12 15:44:22 - server.utils.controller - INFO - Time until token 10 is received in the controller from Oprheus3B is 4.356656200000089
 2026-08-12 15:44:24 - server.utils.controller - INFO - Time until token 20 is received in the controller from Oprheus3B is 6.431145500000184
 2026-08-12 15:44:26 - server.utils.controller - INFO - Time until token 30 is received in the controller from Oprheus3B is 8.38629620000006
 2026-08-12 15:44:27 - server.utils.controller - INFO - Time until token 40 is received in the controller from Oprheus3B is 9.605699100000038
-2026-08-12 15:44:27 - server.utils.controller - INFO - Time sentence [ If you’d like, we can start with a classic opener:] is finished from Oprheus is 9.7724161000001
-2026-08-12 15:44:27 - server.utils.controller - INFO - Total processing time of sentence [ If you’d like, we can start with a classic opener:] is 9.773151299999881 seconds
-2026-08-12 15:44:27 - server.utils.controller - INFO - Current sentence consumed is 4 :  “Tell me about yourself.”
-2026-08-12 15:44:27 - server.utils.controller - INFO - Time for emotion generation of [ “Tell me about yourself.”] is 0.5400907000000643
+2026-08-12 15:44:27 - server.utils.controller - INFO - Time sentence [ If youï¿½d like, we can start with a classic opener:] is finished from Oprheus is 9.7724161000001
+2026-08-12 15:44:27 - server.utils.controller - INFO - Total processing time of sentence [ If youï¿½d like, we can start with a classic opener:] is 9.773151299999881 seconds
+2026-08-12 15:44:27 - server.utils.controller - INFO - Current sentence consumed is 4 :  ï¿½Tell me about yourself.ï¿½
+2026-08-12 15:44:27 - server.utils.controller - INFO - Time for emotion generation of [ ï¿½Tell me about yourself.ï¿½] is 0.5400907000000643
 2026-08-12 15:44:30 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 3.201464099999839
 2026-08-12 15:44:31 - server.utils.controller - INFO - Time until token 10 is received in the controller from Oprheus3B is 4.290518699999893
-2026-08-12 15:44:31 - server.utils.controller - INFO - Time sentence [ “Tell me about yourself.”] is finished from Oprheus is 4.446226600000045
-2026-08-12 15:44:31 - server.utils.controller - INFO - Total processing time of sentence [ “Tell me about yourself.”] is 4.446743699999843 seconds
+2026-08-12 15:44:31 - server.utils.controller - INFO - Time sentence [ ï¿½Tell me about yourself.ï¿½] is finished from Oprheus is 4.446226600000045
+2026-08-12 15:44:31 - server.utils.controller - INFO - Total processing time of sentence [ ï¿½Tell me about yourself.ï¿½] is 4.446743699999843 seconds

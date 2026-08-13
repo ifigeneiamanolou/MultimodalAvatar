@@ -43,9 +43,10 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone.",
           "enableBackgroundPlayback": true,
           "enableBackgroundRecording": true,
-          "recordedAudioAndroid" : true
+          "recordedAudioAndroid": true
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true,

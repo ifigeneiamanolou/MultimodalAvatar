@@ -47,12 +47,19 @@ export default function useRecorder({ws, emotion} : useRecorderProps){
     const stopRecording = async () => {
         await audioRecorder.stop();
         const response = await fetch(audioRecorder.uri!);       // Extract audio from file
-        const audio = await response.blob();                    // Extract raw binary audio data 
+        const audio = await response.blob();                    // Extract raw binary audio data
 
         // Encode audio into a base64 string
-        const array = await audio.arrayBuffer();
-        const binary = new Uint8Array(array);
-        var base64string = btoa(String.fromCharCode(...binary));
+        var base64string = "";
+        const reader = new window.FileReader();
+        reader.readAsDataURL(audio); 
+        reader.onloadend = () => {
+            if(reader.result){
+                const base64 = reader.result.toString();        
+                base64string = base64.split(',')[1];
+                    console.log(base64string);
+            } 
+        }
 
         // Emotion recognition
         try{
@@ -85,8 +92,10 @@ export default function useRecorder({ws, emotion} : useRecorderProps){
         if (ws.current?.readyState !== WebSocket.OPEN){
             showAlert('Error', 'Web socket is closed');
         } else{
-            ws.current?.send(base64string);
-            console.log('audio sent to a2f');
+            if(base64string){
+                ws.current?.send(base64string);
+                console.log('audio sent to a2f');
+            }
         }
     };
 

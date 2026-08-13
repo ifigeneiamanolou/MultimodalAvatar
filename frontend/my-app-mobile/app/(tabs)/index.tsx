@@ -135,7 +135,7 @@ export default function Index(){
                 console.log("Connection made ", res, " with code ", res.status);
 
                 // Create a new entry in the array messages
-                id = crypto.randomUUID();
+                id = uuid.v4()
                 setMessages(messages.set(id, {role : 'user', content : nlpResponse}));
             } else{
                 console.log('Error during nlp response generation with status ', res.status);
