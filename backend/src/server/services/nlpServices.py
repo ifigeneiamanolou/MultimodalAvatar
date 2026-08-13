@@ -128,18 +128,18 @@ async def get_answer_router_stream_mobile(input : list, instructions : str, emot
                     logger.info(f"Time until token number {index} is {time.perf_counter() - start} seconds")
                 async for token in bufferSmall.flush_buffer(chunk):    
                     async for sentence in buffer.add(token):  
-                        response += sentence     
-                        path = save_response(path, sentence)    
+                        response += sentence                            # Accumulate tokens for frontend
+                        path = save_response(path, sentence)            # Debugging logs
                         logger.info(f"Time until sentence {sentence} from NLP : {time.perf_counter() - start}")
                         await syncCoordinator.produce(sentence)        # Pass the sentence to the asyncio Queue
 
         async for sentence in buffer.flush():
             if(sentence):
                 await syncCoordinator.produce(sentence)                 # Pass the remaining data to the Queue if they exist
-                path = save_response(path, sentence)   
-        await syncCoordinator.produce("[[DONE]]")  # Signal the end of the stream
+                path = save_response(path, sentence)                    # Save the end of the response
+        await syncCoordinator.produce("[[DONE]]")                       # Signal the end of the stream to UE5
         logger.info(f"Full NLP response in {time.perf_counter() - start}")
-        return sentence
+        return sentence                                                 # Return the sentence to the frontend
     except Exception as e:
         logger.error(msg = f"Error during processing of NLP : {e}")
     finally:   

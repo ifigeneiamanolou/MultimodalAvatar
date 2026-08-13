@@ -1,0 +1,47 @@
+2026-08-12 13:35:28 - server.utils.controller - INFO - starting http sessions
+2026-08-12 13:35:28 - server.utils.controller - INFO - connected to ws://3.129.236.140:7865
+2026-08-12 13:35:29 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-12 13:35:32 - __main__ - INFO - OpenRouter warm-up complete
+2026-08-12 13:37:04 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-12 13:37:06 - server.services.nlpServices - INFO - Time until first chunk from NLP : 2.5717061999894213 seconds
+2026-08-12 13:37:06 - server.services.nlpServices - INFO - Time until token number 10 is 2.768851300003007 seconds
+2026-08-12 13:37:06 - server.services.nlpServices - INFO - Time until token number 20 is 2.9728108999843244 seconds
+2026-08-12 13:37:06 - server.services.nlpServices - INFO - Time until token number 30 is 3.170462000009138 seconds
+2026-08-12 13:37:07 - server.services.nlpServices - INFO - Time until token number 40 is 4.012895599997137 seconds
+2026-08-12 13:37:07 - server.services.nlpServices - INFO - Time until token number 50 is 4.269994600006612 seconds
+2026-08-12 13:37:08 - server.services.nlpServices - INFO - Time until token number 60 is 4.542558999994071 seconds
+2026-08-12 13:37:08 - server.services.nlpServices - INFO - Time until token number 70 is 4.781493999995291 seconds
+2026-08-12 13:37:09 - server.services.nlpServices - INFO - Time until token number 80 is 5.473957799986238 seconds
+2026-08-12 13:37:09 - server.services.nlpServices - INFO - Time until token number 90 is 5.65059740000288 seconds
+2026-08-12 13:37:09 - server.services.nlpServices - INFO - Time until token number 100 is 5.8431713999889325 seconds
+2026-08-12 13:37:10 - server.services.nlpServices - INFO - Time until token number 110 is 6.822922699997434 seconds
+2026-08-12 13:37:10 - server.services.nlpServices - INFO - Time until token number 120 is 7.082216000009794 seconds
+2026-08-12 13:37:11 - server.services.nlpServices - INFO - Time until token number 130 is 7.386746600008337 seconds
+2026-08-12 13:37:11 - server.services.nlpServices - INFO - Time until token number 140 is 7.718361700011883 seconds
+2026-08-12 13:37:11 - server.services.nlpServices - INFO - Time until token number 150 is 8.020595699985279 seconds
+2026-08-12 13:37:12 - server.services.nlpServices - INFO - Time until token number 160 is 8.672547199996188 seconds
+2026-08-12 13:37:12 - server.services.nlpServices - INFO - Time until token number 170 is 8.949387900007423 seconds
+2026-08-12 13:37:12 - server.services.nlpServices - INFO - Time until token number 180 is 9.130628599988995 seconds
+2026-08-12 13:37:13 - server.services.nlpServices - INFO - Time until token number 190 is 9.420799699990312 seconds
+2026-08-12 13:37:13 - server.services.nlpServices - INFO - Time until token number 200 is 9.752432699984638 seconds
+2026-08-12 13:37:13 - server.services.nlpServices - ERROR - Error during processing of NLP : [Errno 2] No such file or directory: 'C:\\MultimodalAvatarRepo\\backend\\src\\server\\services\\../../../data/raw/response-1.txt'
+2026-08-12 13:38:05 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-12 13:38:09 - server.services.nlpServices - INFO - Time until first chunk from NLP : 5.698023799981456 seconds
+2026-08-12 13:38:09 - server.services.nlpServices - INFO - Time until token number 10 is 5.90435259998776 seconds
+2026-08-12 13:38:09 - server.services.nlpServices - INFO - Time until token number 20 is 6.109598199982429 seconds
+2026-08-12 13:38:10 - server.services.nlpServices - INFO - Time until token number 30 is 6.346428899996681 seconds
+2026-08-12 13:38:11 - server.services.nlpServices - INFO - Time until token number 40 is 7.37083289999282 seconds
+2026-08-12 13:38:11 - server.services.nlpServices - INFO - Time until token number 50 is 7.478831899992656 seconds
+2026-08-12 13:38:11 - server.services.nlpServices - INFO - Time until token number 60 is 7.7911468999809586 seconds
+2026-08-12 13:38:11 - server.services.nlpServices - INFO - Time until token number 70 is 7.989520000002813 seconds
+2026-08-12 13:38:12 - server.services.nlpServices - INFO - Time until token number 80 is 9.022335299989209 seconds
+2026-08-12 13:38:12 - server.services.nlpServices - INFO - Time until token number 90 is 9.138302399980603 seconds
+2026-08-12 13:38:13 - server.services.nlpServices - INFO - Time until token number 100 is 9.430162999982713 seconds
+2026-08-12 13:38:13 - server.services.nlpServices - INFO - Time until token number 110 is 9.638389599975199 seconds
+2026-08-12 13:38:13 - server.services.nlpServices - INFO - Time until token number 120 is 9.856483799987473 seconds
+2026-08-12 13:38:14 - server.services.nlpServices - INFO - Time until token number 130 is 10.510741599980975 seconds
+2026-08-12 13:38:14 - server.services.nlpServices - INFO - Time until token number 140 is 10.694296999979997 seconds
+2026-08-12 13:38:14 - server.services.nlpServices - INFO - Time until token number 150 is 10.898180299991509 seconds
+2026-08-12 13:38:14 - server.services.nlpServices - INFO - Time until token number 160 is 11.109201299987035 seconds
+2026-08-12 13:38:15 - server.services.nlpServices - INFO - Time until token number 170 is 11.551066099986201 seconds
+2026-08-12 13:38:15 - server.services.nlpServices - ERROR - Error during processing of NLP : [Errno 2] No such file or directory: 'C:\\MultimodalAvatarRepo\\backend\\src\\server\\services\\../../../data/raw/response-1.txt'

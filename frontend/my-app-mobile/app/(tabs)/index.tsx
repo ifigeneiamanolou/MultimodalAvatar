@@ -157,13 +157,14 @@ export default function Index(){
                 return;
             }
         }
-        // TO MODIFY INTO A LIST !!!!!!!!
+
         const type = 1;
         var response = "";
+        const input = Array.from(messages.values());
         try{
             const res = await fetch("http:/192.168.1.188:8000/feedback", {
                 method : "POST",
-                body : JSON.stringify({input : messages, interview_type : type}),
+                body : JSON.stringify({input : input, interview_type : type}),
                 headers: {"Content-Type": "application/json"}
             });
 
@@ -177,10 +178,11 @@ export default function Index(){
 
     const handleNew = async () => {
         const type = 1;
+        const input = Array.from(messages.values());
         try{
             await fetch("http:/192.168.1.188:8000/reset", {
                 method : "POST",
-                body : JSON.stringify({interview_type : type, input : messages}),
+                body : JSON.stringify({interview_type : type, input : input}),
                 headers: {"Content-Type": "application/json"}
             });
         } catch(err){
@@ -196,7 +198,6 @@ export default function Index(){
     const {
         stopRecording,
         record,
-        recorderState,
     } = useRecorder({ws, emotion});
 
     return(
@@ -221,7 +222,7 @@ export default function Index(){
                         <Icon name = "paper-plane" size = {24} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress = {recorderState.isRecording ? stopRecording : record}>
+                    <TouchableOpacity onPressIn = {record} onPressOut = {stopRecording}>
                         <Icon name = "microphone" size = {24} />
                     </TouchableOpacity>
 

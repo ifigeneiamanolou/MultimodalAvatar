@@ -26,7 +26,6 @@ const showAlert = (title : string, message : string) => {
 
 export default function useRecorder({ws, emotion} : useRecorderProps){
     const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
-    const recorderState = useAudioRecorderState(audioRecorder);
 
     useEffect(() => { 
         (async () => { 
@@ -51,8 +50,8 @@ export default function useRecorder({ws, emotion} : useRecorderProps){
         const audio = await response.blob();                    // Extract raw binary audio data 
 
         // Encode audio into a base64 string
-        const arrayBuffer = await audio.arrayBuffer();
-        const binary = new Uint8Array(arrayBuffer);
+        const array = await audio.arrayBuffer();
+        const binary = new Uint8Array(array);
         var base64string = btoa(String.fromCharCode(...binary));
 
         // Emotion recognition
@@ -85,6 +84,9 @@ export default function useRecorder({ws, emotion} : useRecorderProps){
         // Send the recording audio for ASR through a WebSocket
         if (ws.current?.readyState !== WebSocket.OPEN){
             showAlert('Error', 'Web socket is closed');
+        } else{
+            ws.current?.send(base64string);
+            console.log('audio sent to a2f');
         }
     };
 
@@ -95,7 +97,6 @@ export default function useRecorder({ws, emotion} : useRecorderProps){
 
     return {
         stopRecording,
-        record,
-        recorderState
+        record
     };
 };
