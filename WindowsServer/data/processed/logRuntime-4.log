@@ -1,0 +1,389 @@
+2026-08-13 12:55:38 - root - INFO - download models from model hub: hf
+2026-08-13 12:55:38 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/agent-harnesses "HTTP/1.1 200 OK"
+2026-08-13 12:55:38 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/emotion2vec/emotion2vec_plus_seed/revision/main "HTTP/1.1 200 OK"
+2026-08-13 12:55:38 - root - WARNING - trust_remote_code: False
+2026-08-13 12:55:39 - root - INFO - Loading pretrained params from C:\Users\Administrator\.cache\huggingface\hub\models--emotion2vec--emotion2vec_plus_seed\snapshots\7be9a30d52bdc793cc24e6f7d25358d6648927c1\model.pt
+2026-08-13 12:55:39 - root - INFO - ckpt: C:\Users\Administrator\.cache\huggingface\hub\models--emotion2vec--emotion2vec_plus_seed\snapshots\7be9a30d52bdc793cc24e6f7d25358d6648927c1\model.pt
+2026-08-13 12:55:43 - root - INFO - scope_map: ['d2v_model.', 'none', 'module.', 'None']
+2026-08-13 12:55:43 - root - INFO - excludes: None
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.extra_tokens from d2v_model.modality_encoders.AUDIO.extra_tokens in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.alibi_scale from d2v_model.modality_encoders.AUDIO.alibi_scale in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.0.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.0.0.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.1.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.1.0.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.2.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.2.0.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.3.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.3.0.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.4.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.4.0.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.5.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.5.0.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.6.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.6.0.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.project_features.1.weight from d2v_model.modality_encoders.AUDIO.project_features.1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.project_features.1.bias from d2v_model.modality_encoders.AUDIO.project_features.1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.project_features.2.weight from d2v_model.modality_encoders.AUDIO.project_features.2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.project_features.2.bias from d2v_model.modality_encoders.AUDIO.project_features.2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.1.0.weight from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.1.0.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.1.0.bias from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.1.0.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.2.0.weight from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.2.0.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.2.0.bias from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.2.0.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.3.0.weight from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.3.0.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.3.0.bias from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.3.0.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.4.0.weight from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.4.0.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.4.0.bias from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.4.0.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.5.0.weight from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.5.0.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.relative_positional_encoder.5.0.bias from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.5.0.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.norm.weight from d2v_model.modality_encoders.AUDIO.context_encoder.norm.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: modality_encoders.AUDIO.context_encoder.norm.bias from d2v_model.modality_encoders.AUDIO.context_encoder.norm.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.0.norm1.weight from d2v_model.blocks.0.norm1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.0.norm1.bias from d2v_model.blocks.0.norm1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.0.attn.qkv.weight from d2v_model.blocks.0.attn.qkv.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.0.attn.qkv.bias from d2v_model.blocks.0.attn.qkv.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.0.attn.proj.weight from d2v_model.blocks.0.attn.proj.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.0.attn.proj.bias from d2v_model.blocks.0.attn.proj.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.0.norm2.weight from d2v_model.blocks.0.norm2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.0.norm2.bias from d2v_model.blocks.0.norm2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.0.mlp.fc1.weight from d2v_model.blocks.0.mlp.fc1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.0.mlp.fc1.bias from d2v_model.blocks.0.mlp.fc1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.0.mlp.fc2.weight from d2v_model.blocks.0.mlp.fc2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.0.mlp.fc2.bias from d2v_model.blocks.0.mlp.fc2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.1.norm1.weight from d2v_model.blocks.1.norm1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.1.norm1.bias from d2v_model.blocks.1.norm1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.1.attn.qkv.weight from d2v_model.blocks.1.attn.qkv.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.1.attn.qkv.bias from d2v_model.blocks.1.attn.qkv.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.1.attn.proj.weight from d2v_model.blocks.1.attn.proj.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.1.attn.proj.bias from d2v_model.blocks.1.attn.proj.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.1.norm2.weight from d2v_model.blocks.1.norm2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.1.norm2.bias from d2v_model.blocks.1.norm2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.1.mlp.fc1.weight from d2v_model.blocks.1.mlp.fc1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.1.mlp.fc1.bias from d2v_model.blocks.1.mlp.fc1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.1.mlp.fc2.weight from d2v_model.blocks.1.mlp.fc2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.1.mlp.fc2.bias from d2v_model.blocks.1.mlp.fc2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.2.norm1.weight from d2v_model.blocks.2.norm1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.2.norm1.bias from d2v_model.blocks.2.norm1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.2.attn.qkv.weight from d2v_model.blocks.2.attn.qkv.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.2.attn.qkv.bias from d2v_model.blocks.2.attn.qkv.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.2.attn.proj.weight from d2v_model.blocks.2.attn.proj.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.2.attn.proj.bias from d2v_model.blocks.2.attn.proj.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.2.norm2.weight from d2v_model.blocks.2.norm2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.2.norm2.bias from d2v_model.blocks.2.norm2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.2.mlp.fc1.weight from d2v_model.blocks.2.mlp.fc1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.2.mlp.fc1.bias from d2v_model.blocks.2.mlp.fc1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.2.mlp.fc2.weight from d2v_model.blocks.2.mlp.fc2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.2.mlp.fc2.bias from d2v_model.blocks.2.mlp.fc2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.3.norm1.weight from d2v_model.blocks.3.norm1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.3.norm1.bias from d2v_model.blocks.3.norm1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.3.attn.qkv.weight from d2v_model.blocks.3.attn.qkv.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.3.attn.qkv.bias from d2v_model.blocks.3.attn.qkv.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.3.attn.proj.weight from d2v_model.blocks.3.attn.proj.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.3.attn.proj.bias from d2v_model.blocks.3.attn.proj.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.3.norm2.weight from d2v_model.blocks.3.norm2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.3.norm2.bias from d2v_model.blocks.3.norm2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.3.mlp.fc1.weight from d2v_model.blocks.3.mlp.fc1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.3.mlp.fc1.bias from d2v_model.blocks.3.mlp.fc1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.3.mlp.fc2.weight from d2v_model.blocks.3.mlp.fc2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.3.mlp.fc2.bias from d2v_model.blocks.3.mlp.fc2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.4.norm1.weight from d2v_model.blocks.4.norm1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.4.norm1.bias from d2v_model.blocks.4.norm1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.4.attn.qkv.weight from d2v_model.blocks.4.attn.qkv.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.4.attn.qkv.bias from d2v_model.blocks.4.attn.qkv.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.4.attn.proj.weight from d2v_model.blocks.4.attn.proj.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.4.attn.proj.bias from d2v_model.blocks.4.attn.proj.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.4.norm2.weight from d2v_model.blocks.4.norm2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.4.norm2.bias from d2v_model.blocks.4.norm2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.4.mlp.fc1.weight from d2v_model.blocks.4.mlp.fc1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.4.mlp.fc1.bias from d2v_model.blocks.4.mlp.fc1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.4.mlp.fc2.weight from d2v_model.blocks.4.mlp.fc2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.4.mlp.fc2.bias from d2v_model.blocks.4.mlp.fc2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.5.norm1.weight from d2v_model.blocks.5.norm1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.5.norm1.bias from d2v_model.blocks.5.norm1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.5.attn.qkv.weight from d2v_model.blocks.5.attn.qkv.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.5.attn.qkv.bias from d2v_model.blocks.5.attn.qkv.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.5.attn.proj.weight from d2v_model.blocks.5.attn.proj.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.5.attn.proj.bias from d2v_model.blocks.5.attn.proj.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.5.norm2.weight from d2v_model.blocks.5.norm2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.5.norm2.bias from d2v_model.blocks.5.norm2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.5.mlp.fc1.weight from d2v_model.blocks.5.mlp.fc1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.5.mlp.fc1.bias from d2v_model.blocks.5.mlp.fc1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.5.mlp.fc2.weight from d2v_model.blocks.5.mlp.fc2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.5.mlp.fc2.bias from d2v_model.blocks.5.mlp.fc2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.6.norm1.weight from d2v_model.blocks.6.norm1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.6.norm1.bias from d2v_model.blocks.6.norm1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.6.attn.qkv.weight from d2v_model.blocks.6.attn.qkv.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.6.attn.qkv.bias from d2v_model.blocks.6.attn.qkv.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.6.attn.proj.weight from d2v_model.blocks.6.attn.proj.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.6.attn.proj.bias from d2v_model.blocks.6.attn.proj.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.6.norm2.weight from d2v_model.blocks.6.norm2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.6.norm2.bias from d2v_model.blocks.6.norm2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.6.mlp.fc1.weight from d2v_model.blocks.6.mlp.fc1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.6.mlp.fc1.bias from d2v_model.blocks.6.mlp.fc1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.6.mlp.fc2.weight from d2v_model.blocks.6.mlp.fc2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.6.mlp.fc2.bias from d2v_model.blocks.6.mlp.fc2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.7.norm1.weight from d2v_model.blocks.7.norm1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.7.norm1.bias from d2v_model.blocks.7.norm1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.7.attn.qkv.weight from d2v_model.blocks.7.attn.qkv.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.7.attn.qkv.bias from d2v_model.blocks.7.attn.qkv.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.7.attn.proj.weight from d2v_model.blocks.7.attn.proj.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.7.attn.proj.bias from d2v_model.blocks.7.attn.proj.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.7.norm2.weight from d2v_model.blocks.7.norm2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.7.norm2.bias from d2v_model.blocks.7.norm2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.7.mlp.fc1.weight from d2v_model.blocks.7.mlp.fc1.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.7.mlp.fc1.bias from d2v_model.blocks.7.mlp.fc1.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.7.mlp.fc2.weight from d2v_model.blocks.7.mlp.fc2.weight in ckpt
+2026-08-13 12:55:43 - root - INFO - init param, map: blocks.7.mlp.fc2.bias from d2v_model.blocks.7.mlp.fc2.bias in ckpt
+2026-08-13 12:55:43 - root - INFO - Loading ckpt: C:\Users\Administrator\.cache\huggingface\hub\models--emotion2vec--emotion2vec_plus_seed\snapshots\7be9a30d52bdc793cc24e6f7d25358d6648927c1\model.pt, status: <All keys matched successfully>
+2026-08-13 12:55:43 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/Systran/faster-whisper-small/revision/main "HTTP/1.1 200 OK"
+2026-08-13 12:55:47 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/TuhinG/distilbert-goemotions/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-08-13 12:55:47 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/TuhinG/distilbert-goemotions/99ec431ef1d64e02e3428740cef20dd8d1752f87/config.json "HTTP/1.1 200 OK"
+2026-08-13 12:55:47 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/TuhinG/distilbert-goemotions/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-08-13 12:55:47 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/TuhinG/distilbert-goemotions/99ec431ef1d64e02e3428740cef20dd8d1752f87/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-08-13 12:55:47 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/TuhinG/distilbert-goemotions/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-08-13 12:55:47 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/TuhinG/distilbert-goemotions/99ec431ef1d64e02e3428740cef20dd8d1752f87/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-08-13 12:55:47 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/TuhinG/distilbert-goemotions/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-08-13 12:55:47 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/TuhinG/distilbert-goemotions/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-08-13 12:55:47 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/TuhinG/distilbert-goemotions/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-08-13 12:55:47 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/TuhinG/distilbert-goemotions/99ec431ef1d64e02e3428740cef20dd8d1752f87/config.json "HTTP/1.1 200 OK"
+2026-08-13 12:55:48 - server.services.bertServices - INFO - passing sentence This is a warmup sentence for the machine learning models through distilbert
+2026-08-13 12:55:49 - server.services.bertServices - INFO - time for distilbert inference : 1.8027943000000164 seconds
+2026-08-13 12:55:50 - server.services.emotionsServices - INFO - Time for emotion2vec inference : 0.8702415000000201 seconds
+2026-08-13 12:55:51 - faster_whisper - INFO - Processing audio with duration 00:08.533
+2026-08-13 12:55:51 - faster_whisper - INFO - VAD filter removed 00:02.101 of audio
+2026-08-13 12:55:53 - server.services.whisperServices - INFO - time for whisper inference : 3.107191300000011 seconds
+2026-08-13 13:00:15 - server.services.bertServices - INFO - passing sentence Hello, nice to meet you. through distilbert
+2026-08-13 13:00:15 - server.services.bertServices - INFO - time for distilbert inference : 0.03291500000000269 seconds
+2026-08-13 13:00:15 - server.services.bertServices - INFO - time for distilbert mapping : 0.00011440000002949091 seconds
+2026-08-13 13:00:15 - server.services.bertServices - INFO - time for distilbert post processing : 0.011570799999958581 seconds
+2026-08-13 13:00:15 - server.services.bertServices - INFO - passing sentence  To tailor the interview, which role and level are you interviewing for, and can you give a brief overview of your relevant experience? through distilbert
+2026-08-13 13:00:16 - server.services.bertServices - INFO - time for distilbert inference : 0.046763899999973546 seconds
+2026-08-13 13:00:16 - server.services.bertServices - INFO - time for distilbert mapping : 9.9800000043615e-05 seconds
+2026-08-13 13:00:16 - server.services.bertServices - INFO - time for distilbert post processing : 0.00010269999995671242 seconds
+2026-08-13 13:00:20 - server.services.bertServices - INFO - passing sentence  As a start, tell me what motivates you in this field and one concrete achievement you’re proud of from your most recent role. through distilbert
+2026-08-13 13:00:20 - server.services.bertServices - INFO - time for distilbert inference : 0.048414900000011585 seconds
+2026-08-13 13:00:20 - server.services.bertServices - INFO - time for distilbert mapping : 9.870000008049828e-05 seconds
+2026-08-13 13:00:20 - server.services.bertServices - INFO - time for distilbert post processing : 0.00011289999997643463 seconds
+2026-08-13 13:00:49 - server.services.bertServices - INFO - passing sentence Hello, nice to meet you. through distilbert
+2026-08-13 13:00:50 - server.services.bertServices - INFO - time for distilbert inference : 0.029871799999909854 seconds
+2026-08-13 13:00:50 - server.services.bertServices - INFO - time for distilbert mapping : 0.00011140000003706518 seconds
+2026-08-13 13:00:50 - server.services.bertServices - INFO - time for distilbert post processing : 9.659999989253265e-05 seconds
+2026-08-13 13:00:56 - server.services.bertServices - INFO - passing sentence  To start, could you briefly introduce yourself and tell me what role you’re pursuing? through distilbert
+2026-08-13 13:00:56 - server.services.bertServices - INFO - time for distilbert inference : 0.03695740000000569 seconds
+2026-08-13 13:00:56 - server.services.bertServices - INFO - time for distilbert mapping : 8.730000001833105e-05 seconds
+2026-08-13 13:00:56 - server.services.bertServices - INFO - time for distilbert post processing : 0.00010910000003150344 seconds
+2026-08-13 13:01:05 - server.services.bertServices - INFO - passing sentence  Also share one example that demonstrates a relevant strength for that role. through distilbert
+2026-08-13 13:01:05 - server.services.bertServices - INFO - time for distilbert inference : 0.029322200000024168 seconds
+2026-08-13 13:01:05 - server.services.bertServices - INFO - time for distilbert mapping : 9.999999997489795e-05 seconds
+2026-08-13 13:01:05 - server.services.bertServices - INFO - time for distilbert post processing : 0.00010329999997793493 seconds
+2026-08-13 13:46:14 - server.services.bertServices - INFO - passing sentence Let's move to the next question. through distilbert
+2026-08-13 13:46:14 - server.services.bertServices - INFO - time for distilbert inference : 0.030263600000125734 seconds
+2026-08-13 13:46:14 - server.services.bertServices - INFO - time for distilbert mapping : 0.00010259999999107094 seconds
+2026-08-13 13:46:14 - server.services.bertServices - INFO - time for distilbert post processing : 9.469999986322364e-05 seconds
+2026-08-13 13:46:19 - server.services.bertServices - INFO - passing sentence  It looks like there was an input format issue (non-base64 data). through distilbert
+2026-08-13 13:46:19 - server.services.bertServices - INFO - time for distilbert inference : 0.03799490000028527 seconds
+2026-08-13 13:46:19 - server.services.bertServices - INFO - time for distilbert mapping : 0.00012389999983497546 seconds
+2026-08-13 13:46:19 - server.services.bertServices - INFO - time for distilbert post processing : 0.00011140000015075202 seconds
+2026-08-13 13:46:31 - server.services.bertServices - INFO - passing sentence  No worries—please tell me the role you're interviewing for and give a brief, metric-based summary of one relevant achievement from your recent work (e.g., improved performance by X%, reduced costs by through distilbert
+2026-08-13 13:46:31 - server.services.bertServices - INFO - time for distilbert inference : 0.05492220000041925 seconds
+2026-08-13 13:46:31 - server.services.bertServices - INFO - time for distilbert mapping : 0.00010249999968436896 seconds
+2026-08-13 13:46:31 - server.services.bertServices - INFO - time for distilbert post processing : 9.709999994811369e-05 seconds
+2026-08-13 13:46:33 - server.services.bertServices - INFO - passing sentence  Y, etc.). through distilbert
+2026-08-13 13:46:33 - server.services.bertServices - INFO - time for distilbert inference : 0.023372099999960483 seconds
+2026-08-13 13:46:33 - server.services.bertServices - INFO - time for distilbert mapping : 0.00010250000013911631 seconds
+2026-08-13 13:46:33 - server.services.bertServices - INFO - time for distilbert post processing : 9.520000003249152e-05 seconds
+2026-08-13 13:46:56 - server.services.bertServices - INFO - passing sentence  If you’re not sure yet, describe your strongest domain and a concrete result you’re proud of. through distilbert
+2026-08-13 13:46:56 - server.services.bertServices - INFO - time for distilbert inference : 0.03487940000013623 seconds
+2026-08-13 13:46:56 - server.services.bertServices - INFO - time for distilbert mapping : 0.00015890000031504314 seconds
+2026-08-13 13:46:56 - server.services.bertServices - INFO - time for distilbert post processing : 0.0001177999997707957 seconds
+2026-08-13 13:47:11 - server.services.bertServices - INFO - passing sentence Hello, thanks for the update. through distilbert
+2026-08-13 13:47:11 - server.services.bertServices - INFO - time for distilbert inference : 0.026531999999861 seconds
+2026-08-13 13:47:11 - server.services.bertServices - INFO - time for distilbert mapping : 0.00011809999978140695 seconds
+2026-08-13 13:47:11 - server.services.bertServices - INFO - time for distilbert post processing : 0.00017269999989366625 seconds
+2026-08-13 13:47:16 - server.services.bertServices - INFO - passing sentence  The error “Only base64 data is allowed” usually means the service expects a base64-encoded payload but received non-base64 data. through distilbert
+2026-08-13 13:47:16 - server.services.bertServices - INFO - time for distilbert inference : 0.043152700000064215 seconds
+2026-08-13 13:47:16 - server.services.bertServices - INFO - time for distilbert mapping : 0.00018210000007456983 seconds
+2026-08-13 13:47:16 - server.services.bertServices - INFO - time for distilbert post processing : 0.00010139999994862592 seconds
+2026-08-13 13:47:34 - server.services.bertServices - INFO - passing sentence  Could you share where this occurs (frontend, API, batch job), the language/framework, and the exact action you performed? through distilbert
+2026-08-13 13:47:34 - server.services.bertServices - INFO - time for distilbert inference : 0.04800010000008115 seconds
+2026-08-13 13:47:34 - server.services.bertServices - INFO - time for distilbert mapping : 8.209999987229821e-05 seconds
+2026-08-13 13:47:34 - server.services.bertServices - INFO - time for distilbert post processing : 0.00011549999999260763 seconds
+2026-08-13 13:47:49 - server.services.bertServices - INFO - passing sentence  If possible, provide a minimal repro or redacted payload. through distilbert
+2026-08-13 13:47:49 - server.services.bertServices - INFO - time for distilbert inference : 0.03536720000010973 seconds
+2026-08-13 13:47:49 - server.services.bertServices - INFO - time for distilbert mapping : 0.00012149999975008541 seconds
+2026-08-13 13:47:49 - server.services.bertServices - INFO - time for distilbert post processing : 0.00011050000011891825 seconds
+2026-08-13 13:47:59 - server.services.bertServices - INFO - passing sentence  Now, a related interview question: through distilbert
+2026-08-13 13:47:59 - server.services.bertServices - INFO - time for distilbert inference : 0.025148199999875942 seconds
+2026-08-13 13:47:59 - server.services.bertServices - INFO - time for distilbert mapping : 0.00020330000006651971 seconds
+2026-08-13 13:47:59 - server.services.bertServices - INFO - time for distilbert post processing : 0.00010040000006483751 seconds
+2026-08-13 13:48:05 - server.services.bertServices - INFO - passing sentence  describe a time you diagnosed and fixed a data-encoding bug (such as base64) in a production system. through distilbert
+2026-08-13 13:48:05 - server.services.bertServices - INFO - time for distilbert inference : 0.03685459999996965 seconds
+2026-08-13 13:48:05 - server.services.bertServices - INFO - time for distilbert mapping : 0.00010939999992842786 seconds
+2026-08-13 13:48:05 - server.services.bertServices - INFO - time for distilbert post processing : 0.0002386000001024513 seconds
+2026-08-13 13:48:18 - server.services.bertServices - INFO - passing sentence  What was the root cause, what steps did you take, and how did you verify the fix? through distilbert
+2026-08-13 13:48:18 - server.services.bertServices - INFO - time for distilbert inference : 0.033862499999941065 seconds
+2026-08-13 13:48:18 - server.services.bertServices - INFO - time for distilbert mapping : 0.00010580000025584013 seconds
+2026-08-13 13:48:18 - server.services.bertServices - INFO - time for distilbert post processing : 9.649999992689118e-05 seconds
+2026-08-13 13:49:42 - server.services.bertServices - INFO - passing sentence Thanks for flagging that. through distilbert
+2026-08-13 13:49:42 - server.services.bertServices - INFO - time for distilbert inference : 0.02560029999995095 seconds
+2026-08-13 13:49:42 - server.services.bertServices - INFO - time for distilbert mapping : 8.22000001790002e-05 seconds
+2026-08-13 13:49:42 - server.services.bertServices - INFO - time for distilbert post processing : 0.00017840000009528012 seconds
+2026-08-13 13:49:45 - server.services.bertServices - INFO - passing sentence  It seems the system expects base64-encoded input. through distilbert
+2026-08-13 13:49:45 - server.services.bertServices - INFO - time for distilbert inference : 0.02567289999979039 seconds
+2026-08-13 13:49:45 - server.services.bertServices - INFO - time for distilbert mapping : 7.749999986117473e-05 seconds
+2026-08-13 13:49:45 - server.services.bertServices - INFO - time for distilbert post processing : 0.0001795999996829778 seconds
+2026-08-13 13:49:54 - server.services.bertServices - INFO - passing sentence  Could you share the exact data you attempted to submit (or describe the file/type) and the full error message? through distilbert
+2026-08-13 13:49:54 - server.services.bertServices - INFO - time for distilbert inference : 0.035514599999714846 seconds
+2026-08-13 13:49:54 - server.services.bertServices - INFO - time for distilbert mapping : 0.00011720000020432053 seconds
+2026-08-13 13:49:54 - server.services.bertServices - INFO - time for distilbert post processing : 0.00010259999999107094 seconds
+2026-08-13 13:50:06 - server.services.bertServices - INFO - passing sentence  If you paste the base64 here, I can help validate it and spot common issues (padding with =, proper line breaks, URL-safe alphabet). through distilbert
+2026-08-13 13:50:06 - server.services.bertServices - INFO - time for distilbert inference : 0.050970499999948515 seconds
+2026-08-13 13:50:06 - server.services.bertServices - INFO - time for distilbert mapping : 0.0002478999999766529 seconds
+2026-08-13 13:50:06 - server.services.bertServices - INFO - time for distilbert post processing : 0.0001011999997899693 seconds
+2026-08-13 13:50:24 - server.services.bertServices - INFO - passing sentence  Also tell me your use case (image, JSON payload, or file upload) and the language/tool you’re using, so I can tailor debugging steps. through distilbert
+2026-08-13 13:50:24 - server.services.bertServices - INFO - time for distilbert inference : 0.04781430000002729 seconds
+2026-08-13 13:50:24 - server.services.bertServices - INFO - time for distilbert mapping : 0.0001283999999941443 seconds
+2026-08-13 13:50:24 - server.services.bertServices - INFO - time for distilbert post processing : 0.00014760000021851738 seconds
+2026-08-13 14:18:52 - server.services.bertServices - INFO - passing sentence Hello, nice to meet you. through distilbert
+2026-08-13 14:18:53 - server.services.bertServices - INFO - time for distilbert inference : 0.024435000000266882 seconds
+2026-08-13 14:18:53 - server.services.bertServices - INFO - time for distilbert mapping : 0.00010999999994965037 seconds
+2026-08-13 14:18:53 - server.services.bertServices - INFO - time for distilbert post processing : 9.899999986373587e-05 seconds
+2026-08-13 14:18:58 - server.services.bertServices - INFO - passing sentence  To start, could you share a brief overview of your background and the role you’re pursuing? through distilbert
+2026-08-13 14:18:58 - server.services.bertServices - INFO - time for distilbert inference : 0.029801900000165915 seconds
+2026-08-13 14:18:58 - server.services.bertServices - INFO - time for distilbert mapping : 0.0001250000004802132 seconds
+2026-08-13 14:18:58 - server.services.bertServices - INFO - time for distilbert post processing : 0.00010959999963233713 seconds
+2026-08-13 14:19:06 - server.services.bertServices - INFO - passing sentence  What single achievement best demonstrates your fit for this position, and why would it matter to the team? through distilbert
+2026-08-13 14:19:06 - server.services.bertServices - INFO - time for distilbert inference : 0.0432053000004089 seconds
+2026-08-13 14:19:06 - server.services.bertServices - INFO - time for distilbert mapping : 0.00012030000016238773 seconds
+2026-08-13 14:19:06 - server.services.bertServices - INFO - time for distilbert post processing : 0.0001266999997824314 seconds
+2026-08-13 14:20:37 - server.services.bertServices - INFO - passing sentence Hello, nice to meet you. through distilbert
+2026-08-13 14:20:37 - server.services.bertServices - INFO - time for distilbert inference : 0.025386999999682303 seconds
+2026-08-13 14:20:37 - server.services.bertServices - INFO - time for distilbert mapping : 0.00010099999963131268 seconds
+2026-08-13 14:20:37 - server.services.bertServices - INFO - time for distilbert post processing : 0.00011869999980262946 seconds
+2026-08-13 14:20:42 - server.services.bertServices - INFO - passing sentence  To tailor this interview, please tell me which role and level you’re interviewing for, and share a brief snapshot of a relevant project or achievement. through distilbert
+2026-08-13 14:20:42 - server.services.bertServices - INFO - time for distilbert inference : 0.040800599999784026 seconds
+2026-08-13 14:20:42 - server.services.bertServices - INFO - time for distilbert mapping : 0.0001191000001199427 seconds
+2026-08-13 14:20:42 - server.services.bertServices - INFO - time for distilbert post processing : 0.00014900000041961903 seconds
+2026-08-13 14:21:00 - server.services.bertServices - INFO - passing sentence  If you’re ready, we’ll start with a behavioral question: through distilbert
+2026-08-13 14:21:00 - server.services.bertServices - INFO - time for distilbert inference : 0.03078430000005028 seconds
+2026-08-13 14:21:00 - server.services.bertServices - INFO - time for distilbert mapping : 0.0001005000003715395 seconds
+2026-08-13 14:21:00 - server.services.bertServices - INFO - time for distilbert post processing : 0.00010449999990669312 seconds
+2026-08-13 14:21:06 - server.services.bertServices - INFO - passing sentence  describe a time you had to work with a difficult stakeholder and how you handled it. through distilbert
+2026-08-13 14:21:06 - server.services.bertServices - INFO - time for distilbert inference : 0.033586300000024494 seconds
+2026-08-13 14:21:06 - server.services.bertServices - INFO - time for distilbert mapping : 0.00010870000005525071 seconds
+2026-08-13 14:21:06 - server.services.bertServices - INFO - time for distilbert post processing : 0.00010240000028716167 seconds
+2026-08-13 14:44:29 - server.services.emotionsServices - ERROR - Error during emotio2vec inference : Calculated padded input size per channel: (0). Kernel size: (10). Kernel size can't be greater than actual input size
+2026-08-13 14:44:29 - server.services.emotionsServices - INFO - Time for emotion2vec inference : 0.06515390000004118 seconds
+2026-08-13 14:44:30 - faster_whisper - INFO - Processing audio with duration 00:01.742
+2026-08-13 14:44:30 - faster_whisper - INFO - VAD filter removed 00:00.656 of audio
+2026-08-13 14:44:33 - server.services.whisperServices - INFO - time for whisper inference : 3.1942816000000676 seconds
+2026-08-13 14:44:44 - server.services.bertServices - INFO - passing sentence Hello, nice to meet you. through distilbert
+2026-08-13 14:44:44 - server.services.bertServices - INFO - time for distilbert inference : 0.025342599999930826 seconds
+2026-08-13 14:44:44 - server.services.bertServices - INFO - time for distilbert mapping : 0.0001748000004226924 seconds
+2026-08-13 14:44:44 - server.services.bertServices - INFO - time for distilbert post processing : 0.00010769999971671496 seconds
+2026-08-13 14:44:48 - server.services.bertServices - INFO - passing sentence  What role and seniority should I simulate, and in which industry? through distilbert
+2026-08-13 14:44:48 - server.services.bertServices - INFO - time for distilbert inference : 0.03741989999980433 seconds
+2026-08-13 14:44:48 - server.services.bertServices - INFO - time for distilbert mapping : 0.00023039999996399274 seconds
+2026-08-13 14:44:48 - server.services.bertServices - INFO - time for distilbert post processing : 0.00015110000003915047 seconds
+2026-08-13 14:44:58 - server.services.bertServices - INFO - passing sentence  Do you prefer I begin with a general opener like “Tell me about yourself” or jump into a role-specific question? through distilbert
+2026-08-13 14:44:58 - server.services.bertServices - INFO - time for distilbert inference : 0.044951400000172725 seconds
+2026-08-13 14:44:58 - server.services.bertServices - INFO - time for distilbert mapping : 0.00014490000012301607 seconds
+2026-08-13 14:44:58 - server.services.bertServices - INFO - time for distilbert post processing : 0.00018589999945106683 seconds
+2026-08-13 14:45:10 - server.services.bertServices - INFO - passing sentence  Are there any focus areas you want me to emphasize (technical skills, behavioral questions, leadership, case studies)? through distilbert
+2026-08-13 14:45:10 - server.services.bertServices - INFO - time for distilbert inference : 0.046091299999716284 seconds
+2026-08-13 14:45:10 - server.services.bertServices - INFO - time for distilbert mapping : 0.00012179999976069666 seconds
+2026-08-13 14:45:10 - server.services.bertServices - INFO - time for distilbert post processing : 0.00017699999989417847 seconds
+2026-08-13 14:45:53 - server.services.emotionsServices - ERROR - Error during emotio2vec inference : Calculated padded input size per channel: (0). Kernel size: (10). Kernel size can't be greater than actual input size
+2026-08-13 14:45:53 - server.services.emotionsServices - INFO - Time for emotion2vec inference : 0.00983760000053735 seconds
+2026-08-13 14:45:54 - faster_whisper - INFO - Processing audio with duration 00:02.438
+2026-08-13 14:45:54 - faster_whisper - INFO - VAD filter removed 00:01.520 of audio
+2026-08-13 14:45:56 - server.services.whisperServices - INFO - time for whisper inference : 2.5455731000001833 seconds
+2026-08-13 14:46:24 - server.services.bertServices - INFO - passing sentence Shalom! Great question—let me tailor it to the role. through distilbert
+2026-08-13 14:46:24 - server.services.bertServices - INFO - time for distilbert inference : 0.028909399999974994 seconds
+2026-08-13 14:46:24 - server.services.bertServices - INFO - time for distilbert mapping : 0.0001229999998031417 seconds
+2026-08-13 14:46:24 - server.services.bertServices - INFO - time for distilbert post processing : 0.00022530000023834873 seconds
+2026-08-13 14:46:31 - server.services.bertServices - INFO - passing sentence  For a balanced interview, focus on technical skills (DSA, coding practice, and system design appropriate to the level), behavioral questions (communication, teamwork, conflict resolution), leadership through distilbert
+2026-08-13 14:46:32 - server.services.bertServices - INFO - time for distilbert inference : 0.07400749999942491 seconds
+2026-08-13 14:46:32 - server.services.bertServices - INFO - time for distilbert mapping : 0.0001573999998072395 seconds
+2026-08-13 14:46:32 - server.services.bertServices - INFO - time for distilbert post processing : 0.00011110000014014076 seconds
+2026-08-13 14:46:57 - server.services.bertServices - INFO - passing sentence  (ownership, mentoring, driving outcomes), and case studies (design or estimation problems). through distilbert
+2026-08-13 14:46:57 - server.services.bertServices - INFO - time for distilbert inference : 0.051065399999970396 seconds
+2026-08-13 14:46:57 - server.services.bertServices - INFO - time for distilbert mapping : 0.00016979999963950831 seconds
+2026-08-13 14:46:57 - server.services.bertServices - INFO - time for distilbert post processing : 0.00011249999988649506 seconds
+2026-08-13 14:47:10 - server.services.bertServices - INFO - passing sentence  If you share the target role and seniority, I’ll tailor the questions and structure; through distilbert
+2026-08-13 14:47:10 - server.services.bertServices - INFO - time for distilbert inference : 0.038752999999815074 seconds
+2026-08-13 14:47:10 - server.services.bertServices - INFO - time for distilbert mapping : 0.00010039999961009016 seconds
+2026-08-13 14:47:10 - server.services.bertServices - INFO - time for distilbert post processing : 9.589999990566866e-05 seconds
+2026-08-13 14:47:21 - server.services.bertServices - INFO - passing sentence  as a rule of thumb, a common split is 40–50% technical, 20–30% behavioral, 10–20% leadership, and 10–20% case studies. through distilbert
+2026-08-13 14:47:21 - server.services.bertServices - INFO - time for distilbert inference : 0.0526782999995703 seconds
+2026-08-13 14:47:21 - server.services.bertServices - INFO - time for distilbert mapping : 0.000261599999248574 seconds
+2026-08-13 14:47:21 - server.services.bertServices - INFO - time for distilbert post processing : 0.00012259999948582845 seconds
+2026-08-13 14:47:42 - server.services.bertServices - INFO - passing sentence  Do you want me to emphasize technical depth, leadership, or a mix? through distilbert
+2026-08-13 14:47:42 - server.services.bertServices - INFO - time for distilbert inference : 0.030245300000387942 seconds
+2026-08-13 14:47:42 - server.services.bertServices - INFO - time for distilbert mapping : 0.00011050000011891825 seconds
+2026-08-13 14:47:42 - server.services.bertServices - INFO - time for distilbert post processing : 0.00011449999965407187 seconds
+2026-08-13 14:47:49 - server.services.bertServices - INFO - passing sentence  Also specify domain (backend/frontend/cloud/ML) to tailor examples. through distilbert
+2026-08-13 14:47:49 - server.services.bertServices - INFO - time for distilbert inference : 0.03231520000008459 seconds
+2026-08-13 14:47:49 - server.services.bertServices - INFO - time for distilbert mapping : 0.00015249999978550477 seconds
+2026-08-13 14:47:49 - server.services.bertServices - INFO - time for distilbert post processing : 0.00010829999973793747 seconds
+2026-08-13 14:48:26 - server.services.emotionsServices - ERROR - Error during emotio2vec inference : Calculated padded input size per channel: (0). Kernel size: (10). Kernel size can't be greater than actual input size
+2026-08-13 14:48:26 - server.services.emotionsServices - INFO - Time for emotion2vec inference : 0.0028108000005886424 seconds
+2026-08-13 14:48:26 - faster_whisper - INFO - Processing audio with duration 00:02.717
+2026-08-13 14:48:26 - faster_whisper - INFO - VAD filter removed 00:01.392 of audio
+2026-08-13 14:48:29 - server.services.whisperServices - INFO - time for whisper inference : 2.8880189999999857 seconds
+2026-08-13 14:48:30 - __main__ - INFO - Windows Server shutting down ...

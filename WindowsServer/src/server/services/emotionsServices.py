@@ -12,6 +12,7 @@ load_dotenv()
 HF_TOKEN = os.environ["HF_TOKEN"]
 
 # Configure logging
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def load_model(model_id : str):
@@ -31,7 +32,7 @@ def load_model(model_id : str):
 def emotion_detection(
         audio : bytes, 
         language : str,
-        model_id : str = ["iic/emotion2vec_plus_seed", "iic/emotion2vec_plus_base", "iic/emotion2vec_plus_large"],
+        model_id : str = "iic/emotion2vec_plus_seed",
     ) -> np.ndarray:
     """ Generate scores for each of the following emotions using emotion2vec in the same order : angry, disgusted, fearful, happy,
     neutral, other, sad, surprised, unk
@@ -44,20 +45,21 @@ def emotion_detection(
     Returns:
         ndarray : numpy array with the output scores
     """
-    if model_id in _models.keys():
-        model = _models[model_id]
-    else:
-        logger.error(msg = "Model not loaded")
+    if model_id not in _models.keys():
+        load_model(model_id)
+    model = _models[model_id]
 
     start = time.perf_counter()
+    
     try:
-        result =  model.generate(
+        result = model.generate(
             audio, 
             language = language, 
             extract_embedding = False
         )
     except Exception as e:
-        logger.error(msg = f"Error during emotio2vec inference : {str(e)}")
+        logger.error(msg = f"Error during emotion2vec inference : {str(e)}")
+        raise
 
     end = time.perf_counter()
     logger.info(f"Time for emotion2vec inference : {end - start} seconds")
