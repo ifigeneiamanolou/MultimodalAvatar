@@ -16,7 +16,7 @@ _models = {}
 
 # Settings
 device = "cuda" if torch.cuda.is_available() else "cpu"
-compute_type = "int8"
+compute_type = "float16"
 
 def load_model(model_id : str):
     """ Load a whisper model and cache locally
@@ -32,7 +32,14 @@ def load_model(model_id : str):
         "large-v2", "large-v3", "large", "distil-large-v2", "distil-large-v3", "large-v3-turbo", "turbo"]:
         raise TypeError("No model found")
     if model_id not in _models.keys():
-            _models[model_id] = WhisperModel(model_size_or_path = model_id, device = device, compute_type = compute_type)  
+        _models[model_id] = WhisperModel(
+            model_size_or_path = model_id, 
+            device = device, 
+            compute_type = compute_type,
+            use_auth_token = True,
+            tensor_parallel = True,
+            flash_attention = True,
+        )  
 
 
 def transcription(model_id : str, path : Path) -> str:
