@@ -39,13 +39,13 @@ WARMUP_SENTENCE = "This is a warmup sentence for the machine learning models"
 async def lifespan(app: FastAPI):
     # Load emotion2vec, distilert and whisper
     load_emotion2vec("iic/emotion2vec_plus_seed") 
-    load_whisper("small")
+    load_whisper("tiny")
     load_distilbert()
 
     # Warm up the ML models
     bert_ready_inference(WARMUP_SENTENCE)
     emotion_detection(read_audio("../../../data/raw/Warmup.m4a"), "en", "iic/emotion2vec_plus_seed")
-    transcription("small", os.path.join(BASE_DIR, "../../../data/raw/Warmup.m4a"))
+    transcription("tiny", os.path.join(BASE_DIR, "../../../data/raw/Warmup.m4a"))
 
     # Run the server
     yield

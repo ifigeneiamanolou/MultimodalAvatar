@@ -323,5 +323,3 @@ class Controller:
             self._ue5_ws = None
 
 controller = Controller()
-
-    
