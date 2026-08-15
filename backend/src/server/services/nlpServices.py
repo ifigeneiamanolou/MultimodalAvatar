@@ -33,6 +33,9 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
         emotion (str) : emotion label
         model (str) : model name to use for inference
     """
+    # Singal UE5 to start a random filler
+    syncCoordinator.signal_filler()
+
     url = "https://openrouter.ai/api/v1/chat/completions"
 
     # Authorization headers for OpenRouter API
@@ -93,6 +96,9 @@ async def get_answer_router_stream_mobile(input : list, instructions : str, emot
         emotion (str) : emotion label
         model (str) : model name to use for inference
     """
+    # Singal UE5 to start a random filler
+    syncCoordinator.signal_filler()
+
     url = "https://openrouter.ai/api/v1/chat/completions"
 
     # Authorization headers for OpenRouter API

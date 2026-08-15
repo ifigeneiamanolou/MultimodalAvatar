@@ -140,6 +140,28 @@ class Controller:
         await self.queue.put(data)
 
     ############################################################
+    # Signal for the start of fillers
+    ############################################################
+    async def signal_filler(self):
+        """ 
+            Sends a text signal to UE5 to start a random filler
+        """
+        await self.ensure_connection()
+        if self._ue5_ws is None:
+            logger.info("Unable to send [[FILLER]]. Server is unavailable")
+            return
+            
+        try:
+            async with self._ue5_lock:
+                await self._ue5_ws.send("[[FILLER]]")
+        except websockets.exceptions.ConnectionClosed:
+            logger.info("Disconnected from UE5 server")
+            self._ue5_ws = None
+        except Exception as e:
+            logger.error(f"Error from UE5 server : {e}")
+            self._ue5_ws = None
+
+    ############################################################
     # Signal end of audio
     ############################################################
     

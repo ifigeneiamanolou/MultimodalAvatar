@@ -30,7 +30,7 @@ export default function Home() {
   // Text displayed in the feedback box
   const [feedback, setFeedback] = useState('');
 
-  // Changing pages
+  // Navigation
   const navigate = useNavigate();
 
   // ======================= Hooks =========================
@@ -233,6 +233,8 @@ export default function Home() {
     setMessages([]);
   }
 
+  const navigateMenu = () => {navigate('/menu')};
+
   const downloadFeedback = () => {
     // Create a blob object of mime type text and attach to a temporary anchor element, triggered programmatically
     const element = document.createElement("a");
@@ -250,8 +252,6 @@ export default function Home() {
       element.click();
     }
   };
-
-  const navigateMenu = () => { navigate('/menu'); };
 
   return (
     <>
