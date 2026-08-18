@@ -6,7 +6,7 @@
     "@breezystack/lamejs": "^1.2.7",
     "@epicgames-ps/lib-pixelstreamingfrontend-ue5.8": "^0.1.0",
     "@epicgames-ps/lib-pixelstreamingfrontend-ui-ue5.8": "^0.1.0",
-    "@expo/metro-runtime": "~57.0.9",
+    "@expo/metro-runtime": "~57.0.10",
     "@expo/ui": "~56.0.18",
     "@heroicons/react": "^2.2.0",
     "@microsoft/fetch-event-source": "^2.0.1",
@@ -36,6 +36,7 @@
     "react-fontawesome": "^1.7.1",
     "react-loader-spinner": "^8.0.2",
     "react-markdown": "^10.1.0",
+    "react-native-web": "^0.21.2",
     "react-router-dom": "^7.18.2"
   },
   "devDependencies": {

@@ -1,0 +1,7 @@
+2026-08-17 15:31:34 - server.utils.controller - INFO - starting http sessions
+2026-08-17 15:31:35 - server.utils.controller - INFO - connected to ws://3.129.236.140:7865
+2026-08-17 15:31:36 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-17 15:31:37 - __main__ - INFO - OpenRouter warm-up complete
+2026-08-17 16:57:00 - server.utils.controller - INFO - Disconnected from UE5 server
+2026-08-17 16:57:00 - server.utils.controller - INFO - Disconnected from windows HTTP session
+2026-08-17 16:57:00 - server.utils.controller - INFO - Disconnected from ubuntu HTTP session

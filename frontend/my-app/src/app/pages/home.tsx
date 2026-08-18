@@ -315,7 +315,7 @@ export default function Home() {
         {/* Right part of the main page */}
         <div className = "flex flex-col flex-1 h-full m-4 gap-8">
           {/* Avatar (pixel streaming)*/}
-          <div className = "flex flex-1 basis-3/4 ">
+          <div className = "flex flex-1 basis-3/4">
               <PixelStreamingWrapper
                   initialSettings={{
                       AutoPlayVideo: true,
@@ -326,7 +326,6 @@ export default function Home() {
                       WaitForStreamer: true,
                       HideUI : false,
                   }}
-
               />
           </div>
 

@@ -34,7 +34,7 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
         model (str) : model name to use for inference
     """
     # Singal UE5 to start a random filler
-    syncCoordinator.signal_filler()
+    await syncCoordinator.signal_filler()
 
     url = "https://openrouter.ai/api/v1/chat/completions"
 
@@ -59,6 +59,7 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
     consumerTask = asyncio.create_task(syncCoordinator.consume())
     start = time.perf_counter()
     path = None         # Used to save the response from the LLM
+    logger.info(f"Input to the LLM is {input}")
     try:
         index = 0
         async with http_client.stream(url = url, headers = headers, json = payload, method = "POST") as r:
@@ -97,7 +98,7 @@ async def get_answer_router_stream_mobile(input : list, instructions : str, emot
         model (str) : model name to use for inference
     """
     # Singal UE5 to start a random filler
-    syncCoordinator.signal_filler()
+    await syncCoordinator.signal_filler()
 
     url = "https://openrouter.ai/api/v1/chat/completions"
 

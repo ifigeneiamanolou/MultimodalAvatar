@@ -8,7 +8,7 @@ interface Props{
 }
 
 export default function Alert({showPopup, closePopup, message} : Props){
-    const timerId = useRef<number>(null);
+    const timerId = useRef<number | null>(null);
 
     useEffect(() => {
         if (showPopup) {
