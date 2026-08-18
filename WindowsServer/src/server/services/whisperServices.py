@@ -16,7 +16,7 @@ _models = {}
 
 # Settings
 device = "cuda" if torch.cuda.is_available() else "cpu"
-compute_type = "float16"
+compute_type = "int8"
 
 def load_model(model_id : str):
     """ Load a whisper model and cache locally
@@ -37,8 +37,6 @@ def load_model(model_id : str):
             device = device, 
             compute_type = compute_type,
             use_auth_token = True,
-            tensor_parallel = True,
-            flash_attention = True,
         )  
 
 

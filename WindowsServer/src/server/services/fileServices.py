@@ -1,7 +1,6 @@
 import os
-import json
-from scipy.io.wavfile import write
 import numpy as np
+import torchaudio
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
 
@@ -93,19 +92,10 @@ def save_distilbert(sentence : str, emotion : str, maxProb : float, result : dic
         # Write final predictions
         f.write(f"Final prediction for {sentence} is {emotion} with probability {maxProb}")
 
-def read_audio(path : str):
-    """ Reads and return the raw audio stored in a file specified
-
-    Args:
-        path (str): the relative path where the audio is stored
-
-    Returns:
-        bytes: the audio read
-    """
+def read_audio(path):
     path = os.path.join(BASE_DIR, path)
-    with open(path, "rb") as f:
-        audio = f.read()
-    return audio
+    waveform, sr = torchaudio.load(path)
+    return waveform, sr
 
 def save(input : str, path : str):
     """ Saves the input text to the next available path in the specified location

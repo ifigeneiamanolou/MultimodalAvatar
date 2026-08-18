@@ -99,13 +99,11 @@ def post_process(predictions : list):
 # Implementation from hugging face
 #################################################################
 def load():
-    """ Load finetuned tokenizer and distilbert model from HF on GoEmotions
-    """
     if "tokenizer" not in _models.keys():
-        _models["tokenizer"] = AutoTokenizer.from_pretrained("TuhinG/distilbert-goemotions")
+        _models["tokenizer"] = AutoTokenizer.from_pretrained("distilbert-base-uncased")
     if "model" not in _models.keys():
-        _models["model"] = AutoModelForSequenceClassification.from_pretrained("TuhinG/distilbert-goemotions")
-        
+        _models["model"] = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased")
+             
 def bert_ready_inference(text : str):
     """ Perform bert inference using a HF model
 
