@@ -24,3 +24,10 @@ The recommended setup is to use a g6.2xlarge with a NVIDIA RTX Virtual Workstati
 * NodeJS
 * python
 * CUDA 
+
+## Setting up torchaudio
+
+For torchaudio to work properly, ffmpeg is needed. To install and use follow these steps:
+1. Install the full build using this link: https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip
+2. Extract the zip folder
+3. Add the location of the bin folder inside the folder downloaded in the system environment variables

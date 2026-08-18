@@ -12,7 +12,6 @@ load_dotenv()
 HF_TOKEN = os.environ["HF_TOKEN"]
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def load_model(model_id : str):

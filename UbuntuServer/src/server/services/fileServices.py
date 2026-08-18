@@ -1,5 +1,6 @@
 import os
 import wave
+import logging
 
 # Base directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
@@ -36,3 +37,38 @@ def save_audio(buffer : bytearray):
         wf.setsampwidth(2)
         wf.setframerate(24000)
         wf.writeframes(buffer)
+
+
+def start_logging():
+    """ Configure the file to store runtime logs for the server
+    """
+    # Logging path
+    LOG_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, next_path("../../../data/processed/logRuntime-%s.log"))
+    )
+    
+    # Check if 10 logging files are already present
+    MAX_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, "../../../data/processed/logRuntime-11.log")
+    )
+    if(os.path.samefile(str(LOG_PATH), str(MAX_PATH))):
+        # Updated log file path
+        LOG_PATH = os.path.abspath(
+            os.path.join(BASE_DIR, "../../../data/processed/logRuntime-1.log")
+        )
+        
+        # Remove old logging files
+        for i in range(1, 11):
+            os.remove(os.path.join(BASE_DIR, f"../../../data/processed/logRuntime-{i}.log"))
+            
+    # Create a directory to store runtime logs
+    os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+        filename=LOG_PATH,
+        force=True
+    )
+        

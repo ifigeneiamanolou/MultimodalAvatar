@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from server.models.pydantic import BertInput, BertOutput
-from server.services.bertServices import post_process, bert_inference, tokenize_input, load, bert_ready_inference, map
+from server.services.bertServices import post_process, bert_inference, tokenize_input, bert_ready_inference, map
 from server.services.fileServices import save_distilbert
 router = APIRouter()
 

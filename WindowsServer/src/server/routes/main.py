@@ -11,25 +11,11 @@ from server.services.whisperServices import load_model as load_whisper
 from server.services.whisperServices import transcription
 from server.services.bertServices import load as load_distilbert
 from server.services.bertServices import bert_ready_inference
-from server.services.fileServices import read_audio
+from server.services.fileServices import read_audio, next_path, start_logging
 import os
 
 # Configure basic logging
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-LOG_PATH = os.path.abspath(
-    os.path.join(BASE_DIR, "../../../data/logRuntime.log")
-)
-
-os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    filename=LOG_PATH,
-    force=True
-)
-
+start_logging()
 logger = logging.getLogger(__name__)
 
 # Constant
@@ -44,7 +30,9 @@ async def lifespan(app: FastAPI):
 
     # Warm up the ML models
     bert_ready_inference(WARMUP_SENTENCE)
-    emotion_detection(read_audio("../../../data/raw/Warmup.m4a"), "en", "iic/emotion2vec_plus_seed")
+    waveform, sr = read_audio("../../../data/raw/Warmup.m4a")
+    logger.info(f"Sample rate for current audio file is {sr}")
+    emotion_detection(waveform, "en", "iic/emotion2vec_plus_seed")
     transcription("tiny", os.path.join(BASE_DIR, "../../../data/raw/Warmup.m4a"))
 
     # Run the server

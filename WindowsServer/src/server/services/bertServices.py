@@ -31,10 +31,7 @@ _SOURCE_LABEL_FOR_SLOT = [
     "neutral",       # neutral
 ]
 
-_A2F_EMOTIONS = ['amazement', 'anger', 'cheekiness', 'disgust', 'fear', 'grief', 'joy', 'out of breath', 'pain', 'sadness', 'neutral']
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
-LOG_PATH = os.path.join(BASE_DIR, "../../../data/logRuntime.log")
+_A2F_EMOTIONS = ['amazement', 'anger', 'cheekiness', 'disgust', 'fear', 'grief', 'joy', 'out of breath', 'pain', 'sadness', 'neutral'] 
 
 # Configure logging
 logger = logging.getLogger(__name__)
