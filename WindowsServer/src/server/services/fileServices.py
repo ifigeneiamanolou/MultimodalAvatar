@@ -24,24 +24,42 @@ def next_path(path_pattern : str) -> str:
 
     return path_pattern % b
 
-def save_audio(audio_bytes : bytes, path : str):
-    """ Saves the input audio bytes to the next available path in the specified location
+def save_audio(audio_bytes : bytes):
+    """ Saves the input audio bytes locally
 
     Args:
         audio_bytes (bytes): input audio bytes 
-        path (str): relative path to the current directory to save the audio
 
     Returns:
         path (str) : absolute path where audio was saved
     """
 
-    path = next_path(os.path.join(BASE_DIR, path))
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+    # Data path
+    DATA_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, next("../../../data/raw/audio-%s.webm"))
+    )
+    
+    # Check if 10 logging files are already present
+    MAX_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, "../../../data/raw/audio-1.webm")
+    )
+    if(str(DATA_PATH) == str(MAX_PATH)):
+        # Updated data file path
+        DATA_PATH = os.path.abspath(
+            os.path.join(BASE_DIR, "../../../data/raw/audio-1.webm")
+        )
+        
+        # Remove old logging files
+        for i in range(1, 11):
+            os.remove(os.path.join(BASE_DIR, f"../../../data/raw/audio-1.webm"))
+            
+    # Create a directory to store output from orpheus3b
+    os.makedirs(os.path.dirname(DATA_PATH), exist_ok=True)
 
-    with open(path, "wb") as f:
+    with open(DATA_PATH, "wb") as f:
         f.write(audio_bytes)
 
-    return path
+    return DATA_PATH
 
 def save_emotion2vec(scores : np.ndarray, emotion : str):
     """ Saves locally the results of emotion2vec inference
@@ -53,12 +71,30 @@ def save_emotion2vec(scores : np.ndarray, emotion : str):
     """
     labels = ['angry', 'disgusted', 'fearful', 'happy', 'sad', 'surprised', 'neutral']
 
-    # Create directory if needed
-    path = next_path(os.path.join(BASE_DIR, "../../../data/processed/emotion2vec-%s.txt"))
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+    # Data path
+    DATA_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, next_path("../../../data/processed/emotion2vec-%s.txt"))
+    )
+    
+    # Check if 10 logging files are already present
+    MAX_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, "../../../data/processed/emotion2vec-1.txt")
+    )
+    if(str(DATA_PATH) == str(MAX_PATH)):
+        # Updated data file path
+        DATA_PATH = os.path.abspath(
+            os.path.join(BASE_DIR, "../../../data/processed/emotion2vec-1.txt")
+        )
+        
+        # Remove old logging files
+        for i in range(1, 11):
+            os.remove(os.path.join(BASE_DIR, f"../../../data/processed/emotion2vec-{i}.txt"))
+            
+    # Create a directory to store output from orpheus3b
+    os.makedirs(os.path.dirname(DATA_PATH), exist_ok=True)
 
     # Write inference results
-    with open(path, "w") as f:
+    with open(DATA_PATH, "w") as f:
         f.write("Explicit scores : \n\n")
 
         # Write emotion scores
@@ -77,12 +113,30 @@ def save_distilbert(sentence : str, emotion : str, maxProb : float, result : dic
         maxProb (float): maximum score from distilbert
         result (dict): dictionary with keys the labels needed for Audio2Face and values their scores after mapping
     """
-    # Create directory if needed
-    path = next_path(os.path.join(BASE_DIR, "../../../data/processed/distilbert-%s.txt"))
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+    # Data path
+    DATA_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, next_path("../../../data/processed/distilbert-%s.txt"))
+    )
+    
+    # Check if 10 logging files are already present
+    MAX_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, "../../../data/processed/distilbert-1.txt")
+    )
+    if(str(DATA_PATH) == str(MAX_PATH)):
+        # Updated data file path
+        DATA_PATH = os.path.abspath(
+            os.path.join(BASE_DIR, "../../../data/processed/distilbert-1.txt")
+        )
+        
+        # Remove old logging files
+        for i in range(1, 11):
+            os.remove(os.path.join(BASE_DIR, f"../../../data/processed/distilbert-{i}.txt"))
+            
+    # Create a directory to store output from orpheus3b
+    os.makedirs(os.path.dirname(DATA_PATH), exist_ok=True)
 
     # Write inference results
-    with open(path, "w") as f:
+    with open(DATA_PATH, "w") as f:
         # Write emotion scores
         f.write("Explicit scores : \n\n")
 
@@ -94,23 +148,47 @@ def save_distilbert(sentence : str, emotion : str, maxProb : float, result : dic
         f.write(f"Final prediction for {sentence} is {emotion} with probability {maxProb}")
 
 def read_audio(path):
+    """ Read audio from given location using torchaudio
+
+    Args:
+        path (str): relative path to the current location
+
+    Returns:
+        bytes, int: the audio bytes, the sample rate of the bytes
+    """
     path = os.path.join(BASE_DIR, path)
     waveform, sr = torchaudio.load(path)
     return waveform, sr
 
-def save(input : str, path : str):
-    """ Saves the input text to the next available path in the specified location
+def save(input : str):
+    """ Saves the input text to the next available path (Used to store Whisper transcriptions)
 
     Args:
         input (str): input text
-        path (str): relative path to the current directory to save the audio
     """
+    # Data path
+    DATA_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, next_path("../../../data/processed/transcription-%s.txt"))
+    )
+    
+    # Check if 10 logging files are already present
+    MAX_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, "../../../data/processed/transcription-11.txt")
+    )
+    if(str(DATA_PATH) == str(MAX_PATH)):
+        # Updated data file path
+        DATA_PATH = os.path.abspath(
+            os.path.join(BASE_DIR, "../../../data/processed/trasncription-1.txt")
+        )
+        
+        # Remove old logging files
+        for i in range(1, 11):
+            os.remove(os.path.join(BASE_DIR, f"../../../data/processed/transcription-{i}.txt"))
+            
+    # Create a directory to store output from orpheus3b
+    os.makedirs(os.path.dirname(DATA_PATH), exist_ok=True)
 
-    path = next_path(os.path.join(BASE_DIR, path))
-
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-
-    with open(path, "w") as f:
+    with open(DATA_PATH, "w") as f:
         f.write(input)
         
 def start_logging():

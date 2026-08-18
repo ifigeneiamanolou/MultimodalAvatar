@@ -38,19 +38,35 @@ def saveJSON(messages : dict, path : str):
     with open(path, "w", encoding = "utf-8") as json_file:
         json.dump(messages, json_file, indent = 4)
 
-def save(input : str, path : str):
-    """ Saves the input text to the next available path in the specified location
+def save(input : str):
+    """ Saves the LLM response locally
 
     Args:
         input (str): input text
-        path (str): relative path to the current directory to save the audio
     """
+    # Data path
+    DATA_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, next_path("../../../data/raw/response-%s.txt"))
+    )
+    
+    # Check if 10 logging files are already present
+    MAX_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, "../../../data/raw/response-11.txt")
+    )
+    if(str(DATA_PATH) == str(MAX_PATH)):
+        # Updated data file path
+        DATA_PATH = os.path.abspath(
+            os.path.join(BASE_DIR, "../../../data/raw/response-1.txt")
+        )
+        
+        # Remove old logging files
+        for i in range(1, 11):
+            os.remove(os.path.join(BASE_DIR, f"../../../data/raw/response-{i}.txt"))
+            
+    # Create a directory to store output from orpheus3b
+    os.makedirs(os.path.dirname(DATA_PATH), exist_ok=True)
 
-    path = next_path(os.path.join(BASE_DIR, path))
-
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-
-    with open(path, "w") as f:
+    with open(DATA_PATH, "w") as f:
         f.write(input)
 
 def load_template(template : str = ["feedback1", "feedback2", "emotions", "interview1", "interview2"]):
@@ -65,7 +81,7 @@ def load_template(template : str = ["feedback1", "feedback2", "emotions", "inter
     return prompt
 
 def save_response(path : str | None, response : str):
-    """_summary_
+    """ Save the streamed NLP response locally
 
     Args:
         path (str | None): _description_
@@ -74,13 +90,36 @@ def save_response(path : str | None, response : str):
     Returns:
         _type_: _description_
     """
+
     # Checks if a new file needs to be opened
     if path is None:
-        path = os.path.join(BASE_DIR, next_path("../../../data/raw/response-%s.txt"))
+        # Data path
+        DATA_PATH = os.path.abspath(
+            os.path.join(BASE_DIR, next_path("../../../data/raw/response-%s.txt"))
+        )
+        
+        # Check if 10 logging files are already present
+        MAX_PATH = os.path.abspath(
+            os.path.join(BASE_DIR, "../../../data/raw/response-11.txt")
+        )
+        if(str(DATA_PATH) == str(MAX_PATH)):
+            # Updated data file path
+            DATA_PATH = os.path.abspath(
+                os.path.join(BASE_DIR, "../../../data/raw/response-1.txt")
+            )
+            
+            # Remove old logging files
+            for i in range(1, 11):
+                os.remove(os.path.join(BASE_DIR, f"../../../data/raw/response-{i}.txt"))
+                
+        # Create a directory to store output from orpheus3b
+        os.makedirs(os.path.dirname(DATA_PATH), exist_ok=True)
+    else:
+        DATA_PATH = path
 
-    with open(path, "a") as f:
+    with open(DATA_PATH, "a") as f:
         f.write(response)
-    return path
+    return DATA_PATH
 
 def start_logging():
     """ Configure the file to store runtime logs for the server

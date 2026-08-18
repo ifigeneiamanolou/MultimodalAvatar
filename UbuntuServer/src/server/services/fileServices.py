@@ -30,9 +30,28 @@ def save_audio(buffer : bytearray):
     Args:
         buffer (bytearray): Orpheus3B output
     """
-    path = os.path.join(BASE_DIR, next_path("../../../data/raw/output-%s.wav"))
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with wave.open(path, "wb") as wf:
+    # Data path
+    DATA_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, next_path("../../../data/raw/output-%s.wav"))
+    )
+    
+    # Check if 10 logging files are already present
+    MAX_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, "../../../data/raw/output-11.wav")
+    )
+    if(str(DATA_PATH) == str(MAX_PATH)):
+        # Updated data file path
+        DATA_PATH = os.path.abspath(
+            os.path.join(BASE_DIR, "../../../data/raw/output-1.wav")
+        )
+        
+        # Remove old logging files
+        for i in range(1, 11):
+            os.remove(os.path.join(BASE_DIR, f"../../../data/raw/output-{i}.wav"))
+            
+    # Create a directory to store output from orpheus3b
+    os.makedirs(os.path.dirname(DATA_PATH), exist_ok=True)
+    with wave.open(DATA_PATH, "wb") as wf:
         wf.setnchannels(1)
         wf.setsampwidth(2)
         wf.setframerate(24000)

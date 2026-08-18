@@ -36,7 +36,7 @@ async def generateTextResponse(user_input : LLMInput):
         }
     
     # Save the response to a file                              
-    save(response, "../../../data/raw/response-%s.txt")
+    save(response)
 
     # Return the response to the frontend server
     return {
