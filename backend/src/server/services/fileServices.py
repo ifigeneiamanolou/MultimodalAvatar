@@ -91,8 +91,10 @@ def start_logging():
     )
     
     # Check if 10 logging files are already present
-    MAX_PATH = os.path.join(BASE_DIR, "../../../data/processed/logRuntime-11.log")
-    if(str(LOG_PATH) == MAX_PATH):
+    MAX_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, "../../../data/processed/logRuntime-11.log")
+    )
+    if(str(LOG_PATH) == str(MAX_PATH)):
         # Updated log file path
         LOG_PATH = os.path.abspath(
             os.path.join(BASE_DIR, "../../../data/processed/logRuntime-1.log")
