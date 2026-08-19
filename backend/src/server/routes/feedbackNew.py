@@ -1,7 +1,8 @@
 from fastapi import APIRouter
-from server.models.pydantic import ResponseModel, UserInput
+from server.models.pydantic import ResponseModel, UserInput, FeedbackInput
 from server.services.fileServices import save, saveJSON, load_template
 from server.services.nlpServices import get_answer_router
+from server.services.database import add_feedback
 
 router = APIRouter()
 
@@ -75,8 +76,8 @@ async def generateFeedback(user_input : UserInput):
     }
 
 @router.post("/feedback/database")
-async def save_feedback():
-    pass
+async def save_feedback(input : FeedbackInput):
+    await add_feedback(input)
     
 
 
