@@ -39,20 +39,31 @@ Make sure the NodeJS version is at least v18.0.0
    ```
 
 This will provide a QR code for the mobile app that can be used to view the mobile app. 
+
 6. To run the two servers in production mode use:
 
    ```bash
    npm run prod
    ```
 
+
 If when trying to connect to the application, the connection is refused or timed out check that:
 * the uri provided in the WebView component in app/(tabs)/index.tsx is the ipv4 address under 'Wireless LAN adapter Wi-Fi' when running 'ipconfig' in windows powershell
 * port 8080 is included in the inbound ports in Windows firewall
 * VPNs are disabled
 
+If running "npm run dev" doesn't provide any QR code scan in the Expo Go app, run first "npx expo start" to access the URL / QR code and then run "npm run dev".
+
 # Frontend structure
-The source code is located into the following folders:
+The source code is located into the src folder in the following subfolders:
 * app : central code for all the pages of the mobile application
 * constants : custom color pallette
 * hooks : custom hooks (to allow recording through expo audio)
+
+## Warning
+The icons for the splash screen and the app will not work properly until an app binary is built using EAS Build. To build the app, run the following:
+
+   ```bash
+   eas build --profile development --platform [android/ios]
+   ```
 

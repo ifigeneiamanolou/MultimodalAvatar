@@ -1,13 +1,15 @@
 import { View, TouchableOpacity, TextInput, Alert, } from 'react-native'; 
-import '../../global.css';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useRef, useState, useEffect, } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import useRecorder from '@/hooks/record';
+import useRecorder from '@/src/hooks/record';
 import uuid from 'react-native-uuid';
 import WebView from 'react-native-webview';
+import { router } from 'expo-router';
+import "../../../global.css";
+import constants from '@/src/constants/app';
 
-const showAlert = (title : string, message : string) => {
+export const showAlert = (title : string, message : string) => {
     Alert.alert(
       title,
       message,
@@ -35,7 +37,7 @@ export default function Index(){
         let keepAliveInterval: ReturnType<typeof setInterval>;
     
         const connectASR = async () => {
-          const socket = new WebSocket("ws://3.129.236.140:8000/asr");          // Elastic IP address
+          const socket = new WebSocket(constants.WHISPER_URL);          // Elastic IP address
           ws.current = socket;
           ws.current.onopen = () => {console.log("ASR socket open");}
     
@@ -121,7 +123,7 @@ export default function Index(){
 
         var id = ""
         try{
-            const res = await fetch("http:/192.168.1.188:8000/response/stream/mobile", {
+            const res = await fetch(`${constants.BACKEND_SERVER_URL}/response/stream/mobile`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -158,11 +160,12 @@ export default function Index(){
             }
         }
 
+        // Fetch a response from the LLM 
         const type = 1;
         var response = "";
         const input = Array.from(messages.values());
         try{
-            const res = await fetch("http:/192.168.1.188:8000/feedback", {
+            const res = await fetch(`${constants.BACKEND_SERVER_URL}/feedback`, {
                 method : "POST",
                 body : JSON.stringify({input : input, interview_type : type}),
                 headers: {"Content-Type": "application/json"}
@@ -174,13 +177,19 @@ export default function Index(){
             showAlert('Error', 'Could not reach the server');
             return;
         }  
+
+        // Send the response to the modal
+        router.push({
+            pathname : "/feedbackModal",
+            params : {feedback : response, messages : input.flat.toString()}
+        })
     };
 
     const handleNew = async () => {
         const type = 1;
         const input = Array.from(messages.values());
         try{
-            await fetch("http:/192.168.1.188:8000/reset", {
+            await fetch(`${constants.BACKEND_SERVER_URL}/reset`, {
                 method : "POST",
                 body : JSON.stringify({interview_type : type, input : input}),
                 headers: {"Content-Type": "application/json"}
@@ -207,7 +216,7 @@ export default function Index(){
                     <WebView
                         // REPLACE WITH YOUR IPV4 (passing the elastic ip of the windows instance where the 
                         // signaling server is hosted)
-                        source={{ uri: 'http:/192.168.1.188:8080/player.html?ss=ws://3.129.236.140:80' }}        
+                        source={{ uri: `${constants.PIXEL_STREAMING_URL}/player.html?ss=${constants.SIGNALING_SERVER}`}}        
                         style={{ flex: 1 }}
                         onError={(syntheticEvent) => {
                             const { nativeEvent } = syntheticEvent;
@@ -216,7 +225,7 @@ export default function Index(){
                     />
                 </View>
             
-                <View className = "flex-row items-center justify-stretch p-3 gap-3 bg-white">
+                <View className = "flex-row items-center p-3 gap-3 bg-white">
                     <TextInput className = "grow h-12 border-2 border-gray-600 rounded-md" editable onChangeText={onChangeText} value={text} placeholder = "Type something ..."/>
                     <TouchableOpacity onPress = {sendText} >
                         <Icon name = "paper-plane" size = {24} />
@@ -225,11 +234,11 @@ export default function Index(){
                     <TouchableOpacity onPressIn = {record} onPressOut = {stopRecording}>
                         <Icon name = "microphone" size = {24} />
                     </TouchableOpacity>
-
+                    
                     <TouchableOpacity onPress = {handleNew}>
                         <Icon name = "plus" size = {24} />
                     </TouchableOpacity>
-                    
+
                     <TouchableOpacity onPress = {handleFeedback}>
                         <Icon name = "comment" size = {24} />
                     </TouchableOpacity>
