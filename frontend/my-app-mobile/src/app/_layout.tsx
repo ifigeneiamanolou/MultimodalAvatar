@@ -9,8 +9,6 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="feedbackModal" options = {{presentation : 'modal'}} />
-        {/* to delete */}
-        <Stack.Screen name="feedbackTest" options = {{presentation : 'modal'}} />  
       </Stack>
       <StatusBar style = "auto"/>
     </React.Fragment>

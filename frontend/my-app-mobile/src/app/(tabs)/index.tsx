@@ -1,6 +1,6 @@
-import { View, TouchableOpacity, TextInput, Alert, } from 'react-native'; 
+import { View, TouchableOpacity, TextInput, Alert, LayoutRectangle } from 'react-native'; 
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { useRef, useState, useEffect, } from 'react';
+import { useRef, useState, useEffect, Component, } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import useRecorder from '@/src/hooks/record';
 import uuid from 'react-native-uuid';
@@ -8,6 +8,7 @@ import WebView from 'react-native-webview';
 import { router } from 'expo-router';
 import "../../../global.css";
 import constants from '@/src/constants/app';
+import Settings from '../Settings';
 
 export const showAlert = (title : string, message : string) => {
     Alert.alert(
@@ -30,6 +31,10 @@ export default function Index(){
 
     // Resulting emotion label from emotion2vec
     const emotion = useRef('');
+
+    // Settings
+    const [visible, setVisible] = useState(false);
+    const [interviewer, setInterviewer] = useState<boolean>(false);
 
     // Connection to the web socket
     useEffect(() => {
@@ -122,13 +127,14 @@ export default function Index(){
         nlpRunning.current = true;
 
         var id = ""
+        const type = interviewer ? 1 : 2;
         try{
             const res = await fetch(`${constants.BACKEND_SERVER_URL}/response/stream/mobile`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({emotion : emotionState, input : input, interview_type : 1})
+                body: JSON.stringify({emotion : emotionState, input : input, interview_type : type})
             });
 
             // Handle the response from emotion recognition endpoint
@@ -161,8 +167,8 @@ export default function Index(){
         }
 
         // Fetch a response from the LLM 
-        const type = 1;
         var response = "";
+        const type = interviewer ? 1 : 2;
         const input = Array.from(messages.values());
         try{
             const res = await fetch(`${constants.BACKEND_SERVER_URL}/feedback`, {
@@ -181,12 +187,12 @@ export default function Index(){
         // Send the response to the modal
         router.push({
             pathname : "/feedbackModal",
-            params : {feedback : response, messages : input.flat.toString()}
+            params : {feedback : response, messages : input.flat.toString(), interviewer : type}
         })
     };
 
     const handleNew = async () => {
-        const type = 1;
+        const type = interviewer ? 1 : 2;
         const input = Array.from(messages.values());
         try{
             await fetch(`${constants.BACKEND_SERVER_URL}/reset`, {
@@ -212,10 +218,26 @@ export default function Index(){
     return(
         <SafeAreaProvider>
             <SafeAreaView  className = 'flex-1'>
+                {/* Settings */}
+                <View className = "absolute top-5 right-5 z-50">
+                    <TouchableOpacity 
+                        className = "w-14 h-14 justify-center items-center rounded-full bg-gray-300"
+                        onPress = {() => {setVisible(true);}}
+                    >
+                        <Icon name = "gear" size = {32} color = "black" />
+                    </TouchableOpacity>
+
+                    <Settings 
+                        visible = {visible}
+                        dismiss={() => setVisible(false)}
+                        setInterviewer = {setInterviewer}
+                        interviewer = {interviewer}
+                    />
+                </View>
+
+                {/* Avatar */}
                 <View className = "flex-1">
                     <WebView
-                        // REPLACE WITH YOUR IPV4 (passing the elastic ip of the windows instance where the 
-                        // signaling server is hosted)
                         source={{ uri: `${constants.PIXEL_STREAMING_URL}/player.html?ss=${constants.SIGNALING_SERVER}`}}        
                         style={{ flex: 1 }}
                         onError={(syntheticEvent) => {
@@ -225,6 +247,7 @@ export default function Index(){
                     />
                 </View>
             
+                {/* Bottom navigation */}
                 <View className = "flex-row items-center p-3 gap-3 bg-white">
                     <TextInput className = "grow h-12 border-2 border-gray-600 rounded-md" editable onChangeText={onChangeText} value={text} placeholder = "Type something ..."/>
                     <TouchableOpacity onPress = {sendText} >

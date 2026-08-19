@@ -11,6 +11,7 @@ import constants from '@/src/constants/app';
 export default function Feedback(){
     var {feedback} = useLocalSearchParams<{feedback : string}>();
     const {messages} = useLocalSearchParams<{messages : string}>();
+    const {interviewer} = useLocalSearchParams();
 
     const dedent = (str: string) =>
         str.split('\n').map(line => line.trimStart()).join('\n');
@@ -24,13 +25,12 @@ export default function Feedback(){
 
         // Simulate a random user
         const id = uuid.v4();
-        const type = 1;
         try{
             await fetch(`${constants.BACKEND_SERVER_URL}/feedback/database`, {
                 method : "POST",
                 body : JSON.stringify({
                     messages : messages, 
-                    interview_type : type,
+                    interview_type : interviewer,
                     id : id,
                     feedback : feedback
                 }),
@@ -66,12 +66,11 @@ export default function Feedback(){
             return;
         }
 
-        const type = 1;
         var response = "";
         try{
             const res = await fetch(`${constants.BACKEND_SERVER_URL}/feedback`, {
                 method : "POST",
-                body : JSON.stringify({input : messages, interview_type : type}),
+                body : JSON.stringify({input : messages, interview_type : interviewer}),
                 headers: {"Content-Type": "application/json"}
             });
 

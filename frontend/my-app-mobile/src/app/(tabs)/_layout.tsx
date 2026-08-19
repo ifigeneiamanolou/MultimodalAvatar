@@ -8,7 +8,7 @@ export default function Layout(){
     return(
         <Tabs screenOptions={{
             tabBarActiveTintColor : colors['red'],
-            tabBarInactiveTintColor : colors['black'],
+            tabBarInactiveTintColor : colors['black']
         }}>
             <Tabs.Screen name = "index" options={{
                 'title' : 'New',
