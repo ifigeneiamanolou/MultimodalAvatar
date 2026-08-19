@@ -74,6 +74,9 @@ async def generateFeedback(user_input : UserInput):
         "message" : "Successful answer generation"
     }
 
+@router.post("/feedback/database")
+async def save_feedback():
+    pass
     
 
 

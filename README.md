@@ -23,6 +23,7 @@ To locally start contributing to the repository the following components need to
 2. AWS Ubuntu EC2 instance with Uvicorn server and gRPC Audio2Face server
 3. Expo server running locally
 4. Uvicorn central backend server running locally
+
 Instructions on how to set up the uvicorn and the expo servers, as well as how to configure the EC2 instances, can be found in the READMEs of the corresponding folders in this repository. Also, instructions on how to set up the signaling server, the gRPC Audio2Face server and the packaged UE5 application can be found in the README of the "MultimodalAvatarUE5" repository.
 
 ## Running the application

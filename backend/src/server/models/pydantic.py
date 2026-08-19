@@ -12,7 +12,7 @@ class Message(BaseModel):
 class LLMInput(BaseModel):
     emotion : Literal['angry', 'disgusted', 'fearful', 'happy', 'sad', 'surprised', 'neutral'] = 'neutral'
     input : list[Message]
-    interview_type : int             # 1 corresponds to user being the interviewer and 2 to user being the interviewee   
+    interview_type : int = Field(int, ge = 1, le = 2)
     model : str | None = "~google/gemini-flash-latest"
 
 class TTSInput(BaseModel):
@@ -25,7 +25,14 @@ class EmotionInput(BaseModel):      # Model used in the emotion2vec endpoint
 
 class UserInput(BaseModel):
     input : list[Message]
-    interview_type : int             # 1 corresponds to user being the interviewer and 2 to user being the interviewee   
+    interview_type : int = Field(int, ge = 1, le = 2)            
+    # 1 corresponds to user being the interviewer and 2 to user being the interviewee   
+
+class FeedbackInput(BaseModel):
+    messages : str
+    interview_type : int = Field(int, ge = 1, le = 2)
+    id : int
+    feedback : str
 
 # Response Body pydantic models
 class ResponseModel(BaseModel):
