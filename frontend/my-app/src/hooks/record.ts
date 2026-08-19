@@ -7,6 +7,7 @@ import {
   useAudioRecorderState,
 } from 'expo-audio';
 import { Alert } from 'react-native';
+import constants from '@/constants/app';
 
 type useRecorderProps = {
     ws : RefObject<WebSocket | null>;
@@ -54,7 +55,7 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
 
         // Emotion recognition
         try{
-            const res = await fetch("http://3.129.236.140:8000/emotion2vec", {              // Elastic IP address 
+            const res = await fetch(`${constants.WINDOWS_SERVER_URL}/emotion2vec`, {              // Elastic IP address 
                 method : "POST",
                 body : JSON.stringify({
                     model : "iic/emotion2vec_plus_seed",

@@ -8,6 +8,7 @@ import MarkDown from 'react-markdown';
 import '../../../global.css';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { PixelStreamingWrapper } from '../components/PixelStreamingWrapper';
+import constants from '@/constants/app';
 
 export default function Home() {
   // ====================== Constants ========================
@@ -48,7 +49,7 @@ export default function Home() {
     let keepAliveInterval: ReturnType<typeof setInterval>;
 
     const connectASR = async () => {
-      const socket = new WebSocket("ws://3.129.236.140:8000/asr");          // Elastic IP address
+      const socket = new WebSocket(`${constants.WHISPER_URL}`);          // Elastic IP address
       ws.current = socket;
       ws.current.onopen = () => {console.log("ASR socket open");}
 
@@ -130,7 +131,7 @@ export default function Home() {
     nlpRunning.current = true;
 
     try{
-      await fetchEventSource("http://localhost:8000/response/stream", {
+      await fetchEventSource(`${constants.BACKEND_SERVER_URL}/response/stream`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -209,7 +210,7 @@ export default function Home() {
 
     // Generate feedback
     const type = interviewer ? 1 : 2;
-    const res = await fetch("http://localhost:8000/feedback", {
+    const res = await fetch(`${constants.BACKEND_SERVER_URL}/feedback`, {
         method : "POST",
         body : JSON.stringify({input : messages, interview_type : type}),
         headers: {"Content-Type": "application/json"}
@@ -223,7 +224,7 @@ export default function Home() {
   const handleNew = async () => {
     // Save messages as a JSON object
     const type = interviewer ? 1 : 2;
-    await fetch("http://localhost:8000/reset", {
+    await fetch(`${constants.BACKEND_SERVER_URL}/reset`, {
         method : "POST",
         body : JSON.stringify({interview_type : type, input : messages}),
         headers: {"Content-Type": "application/json"}
@@ -249,7 +250,7 @@ export default function Home() {
         setMessagePopUp("Complete at least 2 rounds of the interview");
         return;
     } else{
-      element.click();
+        element.click();
     }
   };
 
@@ -320,7 +321,7 @@ export default function Home() {
                   initialSettings={{
                       AutoPlayVideo: true,
                       AutoConnect: true,
-                      ss: 'ws://3.129.236.140:80',    
+                      ss: constants.SIGNALING_SERVER,    
                       StartVideoMuted: true,
                       HoveringMouse: true,
                       WaitForStreamer: true,
