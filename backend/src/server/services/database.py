@@ -7,14 +7,14 @@ from fastapi import Depends
 from server.models.pydantic import FeedbackInput
 
 load_dotenv()
-POSTGRE_SQL_KEY = os.environ["POSTGRE_SQL_KEY"]
+POSTGRES_SQL_KEY = os.environ["POSTGRES_SQL_KEY"]
 
 def connect():
     conn = psycopg2.connect(
         database="mydb",
         host="localhost",
         user="postgres",
-        password=POSTGRE_SQL_KEY,
+        password=POSTGRES_SQL_KEY,
         port="5432" 
     )
     cur = conn.cursor()        # Open a cursor to execute commands
