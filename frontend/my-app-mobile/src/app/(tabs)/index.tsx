@@ -55,7 +55,7 @@ export default function Index(){
     
           ws.current.onmessage = async (e) => {    // Results of ASR
             console.log("data from ASR socket: ", e.data);
-            const response = e.data;
+            const response = e.data;  
     
             // Check the status code of the response
             if (response.ok && response.status === 200) {

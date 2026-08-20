@@ -48,7 +48,7 @@ This will provide a QR code for the mobile app that can be used to view the mobi
 
 
 If when trying to connect to the application, the connection is refused or timed out check that:
-* the uri provided in the WebView component in app/(tabs)/index.tsx is the ipv4 address under 'Wireless LAN adapter Wi-Fi' when running 'ipconfig' in windows powershell
+* the pixel streaming url in the app.js file in the constants folder is the ipv4 address under 'Wireless LAN adapter Wi-Fi' when running 'ipconfig' in windows powershell
 * port 8080 is included in the inbound ports in Windows firewall
 * VPNs are disabled
 

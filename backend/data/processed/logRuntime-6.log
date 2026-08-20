@@ -1,0 +1,202 @@
+2026-08-20 12:53:49 - server.utils.controller - INFO - starting http sessions
+2026-08-20 12:53:49 - server.utils.controller - INFO - connected to ws://3.129.236.140:7865
+2026-08-20 12:53:51 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-20 12:53:53 - __main__ - INFO - OpenRouter warm-up complete
+2026-08-20 12:54:16 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-20 12:54:16 - server.services.nlpServices - INFO - Time until first chunk from NLP : 2.3816407999256626 seconds
+2026-08-20 12:54:20 - server.services.nlpServices - INFO - Time until sentence Hello. That error typically comes up in Python when code attempts to treat a string directly as an iterator, such as calling `next()` on it. While a string is an iterable, it is not an iterator itself from NLP : 6.426801500027068
+2026-08-20 12:54:20 - server.utils.controller - INFO - Produced sentence in the queue : Hello. That error typically comes up in Python when code attempts to treat a string directly as an iterator, such as calling `next()` on it. While a string is an iterable, it is not an iterator itself
+2026-08-20 12:54:20 - server.utils.controller - INFO - Current sentence consumed is 0 : Hello. That error typically comes up in Python when code attempts to treat a string directly as an iterator, such as calling `next()` on it. While a string is an iterable, it is not an iterator itself
+2026-08-20 12:54:20 - server.services.nlpServices - INFO - Time until sentence  until you convert it using the `iter()` function. It also happens when a function expects an iterator or generator object as an argument, but a plain string is passed instead. In my previous role, we ran into this while refactoring some from NLP : 6.696487199980766
+2026-08-20 12:54:20 - server.utils.controller - INFO - Produced sentence in the queue :  until you convert it using the `iter()` function. It also happens when a function expects an iterator or generator object as an argument, but a plain string is passed instead. In my previous role, we ran into this while refactoring some
+2026-08-20 12:54:20 - server.services.nlpServices - INFO - Time until sentence  data ingestion scripts and had to adjust how the collection was being processed. from NLP : 6.697488899924792
+2026-08-20 12:54:20 - server.utils.controller - INFO - Produced sentence in the queue :  data ingestion scripts and had to adjust how the collection was being processed.
+2026-08-20 12:54:20 - server.utils.controller - INFO - Produced sentence in the queue : [[DONE]]
+2026-08-20 12:54:20 - server.services.nlpServices - INFO - Full NLP response in 6.699839000008069
+2026-08-20 12:54:21 - server.utils.controller - INFO - Time for emotion generation of [Hello. That error typically comes up in Python when code attempts to treat a string directly as an iterator, such as calling `next()` on it. While a string is an iterable, it is not an iterator itself] is 0.5461686999769881
+2026-08-20 12:54:23 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 2.7782513999845833
+2026-08-20 12:54:23 - server.utils.controller - INFO - Time until token 10 is received in the controller from Oprheus3B is 3.0725761000066996
+2026-08-20 12:54:25 - server.utils.controller - INFO - Time until token 20 is received in the controller from Oprheus3B is 5.0430252000223845
+2026-08-20 12:54:27 - server.utils.controller - INFO - Time until token 30 is received in the controller from Oprheus3B is 7.008240600000136
+2026-08-20 12:54:27 - server.utils.controller - INFO - Time until token 40 is received in the controller from Oprheus3B is 7.324625400011428
+2026-08-20 12:54:29 - server.utils.controller - INFO - Time until token 50 is received in the controller from Oprheus3B is 9.282994400011376
+2026-08-20 12:54:31 - server.utils.controller - INFO - Time until token 60 is received in the controller from Oprheus3B is 11.229971599997953
+2026-08-20 12:54:31 - server.utils.controller - INFO - Time until token 70 is received in the controller from Oprheus3B is 11.511127699981444
+2026-08-20 12:54:34 - server.utils.controller - INFO - Time until token 80 is received in the controller from Oprheus3B is 13.603783300030045
+2026-08-20 12:54:36 - server.utils.controller - INFO - Time until token 90 is received in the controller from Oprheus3B is 15.577316400012933
+2026-08-20 12:54:38 - server.utils.controller - INFO - Time until token 100 is received in the controller from Oprheus3B is 17.692861299961805
+2026-08-20 12:54:40 - server.utils.controller - INFO - Time until token 110 is received in the controller from Oprheus3B is 19.65295270003844
+2026-08-20 12:54:40 - server.utils.controller - INFO - Time until token 120 is received in the controller from Oprheus3B is 19.944808100000955
+2026-08-20 12:54:42 - server.utils.controller - INFO - Time until token 130 is received in the controller from Oprheus3B is 21.93434130004607
+2026-08-20 12:54:44 - server.utils.controller - INFO - Time sentence [Hello. That error typically comes up in Python when code attempts to treat a string directly as an iterator, such as calling `next()` on it. While a string is an iterable, it is not an iterator itself] is finished from Oprheus is 23.882955400040373
+2026-08-20 12:54:44 - server.utils.controller - INFO - Total processing time of sentence [Hello. That error typically comes up in Python when code attempts to treat a string directly as an iterator, such as calling `next()` on it. While a string is an iterable, it is not an iterator itself] is 23.883756899973378 seconds
+2026-08-20 12:54:44 - server.utils.controller - INFO - Current sentence consumed is 1 :  until you convert it using the `iter()` function. It also happens when a function expects an iterator or generator object as an argument, but a plain string is passed instead. In my previous role, we ran into this while refactoring some
+2026-08-20 12:54:44 - server.utils.controller - INFO - Time for emotion generation of [ until you convert it using the `iter()` function. It also happens when a function expects an iterator or generator object as an argument, but a plain string is passed instead. In my previous role, we ran into this while refactoring some] is 0.5416225999360904
+2026-08-20 12:54:48 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 4.414270399953239
+2026-08-20 12:54:49 - server.utils.controller - INFO - Time until token 10 is received in the controller from Oprheus3B is 4.7164000000339
+2026-08-20 12:54:51 - server.utils.controller - INFO - Time until token 20 is received in the controller from Oprheus3B is 6.825008400017396
+2026-08-20 12:54:53 - server.utils.controller - INFO - Time until token 30 is received in the controller from Oprheus3B is 8.929797800024971
+2026-08-20 12:54:55 - server.utils.controller - INFO - Time until token 40 is received in the controller from Oprheus3B is 10.913367200060748
+2026-08-20 12:54:57 - server.utils.controller - INFO - Time until token 50 is received in the controller from Oprheus3B is 13.024405800038949
+2026-08-20 12:54:59 - server.utils.controller - INFO - Time until token 60 is received in the controller from Oprheus3B is 15.13273820001632
+2026-08-20 12:54:59 - server.utils.controller - INFO - Time until token 70 is received in the controller from Oprheus3B is 15.285136300022714
+2026-08-20 12:55:01 - server.utils.controller - INFO - Time until token 80 is received in the controller from Oprheus3B is 17.421388100017793
+2026-08-20 12:55:03 - server.utils.controller - INFO - Time until token 90 is received in the controller from Oprheus3B is 19.534353700000793
+2026-08-20 12:55:05 - server.utils.controller - INFO - Time until token 100 is received in the controller from Oprheus3B is 21.532324800034985
+2026-08-20 12:55:06 - server.utils.controller - INFO - Time until token 110 is received in the controller from Oprheus3B is 21.684279500041157
+2026-08-20 12:55:08 - server.utils.controller - INFO - Time until token 120 is received in the controller from Oprheus3B is 23.69365100003779
+2026-08-20 12:55:10 - server.utils.controller - INFO - Time until token 130 is received in the controller from Oprheus3B is 25.823686699965037
+2026-08-20 12:55:12 - server.utils.controller - INFO - Time until token 140 is received in the controller from Oprheus3B is 27.829955599969253
+2026-08-20 12:55:12 - server.utils.controller - INFO - Time until token 150 is received in the controller from Oprheus3B is 28.14135890000034
+2026-08-20 12:55:14 - server.utils.controller - INFO - Time until token 160 is received in the controller from Oprheus3B is 30.598981900024228
+2026-08-20 12:55:15 - server.utils.controller - INFO - Time sentence [ until you convert it using the `iter()` function. It also happens when a function expects an iterator or generator object as an argument, but a plain string is passed instead. In my previous role, we ran into this while refactoring some] is finished from Oprheus is 30.74110169999767
+2026-08-20 12:55:15 - server.utils.controller - INFO - Total processing time of sentence [ until you convert it using the `iter()` function. It also happens when a function expects an iterator or generator object as an argument, but a plain string is passed instead. In my previous role, we ran into this while refactoring some] is 30.74277999997139 seconds
+2026-08-20 12:55:15 - server.utils.controller - INFO - Current sentence consumed is 2 :  data ingestion scripts and had to adjust how the collection was being processed.
+2026-08-20 12:55:19 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 4.862855399958789
+2026-08-20 12:55:20 - server.utils.controller - INFO - Time until token 10 is received in the controller from Oprheus3B is 5.160566400038078
+2026-08-20 12:55:22 - server.utils.controller - INFO - Time until token 20 is received in the controller from Oprheus3B is 7.171618700027466
+2026-08-20 12:55:24 - server.utils.controller - INFO - Time until token 30 is received in the controller from Oprheus3B is 9.2140324000502
+2026-08-20 12:55:25 - server.utils.controller - INFO - Time sentence [ data ingestion scripts and had to adjust how the collection was being processed.] is finished from Oprheus is 10.740777299972251
+2026-08-20 12:55:36 - server.utils.controller - ERROR - Error during emotion generation 2 : Cannot connect to host 3.129.236.140:8000 ssl:default [Το χρονικό όριο του σηματοφορέα (semaphore) εξαντλήθηκε]
+2026-08-20 12:55:36 - server.utils.controller - INFO - Time for emotion generation of [ data ingestion scripts and had to adjust how the collection was being processed.] is 21.043600999983028
+2026-08-20 12:55:36 - server.utils.controller - ERROR - Error while sending emotion 2 : cannot access local variable 'emotions' where it is not associated with a value
+2026-08-20 12:55:36 - server.utils.controller - INFO - Total processing time of sentence [ data ingestion scripts and had to adjust how the collection was being processed.] is 21.044925200054422 seconds
+2026-08-20 12:56:31 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-20 12:56:31 - server.services.nlpServices - INFO - Time until first chunk from NLP : 2.9528386000311 seconds
+2026-08-20 12:56:32 - server.services.nlpServices - INFO - Time until sentence Hello. Thank you for taking the time to meet with me today. I am excited about this opportunity and looking forward to our discussion. I am ready whenever you want to begin. from NLP : 3.5297106000361964
+2026-08-20 12:56:32 - server.utils.controller - INFO - Produced sentence in the queue : Hello. Thank you for taking the time to meet with me today. I am excited about this opportunity and looking forward to our discussion. I am ready whenever you want to begin.
+2026-08-20 12:56:32 - server.utils.controller - INFO - Current sentence consumed is 3 : Hello. Thank you for taking the time to meet with me today. I am excited about this opportunity and looking forward to our discussion. I am ready whenever you want to begin.
+2026-08-20 12:56:32 - server.utils.controller - INFO - Produced sentence in the queue : [[DONE]]
+2026-08-20 12:56:32 - server.services.nlpServices - INFO - Full NLP response in 3.540768300066702
+2026-08-20 12:56:33 - server.utils.controller - INFO - Time for emotion generation of [Hello. Thank you for taking the time to meet with me today. I am excited about this opportunity and looking forward to our discussion. I am ready whenever you want to begin.] is 0.570617499994114
+2026-08-20 12:56:35 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 2.8206970000173897
+2026-08-20 12:56:35 - server.utils.controller - INFO - Time until token 10 is received in the controller from Oprheus3B is 3.100184299983084
+2026-08-20 12:56:37 - server.utils.controller - INFO - Time until token 20 is received in the controller from Oprheus3B is 5.060194699908607
+2026-08-20 12:56:37 - server.utils.controller - INFO - Time until token 30 is received in the controller from Oprheus3B is 5.203581799985841
+2026-08-20 12:56:39 - server.utils.controller - INFO - Time until token 40 is received in the controller from Oprheus3B is 7.312631799955852
+2026-08-20 12:56:41 - server.utils.controller - INFO - Time until token 50 is received in the controller from Oprheus3B is 9.300222799996845
+2026-08-20 12:56:43 - server.utils.controller - INFO - Time until token 60 is received in the controller from Oprheus3B is 11.255907099926844
+2026-08-20 12:56:45 - server.utils.controller - INFO - Time until token 70 is received in the controller from Oprheus3B is 13.36852589994669
+2026-08-20 12:56:47 - server.utils.controller - INFO - Time until token 80 is received in the controller from Oprheus3B is 15.481886499910615
+2026-08-20 12:56:48 - server.utils.controller - INFO - Time until token 90 is received in the controller from Oprheus3B is 15.768282599980012
+2026-08-20 12:56:50 - server.utils.controller - INFO - Time until token 100 is received in the controller from Oprheus3B is 17.892986799939536
+2026-08-20 12:56:51 - server.utils.controller - INFO - Time sentence [Hello. Thank you for taking the time to meet with me today. I am excited about this opportunity and looking forward to our discussion. I am ready whenever you want to begin.] is finished from Oprheus is 19.06709889997728
+2026-08-20 12:56:51 - server.utils.controller - INFO - Total processing time of sentence [Hello. Thank you for taking the time to meet with me today. I am excited about this opportunity and looking forward to our discussion. I am ready whenever you want to begin.] is 19.068943599937484 seconds
+2026-08-20 13:05:20 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-20 13:05:20 - server.services.nlpServices - INFO - Time until first chunk from NLP : 2.924468499957584 seconds
+2026-08-20 13:05:21 - server.services.nlpServices - INFO - Time until sentence Hello. Thank you for taking the time to meet with me today. I'm really glad to be here and look forward to discussing the role with you. Whenever you are ready, please feel free to start. from NLP : 3.6586083999136463
+2026-08-20 13:05:21 - server.utils.controller - INFO - Produced sentence in the queue : Hello. Thank you for taking the time to meet with me today. I'm really glad to be here and look forward to discussing the role with you. Whenever you are ready, please feel free to start.
+2026-08-20 13:05:21 - server.utils.controller - INFO - Current sentence consumed is 4 : Hello. Thank you for taking the time to meet with me today. I'm really glad to be here and look forward to discussing the role with you. Whenever you are ready, please feel free to start.
+2026-08-20 13:05:21 - server.utils.controller - INFO - Produced sentence in the queue : [[DONE]]
+2026-08-20 13:05:21 - server.services.nlpServices - INFO - Full NLP response in 3.6668067999416962
+2026-08-20 13:05:21 - server.utils.controller - INFO - Time for emotion generation of [Hello. Thank you for taking the time to meet with me today. I'm really glad to be here and look forward to discussing the role with you. Whenever you are ready, please feel free to start.] is 0.5702202999964356
+2026-08-20 13:05:23 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 2.7760906000621617
+2026-08-20 13:05:24 - server.utils.controller - INFO - Time until token 10 is received in the controller from Oprheus3B is 3.068851000047289
+2026-08-20 13:05:26 - server.utils.controller - INFO - Time until token 20 is received in the controller from Oprheus3B is 5.026154900086112
+2026-08-20 13:05:26 - server.utils.controller - INFO - Time until token 30 is received in the controller from Oprheus3B is 5.1760034000035375
+2026-08-20 13:05:28 - server.utils.controller - INFO - Time until token 40 is received in the controller from Oprheus3B is 7.29359320004005
+2026-08-20 13:05:30 - server.utils.controller - INFO - Time until token 50 is received in the controller from Oprheus3B is 9.404331600060686
+2026-08-20 13:05:32 - server.utils.controller - INFO - Time until token 60 is received in the controller from Oprheus3B is 11.246007400099188
+2026-08-20 13:05:32 - server.utils.controller - INFO - Time until token 70 is received in the controller from Oprheus3B is 11.520186500041746
+2026-08-20 13:05:34 - server.utils.controller - INFO - Time until token 80 is received in the controller from Oprheus3B is 13.491307300049812
+2026-08-20 13:05:36 - server.utils.controller - INFO - Time until token 90 is received in the controller from Oprheus3B is 15.463600200018845
+2026-08-20 13:05:36 - server.utils.controller - INFO - Time until token 100 is received in the controller from Oprheus3B is 15.756822300027125
+2026-08-20 13:05:39 - server.utils.controller - INFO - Time until token 110 is received in the controller from Oprheus3B is 18.34796330006793
+2026-08-20 13:05:39 - server.utils.controller - INFO - Time sentence [Hello. Thank you for taking the time to meet with me today. I'm really glad to be here and look forward to discussing the role with you. Whenever you are ready, please feel free to start.] is finished from Oprheus is 18.483323400025256
+2026-08-20 13:05:39 - server.utils.controller - INFO - Total processing time of sentence [Hello. Thank you for taking the time to meet with me today. I'm really glad to be here and look forward to discussing the role with you. Whenever you are ready, please feel free to start.] is 18.484574200003408 seconds
+2026-08-20 13:08:51 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-20 13:08:51 - server.services.nlpServices - INFO - Time until first chunk from NLP : 2.46330649999436 seconds
+2026-08-20 13:08:54 - server.services.nlpServices - INFO - Time until sentence Hello, thank you for having me. It is great to connect with you today. I have been working in the industry for a few years now, mostly focusing on general operations and handling various team projects, so I am really eager to learn more about the position from NLP : 5.049887100001797
+2026-08-20 13:08:54 - server.utils.controller - INFO - Produced sentence in the queue : Hello, thank you for having me. It is great to connect with you today. I have been working in the industry for a few years now, mostly focusing on general operations and handling various team projects, so I am really eager to learn more about the position
+2026-08-20 13:08:54 - server.utils.controller - INFO - Current sentence consumed is 5 : Hello, thank you for having me. It is great to connect with you today. I have been working in the industry for a few years now, mostly focusing on general operations and handling various team projects, so I am really eager to learn more about the position
+2026-08-20 13:08:54 - server.services.nlpServices - INFO - Time until sentence  and see how my background fits in. I am ready whenever you want to begin. from NLP : 5.109268700005487
+2026-08-20 13:08:54 - server.utils.controller - INFO - Produced sentence in the queue :  and see how my background fits in. I am ready whenever you want to begin.
+2026-08-20 13:08:54 - server.utils.controller - INFO - Produced sentence in the queue : [[DONE]]
+2026-08-20 13:08:54 - server.services.nlpServices - INFO - Full NLP response in 5.112784500000998
+2026-08-20 13:08:57 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 2.795884299906902
+2026-08-20 13:08:57 - server.utils.controller - INFO - Time until token 10 is received in the controller from Oprheus3B is 2.95508909993805
+2026-08-20 13:08:59 - server.utils.controller - INFO - Time until token 20 is received in the controller from Oprheus3B is 4.899133899947628
+2026-08-20 13:08:59 - server.utils.controller - INFO - Time until token 30 is received in the controller from Oprheus3B is 5.060101799899712
+2026-08-20 13:09:01 - server.utils.controller - INFO - Time until token 40 is received in the controller from Oprheus3B is 7.158995999954641
+2026-08-20 13:09:01 - server.utils.controller - INFO - Time until token 50 is received in the controller from Oprheus3B is 7.327613699948415
+2026-08-20 13:09:03 - server.utils.controller - INFO - Time until token 60 is received in the controller from Oprheus3B is 9.266162199899554
+2026-08-20 13:09:06 - server.utils.controller - INFO - Time until token 70 is received in the controller from Oprheus3B is 11.99640899989754
+2026-08-20 13:09:06 - server.utils.controller - INFO - Time until token 80 is received in the controller from Oprheus3B is 12.15191719995346
+2026-08-20 13:09:09 - server.utils.controller - INFO - Time until token 90 is received in the controller from Oprheus3B is 14.829323399928398
+2026-08-20 13:09:10 - server.utils.controller - INFO - Time until token 100 is received in the controller from Oprheus3B is 16.38767719990574
+2026-08-20 13:09:11 - server.utils.controller - INFO - Time until token 110 is received in the controller from Oprheus3B is 16.69198639993556
+2026-08-20 13:09:13 - server.utils.controller - INFO - Time until token 120 is received in the controller from Oprheus3B is 18.609069900005125
+2026-08-20 13:09:15 - server.utils.controller - INFO - Time until token 130 is received in the controller from Oprheus3B is 20.4873249999946
+2026-08-20 13:09:15 - server.utils.controller - INFO - Time until token 140 is received in the controller from Oprheus3B is 20.798976799938828
+2026-08-20 13:09:15 - server.utils.controller - ERROR - Error during emotion generation 5 : Cannot connect to host 3.129.236.140:8000 ssl:default [Το χρονικό όριο του σηματοφορέα (semaphore) εξαντλήθηκε]
+2026-08-20 13:09:15 - server.utils.controller - INFO - Time for emotion generation of [Hello, thank you for having me. It is great to connect with you today. I have been working in the industry for a few years now, mostly focusing on general operations and handling various team projects, so I am really eager to learn more about the position] is 21.026040200027637
+2026-08-20 13:09:15 - server.utils.controller - ERROR - Error while sending emotion 5 : cannot access local variable 'emotions' where it is not associated with a value
+2026-08-20 13:09:19 - server.utils.controller - INFO - Time until token 150 is received in the controller from Oprheus3B is 24.599802099983208
+2026-08-20 13:09:19 - server.utils.controller - INFO - Time until token 160 is received in the controller from Oprheus3B is 24.905181699898094
+2026-08-20 13:09:20 - server.utils.controller - INFO - Time until token 170 is received in the controller from Oprheus3B is 25.958851199946366
+2026-08-20 13:09:20 - server.utils.controller - INFO - Time sentence [Hello, thank you for having me. It is great to connect with you today. I have been working in the industry for a few years now, mostly focusing on general operations and handling various team projects, so I am really eager to learn more about the position] is finished from Oprheus is 25.965119099942967
+2026-08-20 13:09:20 - server.utils.controller - INFO - Total processing time of sentence [Hello, thank you for having me. It is great to connect with you today. I have been working in the industry for a few years now, mostly focusing on general operations and handling various team projects, so I am really eager to learn more about the position] is 25.96649919997435 seconds
+2026-08-20 13:09:20 - server.utils.controller - INFO - Current sentence consumed is 6 :  and see how my background fits in. I am ready whenever you want to begin.
+2026-08-20 13:09:23 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 2.6392021999927238
+2026-08-20 13:09:23 - server.utils.controller - INFO - Time until token 10 is received in the controller from Oprheus3B is 2.9402432999340817
+2026-08-20 13:09:25 - server.utils.controller - INFO - Time until token 20 is received in the controller from Oprheus3B is 4.905319499899633
+2026-08-20 13:09:27 - server.utils.controller - INFO - Time until token 30 is received in the controller from Oprheus3B is 6.8367427999619395
+2026-08-20 13:09:27 - server.utils.controller - INFO - Time until token 40 is received in the controller from Oprheus3B is 7.144186699995771
+2026-08-20 13:09:29 - server.utils.controller - INFO - Time until token 50 is received in the controller from Oprheus3B is 9.226227399893105
+2026-08-20 13:09:29 - server.utils.controller - INFO - Time sentence [ and see how my background fits in. I am ready whenever you want to begin.] is finished from Oprheus is 9.362085299915634
+2026-08-20 13:09:36 - server.utils.controller - INFO - Time for emotion generation of [ and see how my background fits in. I am ready whenever you want to begin.] is 16.029839399969205
+2026-08-20 13:09:36 - server.utils.controller - INFO - Total processing time of sentence [ and see how my background fits in. I am ready whenever you want to begin.] is 16.032100899959914 seconds
+2026-08-20 13:09:47 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-20 13:09:47 - server.services.nlpServices - INFO - Time until first chunk from NLP : 2.308772800024599 seconds
+2026-08-20 13:09:49 - server.services.nlpServices - INFO - Time until sentence Hello! It is a pleasure to meet you as well, and thank you for taking the time to speak with me. I have been really looking forward to this conversation and learning more about what the team is working on. I from NLP : 4.066343800048344
+2026-08-20 13:09:49 - server.utils.controller - INFO - Produced sentence in the queue : Hello! It is a pleasure to meet you as well, and thank you for taking the time to speak with me. I have been really looking forward to this conversation and learning more about what the team is working on. I
+2026-08-20 13:09:49 - server.utils.controller - INFO - Current sentence consumed is 7 : Hello! It is a pleasure to meet you as well, and thank you for taking the time to speak with me. I have been really looking forward to this conversation and learning more about what the team is working on. I
+2026-08-20 13:09:49 - server.services.nlpServices - INFO - Time until sentence  am all set whenever you would like to begin with the first question. from NLP : 4.124208000022918
+2026-08-20 13:09:49 - server.utils.controller - INFO - Produced sentence in the queue :  am all set whenever you would like to begin with the first question.
+2026-08-20 13:09:49 - server.utils.controller - INFO - Produced sentence in the queue : [[DONE]]
+2026-08-20 13:09:49 - server.services.nlpServices - INFO - Full NLP response in 4.127356400014833
+2026-08-20 13:09:49 - server.utils.controller - INFO - Time for emotion generation of [Hello! It is a pleasure to meet you as well, and thank you for taking the time to speak with me. I have been really looking forward to this conversation and learning more about what the team is working on. I] is 0.5470594000071287
+2026-08-20 13:09:51 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 2.7565687999594957
+2026-08-20 13:09:52 - server.utils.controller - INFO - Time until token 10 is received in the controller from Oprheus3B is 3.0493546000216156
+2026-08-20 13:09:54 - server.utils.controller - INFO - Time until token 20 is received in the controller from Oprheus3B is 5.018144299974665
+2026-08-20 13:09:56 - server.utils.controller - INFO - Time until token 30 is received in the controller from Oprheus3B is 6.969484700006433
+2026-08-20 13:09:56 - server.utils.controller - INFO - Time until token 40 is received in the controller from Oprheus3B is 7.272661300026812
+2026-08-20 13:10:00 - server.utils.controller - INFO - Time until token 50 is received in the controller from Oprheus3B is 11.188673799973913
+2026-08-20 13:10:02 - server.utils.controller - INFO - Time until token 60 is received in the controller from Oprheus3B is 13.29113230004441
+2026-08-20 13:10:02 - server.utils.controller - INFO - Time until token 70 is received in the controller from Oprheus3B is 13.572992700035684
+2026-08-20 13:10:04 - server.utils.controller - INFO - Time until token 80 is received in the controller from Oprheus3B is 15.66477939998731
+2026-08-20 13:10:06 - server.utils.controller - INFO - Time until token 90 is received in the controller from Oprheus3B is 17.496961800032295
+2026-08-20 13:10:06 - server.utils.controller - INFO - Time until token 100 is received in the controller from Oprheus3B is 17.800049699959345
+2026-08-20 13:10:08 - server.utils.controller - INFO - Time until token 110 is received in the controller from Oprheus3B is 19.792031300021335
+2026-08-20 13:10:11 - server.utils.controller - INFO - Time until token 120 is received in the controller from Oprheus3B is 21.952359599992633
+2026-08-20 13:10:11 - server.utils.controller - INFO - Time sentence [Hello! It is a pleasure to meet you as well, and thank you for taking the time to speak with me. I have been really looking forward to this conversation and learning more about what the team is working on. I] is finished from Oprheus is 22.24040090001654
+2026-08-20 13:10:11 - server.utils.controller - INFO - Total processing time of sentence [Hello! It is a pleasure to meet you as well, and thank you for taking the time to speak with me. I have been really looking forward to this conversation and learning more about what the team is working on. I] is 22.24166229995899 seconds
+2026-08-20 13:10:11 - server.utils.controller - INFO - Current sentence consumed is 8 :  am all set whenever you would like to begin with the first question.
+2026-08-20 13:10:11 - server.utils.controller - INFO - Time for emotion generation of [ am all set whenever you would like to begin with the first question.] is 0.5328933999408036
+2026-08-20 13:10:14 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 2.660314100096002
+2026-08-20 13:10:14 - server.utils.controller - INFO - Time until token 10 is received in the controller from Oprheus3B is 2.9520614000502974
+2026-08-20 13:10:16 - server.utils.controller - INFO - Time until token 20 is received in the controller from Oprheus3B is 4.9189151000464335
+2026-08-20 13:10:18 - server.utils.controller - INFO - Time until token 30 is received in the controller from Oprheus3B is 6.879010900040157
+2026-08-20 13:10:18 - server.utils.controller - INFO - Time until token 40 is received in the controller from Oprheus3B is 7.181704199989326
+2026-08-20 13:10:19 - server.utils.controller - INFO - Time sentence [ am all set whenever you would like to begin with the first question.] is finished from Oprheus is 8.147112800041214
+2026-08-20 13:10:19 - server.utils.controller - INFO - Total processing time of sentence [ am all set whenever you would like to begin with the first question.] is 8.148270300007425 seconds
+2026-08-20 13:19:00 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-20 13:19:00 - server.services.nlpServices - INFO - Time until first chunk from NLP : 2.558576099923812 seconds
+2026-08-20 13:19:01 - server.services.nlpServices - INFO - Time until sentence Hello! Thank you for taking the time to meet with me today. I am excited about this opportunity and ready whenever you would like to begin. from NLP : 2.8403002999257296
+2026-08-20 13:19:01 - server.utils.controller - INFO - Produced sentence in the queue : Hello! Thank you for taking the time to meet with me today. I am excited about this opportunity and ready whenever you would like to begin.
+2026-08-20 13:19:01 - server.utils.controller - INFO - Current sentence consumed is 9 : Hello! Thank you for taking the time to meet with me today. I am excited about this opportunity and ready whenever you would like to begin.
+2026-08-20 13:19:01 - server.utils.controller - INFO - Produced sentence in the queue : [[DONE]]
+2026-08-20 13:19:01 - server.services.nlpServices - INFO - Full NLP response in 2.8466095000039786
+2026-08-20 13:19:01 - server.utils.controller - INFO - Time for emotion generation of [Hello! Thank you for taking the time to meet with me today. I am excited about this opportunity and ready whenever you would like to begin.] is 0.5597032000077888
+2026-08-20 13:19:04 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 2.7905846000649035
+2026-08-20 13:19:06 - server.utils.controller - INFO - Time until token 10 is received in the controller from Oprheus3B is 4.897928799968213
+2026-08-20 13:19:08 - server.utils.controller - INFO - Time until token 20 is received in the controller from Oprheus3B is 6.988855700008571
+2026-08-20 13:19:08 - server.utils.controller - INFO - Time until token 30 is received in the controller from Oprheus3B is 7.314712699968368
+2026-08-20 13:19:10 - server.utils.controller - INFO - Time until token 40 is received in the controller from Oprheus3B is 9.398590500000864
+2026-08-20 13:19:12 - server.utils.controller - INFO - Time until token 50 is received in the controller from Oprheus3B is 11.509726500022225
+2026-08-20 13:19:14 - server.utils.controller - INFO - Time until token 60 is received in the controller from Oprheus3B is 13.671232900000177
+2026-08-20 13:19:15 - server.utils.controller - INFO - Time sentence [Hello! Thank you for taking the time to meet with me today. I am excited about this opportunity and ready whenever you would like to begin.] is finished from Oprheus is 13.82038889999967
+2026-08-20 13:19:15 - server.utils.controller - INFO - Total processing time of sentence [Hello! Thank you for taking the time to meet with me today. I am excited about this opportunity and ready whenever you would like to begin.] is 13.821650200057775 seconds
+2026-08-20 14:43:26 - server.utils.controller - INFO - Disconnected from UE5 server
+2026-08-20 14:43:26 - server.utils.controller - INFO - Disconnected from windows HTTP session
+2026-08-20 14:43:26 - server.utils.controller - INFO - Disconnected from ubuntu HTTP session

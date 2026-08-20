@@ -1,0 +1,48 @@
+2026-08-20 12:48:32 - server.utils.controller - INFO - starting http sessions
+2026-08-20 12:48:32 - server.utils.controller - INFO - connected to ws://3.129.236.140:7865
+2026-08-20 12:48:35 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-20 12:48:35 - __main__ - INFO - OpenRouter warm-up complete
+2026-08-20 12:48:38 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-20 12:48:39 - server.services.nlpServices - INFO - Time until first chunk from NLP : 3.861569199943915 seconds
+2026-08-20 12:48:41 - server.services.nlpServices - INFO - Time until sentence Hello. That error typically occurs in Python when you attempt to call a function like `next()` directly on a string without converting it first, or if a function expected an iterator object and received a raw string. I usually resolve that by wrapping the string with `iter()`, or by adjusting the loop logic depending on what the from NLP : 5.153738199966028
+2026-08-20 12:48:41 - server.utils.controller - INFO - Produced sentence in the queue : Hello. That error typically occurs in Python when you attempt to call a function like `next()` directly on a string without converting it first, or if a function expected an iterator object and received a raw string. I usually resolve that by wrapping the string with `iter()`, or by adjusting the loop logic depending on what the
+2026-08-20 12:48:41 - server.services.nlpServices - INFO - Time until sentence  code was trying to process. from NLP : 5.157959799980745
+2026-08-20 12:48:41 - server.utils.controller - INFO - Produced sentence in the queue :  code was trying to process.
+2026-08-20 12:48:41 - server.utils.controller - INFO - Current sentence consumed is 0 : Hello. That error typically occurs in Python when you attempt to call a function like `next()` directly on a string without converting it first, or if a function expected an iterator object and received a raw string. I usually resolve that by wrapping the string with `iter()`, or by adjusting the loop logic depending on what the
+2026-08-20 12:48:41 - server.utils.controller - INFO - Produced sentence in the queue : [[DONE]]
+2026-08-20 12:48:41 - server.services.nlpServices - INFO - Full NLP response in 5.167540099937469
+2026-08-20 12:48:41 - server.utils.controller - INFO - Time for emotion generation of [Hello. That error typically occurs in Python when you attempt to call a function like `next()` directly on a string without converting it first, or if a function expected an iterator object and received a raw string. I usually resolve that by wrapping the string with `iter()`, or by adjusting the loop logic depending on what the] is 0.6126482000108808
+2026-08-20 12:48:44 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 2.7850924999220297
+2026-08-20 12:48:44 - server.utils.controller - INFO - Time until token 10 is received in the controller from Oprheus3B is 3.0785389998927712
+2026-08-20 12:48:46 - server.utils.controller - INFO - Time until token 20 is received in the controller from Oprheus3B is 5.039588199928403
+2026-08-20 12:48:48 - server.utils.controller - INFO - Time until token 30 is received in the controller from Oprheus3B is 7.13082559988834
+2026-08-20 12:48:50 - server.utils.controller - INFO - Time until token 40 is received in the controller from Oprheus3B is 9.072070099995472
+2026-08-20 12:48:50 - server.utils.controller - INFO - Time until token 50 is received in the controller from Oprheus3B is 9.369508299976587
+2026-08-20 12:48:54 - server.utils.controller - INFO - Time until token 60 is received in the controller from Oprheus3B is 13.308105599950068
+2026-08-20 12:48:54 - server.utils.controller - INFO - Time until token 70 is received in the controller from Oprheus3B is 13.602947799954563
+2026-08-20 12:48:56 - server.utils.controller - INFO - Time until token 80 is received in the controller from Oprheus3B is 15.585330399917439
+2026-08-20 12:48:58 - server.utils.controller - INFO - Time until token 90 is received in the controller from Oprheus3B is 17.70991889992729
+2026-08-20 12:49:01 - server.utils.controller - INFO - Time until token 100 is received in the controller from Oprheus3B is 19.841105899889953
+2026-08-20 12:49:03 - server.utils.controller - INFO - Time until token 110 is received in the controller from Oprheus3B is 21.965794499963522
+2026-08-20 12:49:03 - server.utils.controller - INFO - Time until token 120 is received in the controller from Oprheus3B is 22.125290700001642
+2026-08-20 12:49:05 - server.utils.controller - INFO - Time until token 130 is received in the controller from Oprheus3B is 24.284274899982847
+2026-08-20 12:49:07 - server.utils.controller - INFO - Time until token 140 is received in the controller from Oprheus3B is 26.259341699886136
+2026-08-20 12:49:09 - server.utils.controller - INFO - Time until token 150 is received in the controller from Oprheus3B is 28.406324799987487
+2026-08-20 12:49:11 - server.utils.controller - INFO - Time until token 160 is received in the controller from Oprheus3B is 30.40198679990135
+2026-08-20 12:49:11 - server.utils.controller - INFO - Time until token 170 is received in the controller from Oprheus3B is 30.692293799947947
+2026-08-20 12:49:14 - server.utils.controller - INFO - Time until token 180 is received in the controller from Oprheus3B is 32.860065599903464
+2026-08-20 12:49:15 - server.utils.controller - INFO - Time until token 190 is received in the controller from Oprheus3B is 34.72284519998357
+2026-08-20 12:49:16 - server.utils.controller - INFO - Time until token 200 is received in the controller from Oprheus3B is 35.007853299961425
+2026-08-20 12:49:18 - server.utils.controller - INFO - Time until token 210 is received in the controller from Oprheus3B is 37.05101159994956
+2026-08-20 12:49:18 - server.utils.controller - INFO - Time sentence [Hello. That error typically occurs in Python when you attempt to call a function like `next()` directly on a string without converting it first, or if a function expected an iterator object and received a raw string. I usually resolve that by wrapping the string with `iter()`, or by adjusting the loop logic depending on what the] is finished from Oprheus is 37.60117989999708
+2026-08-20 12:49:18 - server.utils.controller - INFO - Total processing time of sentence [Hello. That error typically occurs in Python when you attempt to call a function like `next()` directly on a string without converting it first, or if a function expected an iterator object and received a raw string. I usually resolve that by wrapping the string with `iter()`, or by adjusting the loop logic depending on what the] is 37.60295570001472 seconds
+2026-08-20 12:49:18 - server.utils.controller - INFO - Current sentence consumed is 1 :  code was trying to process.
+2026-08-20 12:49:19 - server.utils.controller - INFO - Time for emotion generation of [ code was trying to process.] is 0.5011848999420181
+2026-08-20 12:49:24 - server.utils.controller - INFO - Time until token 0 is received in the controller from Oprheus3B is 5.484557599993423
+2026-08-20 12:49:24 - server.utils.controller - INFO - Time until token 10 is received in the controller from Oprheus3B is 5.774513700045645
+2026-08-20 12:49:26 - server.utils.controller - INFO - Time until token 20 is received in the controller from Oprheus3B is 7.941323300008662
+2026-08-20 12:49:26 - server.utils.controller - INFO - Time sentence [ code was trying to process.] is finished from Oprheus is 8.07790799997747
+2026-08-20 12:49:26 - server.utils.controller - INFO - Total processing time of sentence [ code was trying to process.] is 8.078967200010084 seconds
+2026-08-20 12:53:41 - server.utils.controller - INFO - Disconnected from UE5 server
+2026-08-20 12:53:41 - server.utils.controller - INFO - Disconnected from windows HTTP session
+2026-08-20 12:53:41 - server.utils.controller - INFO - Disconnected from ubuntu HTTP session

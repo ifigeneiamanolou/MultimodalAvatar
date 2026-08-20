@@ -50,17 +50,20 @@ export default function useRecorder({ws, emotion} : useRecorderProps){
         const audio = await response.blob();                    // Extract raw binary audio data
 
         // Encode audio into a base64 string
-        var base64string = "";
-        const reader = new window.FileReader();
-        reader.readAsDataURL(audio); 
-        reader.onloadend = () => {
-            if(reader.result){
-                const base64 = reader.result.toString();        
-                base64string = base64.split(',')[1];
-                    console.log(base64string);
-            } 
-        }
-
+        const base64string : string = await new Promise((resolve, reject) => {
+            const reader = new window.FileReader();
+            reader.onloadend = () => {
+                if(reader.result){
+                    const base64 = reader.result.toString();        
+                    resolve(base64.split(',')[1]);
+                } else{
+                    reject(new Error('File reader produced no result'));
+                }
+            }
+            reader.onerror = reject;
+            reader.readAsDataURL(audio); 
+        });
+    
         // Emotion recognition
         try{
             const res = await fetch(`${constants.WINDOWS_SERVER_URL}/emotion2vec`, {              // Elastic IP address 
@@ -94,7 +97,7 @@ export default function useRecorder({ws, emotion} : useRecorderProps){
         } else{
             if(base64string){
                 ws.current?.send(base64string);
-                console.log('audio sent to a2f');
+                console.log('audio sent for ASR');
             }
         }
     };
