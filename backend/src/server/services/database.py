@@ -10,6 +10,11 @@ load_dotenv()
 POSTGRES_SQL_KEY = os.environ["POSTGRES_SQL_KEY"]
 
 def connect():
+    """ Connect to a local PostgresSQL database, yield the cursor object and perform cleaning
+
+    Yields:
+        cursor: object that allows us to perform SQL queries within the database
+    """
     conn = psycopg2.connect(
         database="mydb",
         host="localhost",
@@ -27,6 +32,14 @@ def connect():
         conn.close()           # Close the communication with the db
 
 async def add_feedback(cursor : Annotated[cursor, Depends(connect)], input : FeedbackInput):
+    """
+        Add a new entry to the feedback table (and create the table if missing)
+
+        Args:
+            cursor (cursor) : cursor object needed to perform SQL queries
+            input (FeedbackInput) : pydantic model containing the data to add to the table (feedback, type
+            of interview, unique id and messages during the interview)
+    """
     # Find the "feedback" table
     cursor.execute(""" SELECT EXISTS(
             SELECT * FROM information_schema.tables
