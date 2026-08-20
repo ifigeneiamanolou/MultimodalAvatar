@@ -45,6 +45,7 @@ export default function Home() {
 
   // ======================= Web Socket ======================
   useEffect(() => {
+    reset();
     let reconnectTimer: ReturnType<typeof setTimeout>;
     let keepAliveInterval: ReturnType<typeof setInterval>;
 
@@ -115,6 +116,11 @@ export default function Home() {
       ws.current?.close(1000, "unmounted");
     };
   }, []);
+
+  // Restart the asyncio queue in the backend
+  const reset = async () => {
+      await fetch(`${constants.BACKEND_SERVER_URL}/reset/queue`, {method: 'POST'});
+  };
 
   const fetchData = async (input : {role : string, content : string}[]) => {
      console.log("CALLING NLP", new Date(), input);

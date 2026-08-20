@@ -38,6 +38,7 @@ export default function Index(){
 
     // Connection to the web socket
     useEffect(() => {
+        reset();
         let reconnectTimer: ReturnType<typeof setTimeout>;
         let keepAliveInterval: ReturnType<typeof setInterval>;
     
@@ -95,6 +96,11 @@ export default function Index(){
           ws.current?.close(1000, "unmounted");
         };
     }, []);
+
+    // Restart the asyncio queue in the backend
+    const reset = async () => {
+        await fetch(`${constants.BACKEND_SERVER_URL}/reset/queue`, {method: 'POST'});
+    };
 
     // Handle user input text
     const sendText = async () => {

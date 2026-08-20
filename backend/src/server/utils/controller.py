@@ -53,6 +53,17 @@ class Controller:
         # Connect to the web socket 
         await self.connect_ue5()
 
+    async def restart(self):
+        """
+            Restarts the state of the controller once a new pixel streaming user enters
+        """
+        # Empty the queue
+        while not self.queue.empty:
+            self.queue.get()
+
+        # Reset sentence id 
+        self._sequence_id = 0
+        
     async def close(self):
         """ 
             Stops the aiohttp sessions, empties the asyncio queue and disconnects from the UE5 app 

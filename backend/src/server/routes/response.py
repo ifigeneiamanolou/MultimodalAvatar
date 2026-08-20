@@ -3,6 +3,7 @@ from fastapi.responses import StreamingResponse
 from server.services.nlpServices import get_answer_router, get_answer_router_stream, get_answer_router_stream_mobile
 from server.models.pydantic import LLMInput, ResponseModel
 from server.services.fileServices import save, load_template
+from server.utils.controller import controller as syncCoordinator
 
 router = APIRouter()     
 
@@ -83,3 +84,7 @@ async def generateTextResponse(user_input :LLMInput):
         model = user_input.model,
     )
     return result
+
+@router.post("/reset/queue")
+async def reset_queue():
+    syncCoordinator.restart()
