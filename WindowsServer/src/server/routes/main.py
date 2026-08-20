@@ -12,7 +12,6 @@ from server.services.whisperServices import transcription
 from server.services.bertServices import load as load_distilbert
 from server.services.bertServices import bert_ready_inference
 from server.services.fileServices import read_audio, next_path, start_logging
-import os
 
 # Configure basic logging
 start_logging()
@@ -33,7 +32,7 @@ async def lifespan(app: FastAPI):
     waveform, sr = read_audio("../../../data/raw/Warmup.m4a")
     logger.info(f"Sample rate for current audio file is {sr}")
     emotion_detection(waveform, "en", "iic/emotion2vec_plus_seed")
-    transcription("tiny", os.path.join(BASE_DIR, "../../../data/raw/Warmup.m4a"))
+    transcription("tiny", "../../../data/raw/Warmup.m4a")
 
     # Run the server
     yield
