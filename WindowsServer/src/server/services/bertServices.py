@@ -97,9 +97,9 @@ def post_process(predictions : list):
 #################################################################
 def load():
     if "tokenizer" not in _models.keys():
-        _models["tokenizer"] = AutoTokenizer.from_pretrained("distilbert-base-uncased")
+        _models["tokenizer"] = AutoTokenizer.from_pretrained("TuhinG/distilbert-goemotions")
     if "model" not in _models.keys():
-        _models["model"] = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased")
+        _models["model"] = AutoModelForSequenceClassification.from_pretrained("TuhinG/distilbert-goemotions", device_map = "auto")
              
 def bert_ready_inference(text : str):
     """ Perform bert inference using a HF model
@@ -115,6 +115,7 @@ def bert_ready_inference(text : str):
 
     tokenizer = _models["tokenizer"]
     inputs = tokenizer(text, return_tensors="pt")
+    inputs = {key: value.to(device) for key, value in inputs.items()}
 
     with torch.no_grad():    # No gradient calculation
         model = _models["model"]

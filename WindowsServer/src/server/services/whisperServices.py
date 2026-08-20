@@ -5,6 +5,8 @@ import logging
 import time
 import os
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
+
 # Configure logging
 logger = logging.getLogger(__name__)
 
@@ -13,7 +15,7 @@ _models = {}
 
 # Settings
 device = "cuda" if torch.cuda.is_available() else "cpu"
-compute_type = "int8"
+compute_type = "float16"
 
 def load_model(model_id : str):
     """ Load a whisper model and cache locally
@@ -36,7 +38,6 @@ def load_model(model_id : str):
             use_auth_token = True,
         )  
 
-
 def transcription(model_id : str, path : Path) -> str:
     """ Perform audio transcription 
 
@@ -50,6 +51,9 @@ def transcription(model_id : str, path : Path) -> str:
     Returns:
         str: the transcription of the input audio
     """
+    
+    # Configure path
+    path = os.path.join(BASE_DIR, path)
 
     # Load model
     load_model(model_id)
