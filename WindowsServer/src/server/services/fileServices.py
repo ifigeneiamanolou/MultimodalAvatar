@@ -36,12 +36,12 @@ def save_audio(audio_bytes : bytes):
 
     # Data path
     DATA_PATH = os.path.abspath(
-        os.path.join(BASE_DIR, next("../../../data/raw/audio-%s.webm"))
+        os.path.join(BASE_DIR, next_path("../../../data/raw/audio-%s.webm"))
     )
     
     # Check if 10 logging files are already present
     MAX_PATH = os.path.abspath(
-        os.path.join(BASE_DIR, "../../../data/raw/audio-1.webm")
+        os.path.join(BASE_DIR, "../../../data/raw/audio-11.webm")
     )
     if(str(DATA_PATH) == str(MAX_PATH)):
         # Updated data file path
@@ -78,7 +78,7 @@ def save_emotion2vec(scores : np.ndarray, emotion : str):
     
     # Check if 10 logging files are already present
     MAX_PATH = os.path.abspath(
-        os.path.join(BASE_DIR, "../../../data/processed/emotion2vec-1.txt")
+        os.path.join(BASE_DIR, "../../../data/processed/emotion2vec-11.txt")
     )
     if(str(DATA_PATH) == str(MAX_PATH)):
         # Updated data file path
@@ -88,7 +88,7 @@ def save_emotion2vec(scores : np.ndarray, emotion : str):
         
         # Remove old logging files
         for i in range(1, 11):
-            os.remove(os.path.join(BASE_DIR, f"../../../data/processed/emotion2vec-{i}.txt"))
+            os.path.remove(os.path.join(BASE_DIR, f"../../../data/processed/emotion2vec-{i}.txt"))
             
     # Create a directory to store output from orpheus3b
     os.makedirs(os.path.dirname(DATA_PATH), exist_ok=True)
@@ -120,7 +120,7 @@ def save_distilbert(sentence : str, emotion : str, maxProb : float, result : dic
     
     # Check if 10 logging files are already present
     MAX_PATH = os.path.abspath(
-        os.path.join(BASE_DIR, "../../../data/processed/distilbert-1.txt")
+        os.path.join(BASE_DIR, "../../../data/processed/distilbert-11.txt")
     )
     if(str(DATA_PATH) == str(MAX_PATH)):
         # Updated data file path

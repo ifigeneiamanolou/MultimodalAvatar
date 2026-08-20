@@ -8,15 +8,21 @@ from server.models.pydantic import ResponseModel, EmotionInput
 import os
 from server.services.emotionsServices import emotion_detection, processScores
 import base64
-from server.services.fileServices import save_emotion2vec
+from server.services.fileServices import save_emotion2vec, save_audio
 
 router = APIRouter()
 
 @router.post("/emotion2vec", response_model = ResponseModel)
 async def detectAudioEmotion(input : EmotionInput):
+    # Decode the base64 input audio
+    decoded_data = base64.b64decode(input.audio, validate = True)
+    
+    # Save raw audio into a webm file  
+    path = save_audio(decoded_data)  
+    
     # Emotion detection
     try:
-        scores = emotion_detection(base64.b64decode(input.audio, ' /'), input.language, input.model)
+        scores = emotion_detection(path, input.language, input.model)
     except RuntimeError as e:
         return{
             "success" : False,

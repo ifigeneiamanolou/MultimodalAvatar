@@ -11,17 +11,24 @@ from server.services.whisperServices import load_model as load_whisper
 from server.services.whisperServices import transcription
 from server.services.bertServices import load as load_distilbert
 from server.services.bertServices import bert_ready_inference
-from server.services.fileServices import read_audio, next_path, start_logging
+from server.services.fileServices import read_audio, start_logging
+import torch
 
 # Configure basic logging
 start_logging()
 logger = logging.getLogger(__name__)
+
+# Device
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Constant
 WARMUP_SENTENCE = "This is a warmup sentence for the machine learning models"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Ensure cuda is available
+    logger.info(f"Device used is {device}")
+    
     # Load emotion2vec, distilert and whisper
     load_emotion2vec("iic/emotion2vec_plus_seed") 
     load_whisper("tiny")
@@ -31,6 +38,13 @@ async def lifespan(app: FastAPI):
     bert_ready_inference(WARMUP_SENTENCE)
     waveform, sr = read_audio("../../../data/raw/Warmup.m4a")
     logger.info(f"Sample rate for current audio file is {sr}")
+    emotion_detection(waveform, "en", "iic/emotion2vec_plus_seed")
+    transcription("tiny", "../../../data/raw/Warmup.m4a")
+    
+    # Uncomment this only to test inference time
+    logger.info(f"======== RUNNING TEST FOR INFERENCE TIMES =======")
+    bert_ready_inference(WARMUP_SENTENCE)
+    waveform, sr = read_audio("../../../data/raw/Warmup.m4a")
     emotion_detection(waveform, "en", "iic/emotion2vec_plus_seed")
     transcription("tiny", "../../../data/raw/Warmup.m4a")
 

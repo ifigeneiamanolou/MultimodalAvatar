@@ -32,11 +32,11 @@ async def speechRecognition(websocket : WebSocket):
                 continue
             
             # Decode the base64 input audio
-            decoded_data = base64.b64decode(data, validate = True);
+            decoded_data = base64.b64decode(data, validate = True)
 
             # Save raw audio into a webm file  
-            path = save_audio(decoded_data)             # THE AUDIO IS NOT SAVED PROPERLY - LOOK INTO TORCHAUDIO
-
+            path = save_audio(decoded_data)            
+            
             try:
                 # Perform audio trancription
                 text = transcription("small", path)
