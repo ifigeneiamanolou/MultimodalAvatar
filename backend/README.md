@@ -9,7 +9,7 @@ The src/server folder is structured into the following folders:
 1) models : custom web socket manager and pydantic models
 2) routes : FastAPI application, endpoints and web socket connectins
 3) services : business logic used in the routes
-4) utils : utilities such as a consumer-producer class based on an asyncio queue and custom buffers
+4) utils : utilities such as a consumer-producer class 
 The src/tests folder contains scripts to test specific parts of the application. 
 
 # Poetry
@@ -74,7 +74,7 @@ The backend server runs using HTTP protocol (TCP when converted to a WebSocket) 
 
 # Database
 
-Currently, the app uses a PostgreSQL database. It is only used for now to save the feedback generated in the mobile application. To create a database locally, follow these steps:
+Currently, the app uses a PostgreSQL database to store the feedback provided after the interview to the user. It is only used for now to save the feedback generated in the mobile application. To create a database locally, follow these steps:
 
 1. Install postgresSQL using this link : https://www.postgresql.org/download/ remembering the password set during installation
 2. Navigate to the directory where it was installed and run scripts/runpsql
