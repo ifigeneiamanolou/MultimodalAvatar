@@ -1,0 +1,8 @@
+# Ignore all log files no matter where they are located
+**/*.log
+
+# Ignore the notebooks folder
+notebooks/
+
+# Ignore all contents of the /data/testing folder
+/data/testing/*
