@@ -1,0 +1,41 @@
+services:
+  backend:
+    build: 
+      context: ./backend
+    container_name: backend_uvicorn_server
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  frontend:
+    build: 
+      context: ./frontend/my-app-mobile
+    container_name: frontend_server
+    ports:
+      - "8081 : 8081"
+
+  db:
+    restart: always
+    image: postgres:latest
+    container_name: postgres_db
+    shm_size: 1GB
+    ports:
+      - "5432 : 5432"
+    volumes:
+      # Ensure data is not lost on container restart
+      - postgres_data: /var/lib/postgresql
+
+    environment:
+      POSTGRES_USER=postgres
+      POSTGRES_PASSWORD=${POSTGRES_SQL_KEY}
+      POSTGRES_DB=mydb
+
+    deploy:
+      ressources:
+        limits:
+          cpus: "6.0"
+          memory: "4GB"
+
+volumes:
+  postgres_data:

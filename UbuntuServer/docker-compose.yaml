@@ -1,0 +1,7 @@
+services:
+  backend:
+    build: 
+      context: ./backend
+    container_name: backend_uvicorn_server
+    ports:
+      - "8000:8000"
