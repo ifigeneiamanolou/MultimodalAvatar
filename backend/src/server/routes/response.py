@@ -87,4 +87,4 @@ async def generateTextResponse(user_input :LLMInput):
 
 @router.post("/reset/queue")
 async def reset_queue():
-    syncCoordinator.restart()
+    await syncCoordinator.restart()
