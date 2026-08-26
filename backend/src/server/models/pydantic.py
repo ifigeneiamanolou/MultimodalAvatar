@@ -10,18 +10,9 @@ class Message(BaseModel):
     content: str
 
 class LLMInput(BaseModel):
-    emotion : Literal['angry', 'disgusted', 'fearful', 'happy', 'sad', 'surprised', 'neutral'] = 'neutral'
     input : list[Message]
     interview_type : int = Field(int, ge = 1, le = 2)
-    model : str | None = "~google/gemini-flash-latest"
-
-class TTSInput(BaseModel):
-    text : str
-    path : Path | None = None       # Path to store artkit coefficients, if not provided, new file
-
-class EmotionInput(BaseModel):      # Model used in the emotion2vec endpoint
-    model : Literal["iic/emotion2vec_plus_seed", "iic/emotion2vec_plus_base", "iic/emotion2vec_plus_large"]
-    audio : str                     # Encoded audio into a base64 string
+    model : str | None = "openai/gpt-4o-audio-preview"
 
 class UserInput(BaseModel):
     input : list[Message]

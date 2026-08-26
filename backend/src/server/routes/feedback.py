@@ -19,6 +19,7 @@ async def resetConversation(user_input : UserInput):
     Returns:
         ResponseModel: Pydantic model with information on the completion of the upload
     """
+    
     try:
         input_list = [m.model_dump() for m in user_input.input]
         saveJSON(input_list, "../../../data/feedback/conversation-%s.json")

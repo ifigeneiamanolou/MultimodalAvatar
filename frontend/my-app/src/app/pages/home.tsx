@@ -5,7 +5,6 @@ import Success from '../components/SuccessMessage';
 import useRecorder from '../../hooks/record';
 import displayTextGradual from '../../hooks/displayGradual';
 import MarkDown from 'react-markdown';
-import '../../../global.css';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { PixelStreamingWrapper } from '../components/PixelStreamingWrapper';
 import constants from '@/constants/app';
@@ -41,7 +40,7 @@ export default function Home() {
     stopRecording,
     record,
     recorderState,
-  } = useRecorder({ws, setMessagePopUp, setErrorPopUp, setSuccessPopUp, emotion, setAudio});
+  } = useRecorder({ setAudio });
 
   // ======================= Web Socket ======================
   useEffect(() => {
@@ -84,20 +83,16 @@ export default function Home() {
           setErrorPopUp(true);
           setMessagePopUp("No voice detected. Try again.");
           return;
-        } else {
-          const updatedMessages = [
-            ...messages,
-            {
-              id: crypto.randomUUID(),
-              role: "user",
-              content: response
-            }
-          ];
-
-          setMessages(updatedMessages);  
-          // Fetch a response from OpenAI 
-          fetchData(updatedMessages);
         }
+          
+        setMessages(prev => [
+          ...prev,
+          {
+            id: crypto.randomUUID(),
+            role: "user",
+            content: response,
+          },
+        ]);
       }
       ws.current.onerror = (e) => {console.log("ASR socket error : ", e.target);}
       
@@ -123,7 +118,7 @@ export default function Home() {
   };
 
   const fetchData = async (input : {role : string, content : string}[]) => {
-     console.log("CALLING NLP", new Date(), input);
+    console.log("CALLING NLP", new Date(), input);
     const interview_type = interviewer ? 1 : 2; 
     const msgID = startBotMessage();
     const emotionState = emotion.current ? emotion.current : "neutral";
@@ -260,6 +255,80 @@ export default function Home() {
     }
   };
 
+  const handleStopRecording = async () => {
+    const base64string = await stopRecording();
+
+    // Check the string is valid
+    if (!base64string) {
+      setErrorPopUp(true);
+      setMessagePopUp("Could not get audio.");
+      return;
+    }
+
+    // Check the websocket is open
+    if(ws.current?.readyState !== WebSocket.OPEN){
+      setMessagePopUp('Web socket is closed');
+      setErrorPopUp(true);
+      return;
+    }
+
+    // Check that no other nlp response is running
+    if(nlpRunning.current) {
+      setErrorPopUp(true);
+      setMessagePopUp("NLP is already running. Please wait for the response.");
+      return;
+    }
+
+    nlpRunning.current = true;
+
+    // Send to whisper
+    ws.current.send(base64string);
+
+    // Send to OpenAI
+    const interview_type = interviewer ? 1 : 2; 
+    const msgID = startBotMessage();
+    const emotionState = emotion.current ? emotion.current : "neutral";
+
+    try{
+      await fetchEventSource(`${constants.BACKEND_SERVER_URL}/response/audio`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': "text/event-stream",
+        },
+        body: JSON.stringify({
+          input : base64string, 
+          interview_type : interview_type, 
+          emotion : emotionState, 
+          messages : messages
+        }),
+        onopen: async (res : Response) => {
+          if (res.ok && res.status === 200) {
+            console.log("Connection made ", res, " with code ", res.status);
+          } else if (
+            res.status >= 400 &&
+            res.status < 500 &&
+            res.status !== 429
+          ) {
+            console.log("Client side error ", res, "with code ", res.status);
+          }
+        },
+        onmessage(event) {
+          console.log("Data from NLP", event.data);
+          displayTextGradual({text : event.data, messageID : msgID, setMessages});
+        },
+        onclose() {
+          console.log("Connection closed by the server");
+        },
+        onerror(err) {
+          console.log("There was an error from server", err);
+        },
+      },)
+    } finally {
+      nlpRunning.current = false;
+    }
+  };
+
   return (
     <>
       {/* Pop ups */}
@@ -300,7 +369,7 @@ export default function Home() {
 
             {/* Input through speech and ASR*/}
             <audio controls src = {audio}></audio>
-            <button onClick = {recorderState.isRecording ? stopRecording : record} className = "bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700">
+            <button onClick = {recorderState.isRecording ? handleStopRecording : record} className = "bg-black text-white rounded-lg py-2 px-4 hover:shadow-white hover:bg-slate-700">
               {recorderState.isRecording ? 'Stop Recording' : 'Start Recording'}
             </button>
 

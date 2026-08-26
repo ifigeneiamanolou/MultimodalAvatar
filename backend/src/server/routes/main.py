@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from server.routes.feedbackNew import router as feedback
+from backend.src.server.routes.feedback import router as feedback
 from server.routes.response import router as response
 from server.services.fileServices import start_logging
 from server.utils.controller import controller
@@ -38,7 +38,7 @@ async def lifespan(app: FastAPI):
             await client.post(
                 "https://openrouter.ai/api/v1/chat/completions",
                 headers={"Authorization": f"Bearer {OPENROUTER_API_KEY}"},
-                json={"model": "openai/gpt-5-nano", "messages": [{"role": "user", "content": "Hi"}], "max_tokens": 5}
+                json={"model": "openai/gpt-4o-audio-preview", "messages": [{"role": "user", "content": "Hi"}], "max_tokens": 5}
             )
         logger.info("OpenRouter warm-up complete")
     except Exception as e:

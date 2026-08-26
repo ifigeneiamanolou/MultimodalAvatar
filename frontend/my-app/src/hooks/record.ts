@@ -7,19 +7,12 @@ import {
   useAudioRecorderState,
 } from 'expo-audio';
 import { Alert } from 'react-native';
-import constants from '@/constants/app';
 
 type useRecorderProps = {
-    ws : RefObject<WebSocket | null>;
-    setMessagePopUp : (message : string) => void;
-    setErrorPopUp : (show : boolean) => void;
-    setSuccessPopUp : (show : boolean) => void;
-    emotion : RefObject<string>;
     setAudio : (audio : any) => void;
 }
 
-
-export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSuccessPopUp, emotion, setAudio} : useRecorderProps){
+export default function useRecorder({ setAudio} : useRecorderProps){
     const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
     const recorderState = useAudioRecorderState(audioRecorder);
 
@@ -53,45 +46,7 @@ export default function useRecorder({ws, setMessagePopUp, setErrorPopUp, setSucc
         // Fill in the audio to be used for playback by the user
         setAudio(arrayBuffer);
 
-        // Emotion recognition
-        try{
-            const res = await fetch(`${constants.WINDOWS_SERVER_URL}/emotion2vec`, {              // Elastic IP address 
-                method : "POST",
-                body : JSON.stringify({
-                    model : "iic/emotion2vec_plus_seed",
-                    audio : base64string,
-                    language : "en",
-                }),
-                headers : {
-                    "Content-Type" : "application/json"
-                }
-            });
-
-            // Handle the response from emotion recognition endpoint
-            if(res.ok){
-                const emotionData = await res.json();
-                emotion.current = emotionData.data;
-            } else{
-                setMessagePopUp("Error during emotion recognition");
-                setErrorPopUp(true);
-                return;
-            }
-        } catch (e){
-            setMessagePopUp("Error connecting to the Windows server");
-            setErrorPopUp(true);
-            return;
-        }
-
-        // Send the recording audio for ASR through a WebSocket
-        if (ws.current?.readyState !== WebSocket.OPEN){
-            setMessagePopUp("No web socket connection found");
-            setErrorPopUp(true);
-            return;
-        } else {
-            ws.current?.send(base64string);
-            setMessagePopUp("Audio sent");
-            setSuccessPopUp(true);
-        }
+        return base64string;
     };
 
     const record = async () => {

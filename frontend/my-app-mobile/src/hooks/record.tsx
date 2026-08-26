@@ -1,4 +1,4 @@
-import { RefObject, useEffect} from 'react';
+import {useEffect} from 'react';
 import {
   useAudioRecorder,
   AudioModule,
@@ -6,12 +6,6 @@ import {
   setAudioModeAsync,
 } from 'expo-audio';
 import { Alert } from 'react-native';
-import constants from '@/src/constants/app';
-
-type useRecorderProps = {
-    ws : RefObject<WebSocket | null>;           // Web socket connection with whisper
-    emotion : RefObject<string>;                // emotion label from emotion2vec
-}
 
 const showAlert = (title : string, message : string) => {
     Alert.alert(
@@ -23,8 +17,7 @@ const showAlert = (title : string, message : string) => {
     );
 };
 
-
-export default function useRecorder({ws, emotion} : useRecorderProps){
+export default function useRecorder(){
     const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
 
     useEffect(() => { 
@@ -64,42 +57,7 @@ export default function useRecorder({ws, emotion} : useRecorderProps){
             reader.readAsDataURL(audio); 
         });
     
-        // Emotion recognition
-        try{
-            const res = await fetch(`${constants.WINDOWS_SERVER_URL}/emotion2vec`, {              // Elastic IP address 
-                method : "POST",
-                body : JSON.stringify({
-                    model : "iic/emotion2vec_plus_seed",
-                    audio : base64string,
-                    language : "en",
-                }),
-                headers : {
-                    "Content-Type" : "application/json"
-                }
-            });
-
-            // Handle the response from emotion recognition endpoint
-            if(res.ok){
-                const emotionData = await res.json();
-                emotion.current = emotionData.data;
-            } else{
-                console.log('Error during emotion recognition with status %s', res.status);
-                showAlert('Error', 'Error during emotion recognition');
-            }
-        } catch (e){
-            console.log('Error connecting to the windows server : %s', e);
-            showAlert('Error', 'Windows server connection issue');
-        }
-
-        // Send the recording audio for ASR through a WebSocket
-        if (ws.current?.readyState !== WebSocket.OPEN){
-            showAlert('Error', 'Web socket is closed');
-        } else{
-            if(base64string){
-                ws.current?.send(base64string);
-                console.log('audio sent for ASR');
-            }
-        }
+        return base64string;
     };
 
     const record = async () => {

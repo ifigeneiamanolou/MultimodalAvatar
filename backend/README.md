@@ -1,16 +1,14 @@
 # Overview
 
-The backend is built using Python and follows the file structure of most modern ML projects, divided in 3 main folders:
+The backend is built using Python and follows the file structure of most modern ML projects, divided in 2 main folders:
 * data : stored datasets, dictionaries, and data created while running the application
 * src : source code
-* notebooks : contains jupyter notebooks used for testing (Emotion2Vec)
 
 The src/server folder is structured into the following folders:
 1) models : custom web socket manager and pydantic models
 2) routes : FastAPI application, endpoints and web socket connectins
 3) services : business logic used in the routes
 4) utils : utilities such as a consumer-producer class 
-The src/tests folder contains scripts to test specific parts of the application. 
 
 # Poetry
 
