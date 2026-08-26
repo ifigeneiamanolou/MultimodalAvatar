@@ -1,8 +1,0 @@
-2026-08-18 14:33:40 - server.utils.controller - INFO - starting http sessions
-2026-08-18 14:33:50 - server.utils.controller - INFO - Unable to connect to ws://3.129.236.140:7865 with error timed out during opening handshake
-2026-08-18 14:33:51 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
-2026-08-18 14:33:53 - __main__ - INFO - OpenRouter warm-up complete
-2026-08-18 14:33:53 - asyncio - ERROR - Unclosed client session
-client_session: <aiohttp.client.ClientSession object at 0x000002846C4278C0>
-2026-08-18 14:33:53 - asyncio - ERROR - Unclosed client session
-client_session: <aiohttp.client.ClientSession object at 0x000002846C4C9D10>
