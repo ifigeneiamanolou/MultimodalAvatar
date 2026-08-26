@@ -35,7 +35,6 @@ export default function Home() {
 
   // ======================= Hooks =========================
   const [audio, setAudio] = useState();
-  const emotion = useRef('');
   const {
     stopRecording,
     record,
@@ -121,7 +120,6 @@ export default function Home() {
     console.log("CALLING NLP", new Date(), input);
     const interview_type = interviewer ? 1 : 2; 
     const msgID = startBotMessage();
-    const emotionState = emotion.current ? emotion.current : "neutral";
 
     if(nlpRunning.current) {
       setErrorPopUp(true);
@@ -138,7 +136,7 @@ export default function Home() {
           'Content-Type': 'application/json',
           'Accept': "text/event-stream",
         },
-        body: JSON.stringify({input, interview_type : interview_type, emotion : emotionState}),
+        body: JSON.stringify({input, interview_type : interview_type}),
         onopen: async (res : Response) => {
           if (res.ok && res.status === 200) {
             console.log("Connection made ", res, " with code ", res.status);
@@ -287,7 +285,6 @@ export default function Home() {
     // Send to OpenAI
     const interview_type = interviewer ? 1 : 2; 
     const msgID = startBotMessage();
-    const emotionState = emotion.current ? emotion.current : "neutral";
 
     try{
       await fetchEventSource(`${constants.BACKEND_SERVER_URL}/response/audio`, {
@@ -299,7 +296,6 @@ export default function Home() {
         body: JSON.stringify({
           input : base64string, 
           interview_type : interview_type, 
-          emotion : emotionState, 
           messages : messages
         }),
         onopen: async (res : Response) => {

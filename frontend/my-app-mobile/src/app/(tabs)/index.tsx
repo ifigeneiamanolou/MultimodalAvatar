@@ -29,9 +29,6 @@ export default function Index() {
     // Web socket connection with whisper
     const ws = useRef<WebSocket | null>(null);
 
-    // Resulting emotion label from emotion2vec
-    const emotion = useRef('');
-
     // Settings
     const [visible, setVisible] = useState(false);
     const [interviewer, setInterviewer] = useState<boolean>(false);
@@ -139,7 +136,6 @@ export default function Index() {
 
     // Fetch an NLP response
     const fetchData = async () => {
-        const emotionState = emotion.current ? emotion.current : "neutral";
         const input = Array.from(messages.values());
 
         if (nlpRunning.current) {
@@ -157,7 +153,6 @@ export default function Index() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    emotion: emotionState,
                     input: input,
                     interview_type: type
                 })
@@ -300,7 +295,6 @@ export default function Index() {
 
         // Send to OpenAI
         const interview_type = interviewer ? 1 : 2;
-        const emotionState = emotion.current ? emotion.current : "neutral";
 
         try {
             const res = await fetch(`${constants.BACKEND_SERVER_URL}/response/audio/mobile`, {
@@ -312,7 +306,6 @@ export default function Index() {
                 body: JSON.stringify({
                     input: base64string,
                     interview_type: interview_type,
-                    emotion: emotionState,
                     messages: messages
                 }),
             });

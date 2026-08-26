@@ -81,14 +81,11 @@ def load_template(template : str = ["feedback1", "feedback2", "emotions", "inter
     return prompt
 
 def save_response(path : str | None, response : str):
-    """ Save the streamed NLP response locally
+    """ Save the streamed NLP response locally in appending mode
 
     Args:
-        path (str | None): _description_
-        response (str): _description_
-
-    Returns:
-        _type_: _description_
+        path (str | None): the path to save the streamed response
+        response (str): the actual LLM response
     """
 
     # Checks if a new file needs to be opened
