@@ -111,11 +111,11 @@ class OrpheusModel:
         prompt_string = self._format_prompt(prompt, voice)
         print(prompt)
         sampling_params = SamplingParams(
-        temperature=temperature,
-        top_p=top_p,
-        max_tokens=max_tokens,  # Adjust max_tokens as needed.
-        stop_token_ids = None, 
-        repetition_penalty=repetition_penalty, 
+            temperature=temperature,
+            top_p=top_p,
+            max_tokens=max_tokens,              # Adjust max_tokens as needed.
+            stop_token_ids = stop_token_ids,    # If set to None the model doesn't stop at the end of audio
+            repetition_penalty=repetition_penalty, 
         )
 
         token_queue = queue.Queue()
