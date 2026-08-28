@@ -2,6 +2,7 @@ import os
 import numpy as np
 import torchaudio
 import logging
+import soundfile as sf
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))   
 
@@ -51,7 +52,7 @@ def save_audio(audio_bytes : bytes):
         
         # Remove old logging files
         for i in range(1, 11):
-            os.remove(os.path.join(BASE_DIR, f"../../../data/raw/audio-1.webm"))
+            os.remove(os.path.join(BASE_DIR, f"../../../data/raw/audio-{i}.webm"))
             
     # Create a directory to store output from orpheus3b
     os.makedirs(os.path.dirname(DATA_PATH), exist_ok=True)
@@ -60,6 +61,33 @@ def save_audio(audio_bytes : bytes):
         f.write(audio_bytes)
 
     return DATA_PATH
+
+def save_tts_result(audio : list):
+    # Data path
+    DATA_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, next_path("../../../data/processed/tts-%s.wav"))
+    )
+    
+    # Check if 10 logging files are already present
+    MAX_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, "../../../data/processed/tts-11.wav")
+    )
+    if(str(DATA_PATH) == str(MAX_PATH)):
+        # Updated data file path
+        DATA_PATH = os.path.abspath(
+            os.path.join(BASE_DIR, "../../../data/processed/tts-1.wav")
+        )
+        
+        # Remove old logging files
+        for i in range(1, 11):
+            os.path.remove(os.path.join(BASE_DIR, f"../../../data/processed/tts-{i}.wav"))
+            
+    # Create a directory to store output from kokoro
+    os.makedirs(os.path.dirname(DATA_PATH), exist_ok=True)
+    
+    if audio:
+        data = np.concatenate(audio)
+        sf.write(DATA_PATH, data, 24000)
 
 def save_emotion2vec(scores : np.ndarray, emotion : str):
     """ Saves locally the results of emotion2vec inference

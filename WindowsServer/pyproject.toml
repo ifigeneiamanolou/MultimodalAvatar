@@ -28,6 +28,7 @@ dependencies = [
     "torchaudio (==2.11.0)",
     "torchcodec (==0.16)",
     "ctranslate2 (==4.4.0)",
+    "kokoro (>=0.9.4,<0.10.0)",
 ]
 
 [[tool.poetry.source]]

@@ -5,7 +5,6 @@
 
 from fastapi import APIRouter
 from server.models.pydantic import ResponseModel, EmotionInput
-import os
 from server.services.emotionsServices import emotion_detection, processScores
 import base64
 from server.services.fileServices import save_emotion2vec, save_audio

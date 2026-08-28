@@ -10,9 +10,9 @@ class EmotionInput(BaseModel):      # Model used in the emotion2vec endpoint
     language : str                  # Encoded as a language code ie "en"
 
 class TTSInput(BaseModel):
-    sentence : str
-    voice : str = ["tara", "leah", "jess", "leo", "dan", "mia", "zac", "zoe"]
-    model : str = ["canopylabs/orpheus-tts-0.1-finetune-prod"]
+    text : str
+    language_code : Literal['a', 'e', 'f', 'h', 'i', 'j', 'p', 'z']
+    voice : str
 
 class BertInput(BaseModel):
     sentence : str
