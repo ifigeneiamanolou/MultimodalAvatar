@@ -22,13 +22,12 @@ class Controller:
         # General attributes
         self.queue = asyncio.Queue(maxsize = 50)
         self.current_sentence = ""                  # Sentence currently processed
-        self.orpheus_model = "canopylabs/orpheus-tts-0.1-finetune-prod"
-        self.voice = "zoe"                         # Voice used in orpheus3b
         self._sequence_id = 0
+        self.language_code = 'a';                   # Used for kokoro
 
         # Orpheus3B and distilbert
         self.windows_url = "http://3.129.236.140:8000/distilbert"             # DistilBert (elastip ip)
-        self.ubuntu_url = "http://3.151.224.227:8000/orpheus"                 # Orpheus3B (elastic ip)
+        self.ubuntu_url = "http://3.129.236.140:8000/kokoro"                  # Kokoro TTS (elastic ip)
         self._session_windows : Optional[aiohttp.ClientSession] = None        # Asychronous HTTP requests to Windows server
         self._session_ubuntu : Optional[aiohttp.ClientSession] = None         # Asychronous HTTP requests to Ubuntuserver
 
@@ -196,11 +195,11 @@ class Controller:
             self._ue5_ws = None
 
     ############################################################
-    # Orpheus TTS
+    # Kokoro TTS
     ############################################################
 
     async def produce_audio_orpheus(self, sentence : str, id : int):
-        """ Forwards a sentence to Orpheus3B and forwards the output chunks to UE5 along with informative headers
+        """ Forwards a sentence to Kokoro and forwards the output chunks to UE5 along with informative headers
 
         Args:
             sentence (str): the sentence to send to A2F
@@ -209,8 +208,7 @@ class Controller:
         # Configure payload 
         payload ={
             "sentence" : sentence,
-            "voice" : self.voice,
-            "model" : self.orpheus_model
+            "language" : self.language_code
         }
 
         chunk_index = 0

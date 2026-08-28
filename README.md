@@ -4,8 +4,15 @@ This project explores how AI can be used to render conversational agents capable
 
 * frontend -> Build the frontend of the application via Expo
 * backend -> FastAPI backend server locally running connected with the frontend
-* WindowsServer -> Used in the remote AWS Windows server to host Emotion2Vec, Distilert Whisper through a Uvicorn server
-* UbuntuServer -> Used in the remote AWS Ubuntu server to host Orpheus3B through a Uvicorn server
+* WindowsServer -> Used in the remote AWS Windows server to host Emotion2Vec, Distilert, Whisper and Kokoro TTS through a Uvicorn server
+* UbuntuServer -> Used in the remote AWS Ubuntu server to host Orpheus3B through a Uvicorn server as an alternative to Kokoro
+
+## Text to Speech
+When developping the applications 3 TTS alternatives were considered:
+1. ElevenLabs (proper latency but data proprietry issues)
+2. Orpheus3B (introduces significant latency to the pipeline)
+3. Kokoro
+Eventually, Kokoro was chosen as it is one of the smallest and fastest TTS models currently available, with the only caveat being that voice cloning is not possible. Even though, inference would still be fast in a CPU, GPU inference was prefered, since it is already used for the other ML models and the pipeline's time constraints are strict.
 
 
 ## Third-party code

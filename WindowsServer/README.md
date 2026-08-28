@@ -31,3 +31,9 @@ For torchaudio to work properly, ffmpeg is needed. To install and use follow the
 1. Install the full build using this link: https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip
 2. Extract the zip folder
 3. Add the location of the bin folder inside the folder downloaded in the system environment variables
+
+## Setting up espeak-ng
+If you wish to use kokoro as the TTS model in the pipeline of the application espeak-ng has to be 
+installed locally. Given that the instance runs on a Windows EC2 instance, follow these steps:
+1. Open https://github.com/espeak-ng/espeak-ng/releases and click on the latest .msi release
+2. Execute the downloaded installer
