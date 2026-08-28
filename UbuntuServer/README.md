@@ -8,6 +8,14 @@ To run the Uvicorn server within an AWS Ubuntu instance follow the following ins
 
 1. Install poetry
 
+   ```bash
+   sudo apt update
+   sudo apt install pipx -y
+   pipx ensurepath
+   source ~/.bashrc
+   pipx install poetry
+   ```
+   
 2. Install python 3.11
 
    ```bash

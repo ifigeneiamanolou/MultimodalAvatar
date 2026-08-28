@@ -73,9 +73,7 @@ class OrpheusModel:
         engine_args = AsyncEngineArgs(
             model=self.model_name,
             dtype=self.dtype,
-            gpu_memory_utilization=0.6,
             max_model_len = 4096,
-            enforce_eager = True,
             **self.engine_kwargs
         )
         
@@ -108,9 +106,6 @@ class OrpheusModel:
                 all_input_ids = torch.cat([start_token, prompt_tokens.input_ids, end_tokens], dim=1)
                 prompt_string = self.tokenizer.decode(all_input_ids[0])
                 return prompt_string
-
- 
-
 
     def generate_tokens_sync(self, prompt, voice=None, request_id="req-001", temperature=0.6, top_p=0.8, max_tokens=1200, stop_token_ids = [49158], repetition_penalty=1.3):
         prompt_string = self._format_prompt(prompt, voice)
