@@ -71,10 +71,10 @@ async def get_answer_router_stream(input : list, instructions : str, emotion : s
                     logger.info(f"Time until token number {index} is {time.perf_counter() - start} seconds")
                 async for token in bufferSmall.flush_buffer(chunk): 
                     yield f"data: {token}\n\n"                         # Used in the frontend         
-                    async for sentence in buffer.add(token):       
+                    async for sentence in buffer.add(token):
+                        await syncCoordinator.produce(sentence)        # Pass the sentence to the asyncio Queue       
                         path = save_response(path, sentence)    
-                        logger.info(f"Time until sentence {sentence} from NLP : {time.perf_counter() - start}")
-                        await syncCoordinator.produce(sentence)        # Pass the sentence to the asyncio Queue
+                        logger.info(f"Time until sentence [{sentence}] from NLP : {time.perf_counter() - start}")
 
         async for sentence in buffer.flush():
             if(sentence):

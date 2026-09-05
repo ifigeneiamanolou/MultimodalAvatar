@@ -1,7 +1,7 @@
-2026-08-27 14:13:30 - server.utils.controller - INFO - starting http sessions
-2026-08-27 14:13:30 - server.utils.controller - INFO - connected to ws://3.129.236.140:7865
-2026-08-27 14:13:32 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
-2026-08-27 14:13:34 - __main__ - INFO - OpenRouter warm-up complete
-2026-08-27 14:18:41 - server.utils.controller - INFO - Disconnected from UE5 server
-2026-08-27 14:18:41 - server.utils.controller - INFO - Disconnected from windows HTTP session
-2026-08-27 14:18:41 - server.utils.controller - INFO - Disconnected from ubuntu HTTP session
+2026-08-28 17:37:02 - server.utils.controller - INFO - starting http sessions
+2026-08-28 17:37:03 - server.utils.controller - INFO - connected to ws://3.129.236.140:7865
+2026-08-28 17:37:04 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-28 17:37:06 - __main__ - INFO - OpenRouter warm-up complete
+2026-08-28 17:37:28 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-08-28 17:37:29 - server.services.nlpServices - INFO - Time until first chunk from NLP : 3.446116000006441 seconds
+2026-08-28 17:37:30 - server.services.nlpServices - ERROR - Error during processing of NLP : can only concatenate str (not "list") to str

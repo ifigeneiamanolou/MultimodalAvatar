@@ -16,18 +16,20 @@ class Controller:
         distilbert or audio chunk (in raw binary format) are received, they are sent to A2F, with the latter 
         accompanied with an audio header containing information like the length of the audio chunk and the number of 
         the sentence or the audio chunk. Once both tasks have finished, the consumer forwards the next sentence to 
-        Orpheus3B and DistilBert.
+        Kokoro and DistilBert.
     """
     def __init__(self):
         # General attributes
         self.queue = asyncio.Queue(maxsize = 50)
         self.current_sentence = ""                  # Sentence currently processed
         self._sequence_id = 0
-        self.language_code = 'a';                   # Used for kokoro
+        self.language_code = "a";                   # Language for kokoro
+        self.voice = "af_bella";                            #  Voice for kokoro
 
-        # Orpheus3B and distilbert
-        self.windows_url = "http://3.129.236.140:8000/distilbert"             # DistilBert (elastip ip)
-        self.ubuntu_url = "http://3.129.236.140:8000/kokoro"                  # Kokoro TTS (elastic ip)
+
+        # Kokoro TTS and distilbert
+        self.distil_url = "http://3.129.236.140:8000/distilbert"              # DistilBert (elastip ip)
+        self.kokoro_url = "http://3.129.236.140:8000/kokoro"                  # Kokoro TTS (elastic ip)
         self._session_windows : Optional[aiohttp.ClientSession] = None        # Asychronous HTTP requests to Windows server
         self._session_ubuntu : Optional[aiohttp.ClientSession] = None         # Asychronous HTTP requests to Ubuntuserver
 
@@ -131,7 +133,7 @@ class Controller:
                 # Wait for both tasks to finish to move to the next sentence
                 start = time.perf_counter()
                 async with asyncio.TaskGroup() as tg:
-                    tg.create_task(self.produce_audio_orpheus(self.current_sentence, id))
+                    tg.create_task(self.produce_audio_kokoro(self.current_sentence, id))
                     tg.create_task(self.emotion(self.current_sentence, id))
                 end = time.perf_counter()
                 logger.info(f"Total processing time of sentence [{sentence}] is {end - start} seconds")
@@ -198,7 +200,7 @@ class Controller:
     # Kokoro TTS
     ############################################################
 
-    async def produce_audio_orpheus(self, sentence : str, id : int):
+    async def produce_audio_kokoro(self, sentence : str, id : int):
         """ Forwards a sentence to Kokoro and forwards the output chunks to UE5 along with informative headers
 
         Args:
@@ -206,37 +208,38 @@ class Controller:
             id (int): the id of the sentence
         """
         # Configure payload 
-        payload ={
-            "sentence" : sentence,
-            "language" : self.language_code
+        payload = {
+            "text" : sentence,
+            "language_code" : self.language_code,
+            "voice" : self.voice
         }
 
         chunk_index = 0
-        # Send the sentence to Orpheus3B
+        # Send the sentence to Kokoro TTS
         try:
             start = time.perf_counter()
-            async with self._session_ubuntu.post(self.ubuntu_url, json = payload) as resp:
+            async with self._session_ubuntu.post(self.kokoro_url, json = payload) as resp:
                 index = 0
                 async for audio_chunk in resp.content.iter_any():
                     if index % 10 == 0:
-                        logger.info(f"Time until token {index} is received in the controller from Oprheus3B is {time.perf_counter() - start}")
+                        logger.info(f"Time until token {index} is received in the controller from Kokoro is {time.perf_counter() - start}")
                     if not audio_chunk:
                         continue
                     await self.send_audio_bytes(id, chunk_index, audio_chunk)
                     chunk_index += 1
                     index += 1
             await self.send_audio_end(id)
-            logger.info(f"Time sentence [{sentence}] is finished from Oprheus is {time.perf_counter() - start}")
+            logger.info(f"Time sentence [{sentence}] is finished from Kokoro is {time.perf_counter() - start}")
         except Exception as e:
-            logger.error(msg = f"Error during orpheus 3b remote upload :  {type(e).__name__}: {e}", exc_info=True)
+            logger.error(msg = f"Error during kokoro remote upload :  {type(e).__name__}: {e}", exc_info=True)
 
     async def send_audio_bytes(self, id : int, chunk_index : int, audio_chunk : bytes):
-        """ Sends the audio chunk received by Oprheus3B to A2F along with informative headers
+        """ Sends the audio chunk received by Kokoro to A2F along with informative headers
 
         Args:
             id (int): the id of the sentence the chunk belongs to
             chunk_index (int): the id of the chunk
-            audio_chunk (bytes): the audio chunk received by Oprheus3B
+            audio_chunk (bytes): the audio chunk received by Kokoro
         """
         await self.ensure_connection()
         if self._ue5_ws is None:
@@ -317,7 +320,7 @@ class Controller:
 
     async def produce_emotion(self, sentence) -> dict[str, any]:
         payload = {"sentence" : sentence}
-        async with self._session_windows.post(self.windows_url, json = payload) as resp:
+        async with self._session_windows.post(self.distil_url, json = payload) as resp:
             return await resp.json()
 
     async def send_ue5_emotion(self, emotions : dict[str, any], id : int):

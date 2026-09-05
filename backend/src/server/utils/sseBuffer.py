@@ -39,7 +39,6 @@ class sseBuffer:
                     data_obj = json.loads(data)
                     content = data_obj["choices"][0]["delta"].get("content")
                     if content:
-                        print(f"RAW CONTENT: {content!r}") 
                         yield content
                 except json.JSONDecodeError:
                     continue
