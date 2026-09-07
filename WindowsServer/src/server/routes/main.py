@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 import logging
 from server.services.whisperServices import load_model as load_whisper
 from server.services.whisperServices import transcription
-from server.services.fileServices import read_audio, start_logging
+from server.services.fileServices import start_logging
 import torch
 
 # Configure basic logging

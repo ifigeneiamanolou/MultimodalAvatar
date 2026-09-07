@@ -1,5 +1,5 @@
 [project]
-name = "windowsserver"
+name = "WindowsServer"
 version = "0.1.0"
 description = ""
 authors = [
@@ -7,7 +7,28 @@ authors = [
 ]
 requires-python = "^3.12, <3.13"
 dependencies = [
+    "fastapi (>=0.141.1,<0.142.0)",
+    "numpy (>=2.5.3,<3.0.0)",
+    "torch (>=2.14.0,<3.0.0)",
+    "torchaudio (>=2.11.0,<3.0.0)",
+    "torchcodec (>=0.16.0,<0.17.0)",
+    "torchvision (>=0.29.0,<0.30.0)",
+    "uvicorn (>=0.52.4,<0.53.0)"
 ]
+
+[[tool.poetry.source]]
+name = "torch"
+url = "https://download.pytorch.org/whl/cu130"
+priority = "explicit"
+
+
+[tool.poetry.dependencies]
+torch = {source = "torch"}
+torchaudio = {source = "torch"}
+torchcodec = {source = "torch"}
+torchvision = {source = "torch"}
+[tool.poetry]
+packages = [{include = "server", from = "src"}]
 
 
 [build-system]
