@@ -105,7 +105,8 @@ async def text_mobile(input : list, instructions : str, model : str):
     save(transcript)
 
     # Return the response to the frontend
-    return transcript
+    yield transcript
+    return
     
 async def audio_mobile(input : list, instructions : str, model : str, audio : str):
     url = "https://openrouter.ai/api/v1/chat/completions"
@@ -286,7 +287,8 @@ async def text_web(input : list, instructions : str, model : str):
     save(transcript)
 
     # Return the response to the frontend
-    return transcript
+    yield transcript
+    return
     
 async def audio_web(input : list, instructions : str, model : str, audio : str):
     url = "https://openrouter.ai/api/v1/chat/completions"
@@ -379,5 +381,6 @@ async def audio_web(input : list, instructions : str, model : str, audio : str):
     save(transcript)
 
     # Return the response to the frontend
-    return transcript
+    yield transcript
+    return
 
