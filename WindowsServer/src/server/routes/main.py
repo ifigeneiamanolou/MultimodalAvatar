@@ -12,6 +12,8 @@ from server.services.whisperServices import transcription
 from server.services.bertServices import load as load_distilbert
 from server.services.bertServices import bert_ready_inference
 from server.services.fileServices import read_audio, start_logging
+from server.services.kokoroServices import load_kokoro
+from server.routes.kokoroTTS import router as kokoroRouter
 import torch
 
 # Configure basic logging
@@ -40,13 +42,15 @@ async def lifespan(app: FastAPI):
     logger.info(f"Sample rate for current audio file is {sr}")
     emotion_detection(waveform, "en", "iic/emotion2vec_plus_seed")
     transcription("tiny", "../../../data/raw/Warmup.m4a")
+    load_kokoro(["a"])
     
-    # Uncomment this only to test inference time
+    # UNCOMMENT THIS ONLY TO TEST INFERENCE TIMES AFTER WARM UP
     logger.info(f"======== RUNNING TEST FOR INFERENCE TIMES =======")
     bert_ready_inference(WARMUP_SENTENCE)
     waveform, sr = read_audio("../../../data/raw/Warmup.m4a")
     emotion_detection(waveform, "en", "iic/emotion2vec_plus_seed")
     transcription("tiny", "../../../data/raw/Warmup.m4a")
+    load_kokoro(["a"])
 
     # Run the server
     yield
@@ -58,6 +62,7 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(whisper)
 app.include_router(emotion)
 app.include_router(bert)
+app.include_router(kokoroRouter)
 
 
 origins = [

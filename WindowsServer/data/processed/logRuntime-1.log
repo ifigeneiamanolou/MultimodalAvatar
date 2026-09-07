@@ -204,3 +204,4 @@
 2026-08-28 10:46:56 - faster_whisper - INFO - Processing audio with duration 00:08.533
 2026-08-28 10:46:56 - faster_whisper - INFO - VAD filter removed 00:02.101 of audio
 2026-08-28 10:46:56 - server.services.whisperServices - INFO - time for whisper inference : 0.3470689000000675 seconds
+2026-08-28 12:56:27 - __main__ - INFO - Windows Server shutting down ...

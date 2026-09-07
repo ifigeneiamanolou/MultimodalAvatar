@@ -29,6 +29,7 @@ dependencies = [
     "torchcodec (==0.16)",
     "ctranslate2 (==4.4.0)",
     "kokoro (>=0.9.4,<0.10.0)",
+    "hf-xet (>=1.6.0,<2.0.0)",
 ]
 
 [[tool.poetry.source]]
