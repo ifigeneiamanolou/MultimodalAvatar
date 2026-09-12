@@ -147,7 +147,7 @@ export default function Index() {
         const type = interviewer ? 1 : 2;
 
         try {
-            const res = await fetch(`${constants.BACKEND_SERVER_URL}/response/stream/mobile`, {
+            const res = await fetch(`${constants.BACKEND_SERVER_URL}/response/mobile`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -296,7 +296,7 @@ export default function Index() {
         // Send to OpenAI
         const interview_type = interviewer ? 1 : 2;
 
-        try {
+        try{
             const res = await fetch(`${constants.BACKEND_SERVER_URL}/response/audio/mobile`, {
                 method: 'POST',
                 headers: {
@@ -306,7 +306,7 @@ export default function Index() {
                 body: JSON.stringify({
                     input: base64string,
                     interview_type: interview_type,
-                    messages: messages
+                    messages: Array.from(messages.values()),
                 }),
             });
 

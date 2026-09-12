@@ -12,15 +12,15 @@ class Message(BaseModel):
 # Used when calling the LLM with text input
 class LLMInput(BaseModel):
     input : list[Message]
-    interview_type : int = Field(int, ge = 1, le = 2)
-    model : str | None = "openai/gpt-4o-audio-preview"
+    interview_type : int = Field(ge = 1, le = 2)
+    model : str | None = "openai/gpt-audio"
 
 # Used when calling the LLM with audio input
 class LLMAudioInput(BaseModel):
     input : str             # base64 encoded string
-    interview_type : int = Field(int, ge = 1, le = 2)            
-    messages : list[Message] 
-    model : str | None = "openai/gpt-4o-audio-preview"
+    interview_type : int = Field(ge = 1, le = 2)            
+    messages : list[Message]
+    model : str | None = "openai/gpt-audio"
 
 # Used to generate feedback
 class UserInput(BaseModel):

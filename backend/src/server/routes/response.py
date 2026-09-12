@@ -53,7 +53,7 @@ async def generateresponse(user_input : LLMAudioInput):
 @router.post("/response/audio/mobile")
 async def generateResponse(user_input : LLMAudioInput):
     response = await audio_mobile(
-        input = [m.model_dump() for m in user_input.model],
+        input = [m.model_dump() for m in user_input.messages],
         instructions = prompt1 if user_input.interview_type == 1 else prompt2,
         model = user_input.model,
         audio = user_input.input

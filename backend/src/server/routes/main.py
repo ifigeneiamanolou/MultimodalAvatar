@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.server.routes.feedback import router as feedback
+from server.routes.feedback import router as feedback
 from server.routes.response import router as response
 from server.services.fileServices import start_logging
 from server.utils.controller import controller

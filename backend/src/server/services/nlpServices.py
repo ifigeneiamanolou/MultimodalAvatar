@@ -8,6 +8,7 @@ import asyncio
 import httpx
 import logging
 import time
+import re
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -25,10 +26,10 @@ http_client = httpx.AsyncClient()
 
 async def text_mobile(input : list, instructions : str, model : str):
     url = "https://openrouter.ai/api/v1/chat/completions"
-    syncCoordinator.restart()
+    await syncCoordinator.restart()
 
     # Signal to UE5 to start a filler
-    syncCoordinator.signal_filler()
+    await syncCoordinator.signal_filler()
 
     # Format the input to the LLM
     input.append(
@@ -63,7 +64,7 @@ async def text_mobile(input : list, instructions : str, model : str):
     try:
         index = 0
         async with http_client.stream(url = url, headers = headers, json = payload, method = "POST") as r:
-            async for line in r.iter_lines():
+            async for line in r.aiter_lines():
                 # Debugging logs
                 if index == 0:
                     logger.info(f"Time until first chunk from NLP : {time.perf_counter() - start} seconds")
@@ -110,13 +111,13 @@ async def text_mobile(input : list, instructions : str, model : str):
     
 async def audio_mobile(input : list, instructions : str, model : str, audio : str):
     url = "https://openrouter.ai/api/v1/chat/completions"
-    syncCoordinator.restart()
+    await syncCoordinator.restart()
 
     # Signal to UE5 to start a filler
-    syncCoordinator.signal_filler()
+    await syncCoordinator.signal_filler()
 
     # Format the input to the LLM
-    inputllm = input.append(
+    input.append(
         {
             "type": "input_audio",
             "input_audio": {
@@ -125,6 +126,9 @@ async def audio_mobile(input : list, instructions : str, model : str, audio : st
                 "format": "wav"        
             }
         },
+    )
+
+    input.append(
         {
             "role" : "developer",
             "content" : instructions
@@ -134,7 +138,7 @@ async def audio_mobile(input : list, instructions : str, model : str, audio : st
     # Format the payload
     payload = {
         "model": model,
-        "messages": inputllm,
+        "messages": input,
         "modalities": ["text", "audio"],        # Defines the output format
         "audio": {
             "voice": "alloy",
@@ -156,7 +160,7 @@ async def audio_mobile(input : list, instructions : str, model : str, audio : st
     try:
         index = 0
         async with http_client.stream(url = url, headers = headers, json = payload, method = "POST") as r:
-            async for line in r.iter_lines():
+            async for line in r.aiter_lines():
                 # Debugging logs
                 if index == 0:
                     logger.info(f"Time until first chunk from NLP : {time.perf_counter() - start} seconds")
@@ -188,7 +192,7 @@ async def audio_mobile(input : list, instructions : str, model : str, audio : st
             # Signal to UE5 the end of audio
             syncCoordinator.produce("[[DONE]]")
     except Exception as e:
-        logger.error(msg = f"Error during processing of NLP : {e}")
+        logger.error(msg = f"Error during processing of NLP : {e}, {e.}")
     finally:   
         await consumerTask              # Await for the queue to finish consuming the sentences  
 
@@ -206,10 +210,10 @@ async def audio_mobile(input : list, instructions : str, model : str, audio : st
 
 async def text_web(input : list, instructions : str, model : str):
     url = "https://openrouter.ai/api/v1/chat/completions"
-    syncCoordinator.restart()
+    await syncCoordinator.restart()
 
     # Signal to UE5 to start a filler
-    syncCoordinator.signal_filler()
+    await syncCoordinator.signal_filler()
 
     # Format the input to the LLM
     input.append(
@@ -244,7 +248,7 @@ async def text_web(input : list, instructions : str, model : str):
     try:
         index = 0
         async with http_client.stream(url = url, headers = headers, json = payload, method = "POST") as r:
-            async for line in r.iter_lines():
+            async for line in r.aiter_lines():
                 # Debugging logs
                 if index == 0:
                     logger.info(f"Time until first chunk from NLP : {time.perf_counter() - start} seconds")
@@ -292,10 +296,10 @@ async def text_web(input : list, instructions : str, model : str):
     
 async def audio_web(input : list, instructions : str, model : str, audio : str):
     url = "https://openrouter.ai/api/v1/chat/completions"
-    syncCoordinator.restart()
+    await syncCoordinator.restart()
 
     # Signal to UE5 to start a filler
-    syncCoordinator.signal_filler()
+    await syncCoordinator.signal_filler()
 
     # Format the input to the LLM
     inputllm = input.append(
@@ -338,7 +342,7 @@ async def audio_web(input : list, instructions : str, model : str, audio : str):
     try:
         index = 0
         async with http_client.stream(url = url, headers = headers, json = payload, method = "POST") as r:
-            async for line in r.iter_lines():
+            async for line in r.aiter_lines():
                 # Debugging logs
                 if index == 0:
                     logger.info(f"Time until first chunk from NLP : {time.perf_counter() - start} seconds")
@@ -384,3 +388,65 @@ async def audio_web(input : list, instructions : str, model : str, audio : str):
     yield transcript
     return
 
+
+###########################################
+# FEEDBACK
+###########################################
+
+def input_processing(input : list, instructions : str, emotion : str, role : str) -> list:
+    """ Preprocess the user input to include emotion detected and instructions
+
+    Args:
+        input (list): Conversation between the avatar and the LLM
+        instructions (str): developer instructions
+        emotion (str): detected emotion label
+        role (str) : sting used to denote system instructions
+    Returns:
+        list: processed input to the LLM
+    """
+
+    re.sub(r"\[EMOTION\]", emotion, instructions)
+
+
+    # Developer instructions to the input
+    input.append(
+        {
+            "role" : role,
+            "content" : instructions
+        }
+    )
+
+    return input
+
+async def get_answer_router(input : list, instructions : str, emotion : str, model : str) -> str:
+    """ Stream the model's response through OpenRouter API (gpt-4o-mini)
+
+    Args:
+        input (list): Input of the user
+        instructions (str): Default instructions used in every prompt
+        emotion (str) : emotion label
+        model (str) : model name to use for inference
+
+    Returns:
+        str : response of the LLM 
+    """
+    url = "https://openrouter.ai/api/v1/chat/completions"
+
+    # Authorization headers for OpenRouter API
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    # Input processing
+    input = input_processing(input, instructions, emotion, "system")
+
+    # Request payload
+    payload = {
+        "model": model,
+        "messages": input,
+        "stream": False
+    }
+
+    with requests.post(url, headers = headers, json = payload, stream=True) as response:
+        return response.choices[0].message.content

@@ -1,0 +1,28 @@
+2026-09-08 00:22:51 - server.utils.controller - INFO - connected to ws://3.129.236.140:7865
+2026-09-08 00:22:52 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-09-08 00:22:52 - src.server.routes.main - INFO - OpenRouter warm-up complete
+2026-09-08 00:23:01 - server.utils.controller - INFO - Disconnected from UE5 server
+2026-09-08 00:23:04 - server.utils.controller - INFO - connected to ws://3.129.236.140:7865
+2026-09-08 00:23:04 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-09-08 00:23:04 - src.server.routes.main - INFO - OpenRouter warm-up complete
+2026-09-08 00:23:06 - server.utils.controller - INFO - Disconnected from UE5 server
+2026-09-08 00:23:08 - server.utils.controller - INFO - connected to ws://3.129.236.140:7865
+2026-09-08 00:23:09 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-09-08 00:23:09 - src.server.routes.main - INFO - OpenRouter warm-up complete
+2026-09-08 00:23:09 - server.utils.controller - INFO - Disconnected from UE5 server
+2026-09-08 00:23:12 - server.utils.controller - INFO - connected to ws://3.129.236.140:7865
+2026-09-08 00:23:12 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-09-08 00:23:12 - src.server.routes.main - INFO - OpenRouter warm-up complete
+2026-09-08 00:23:22 - server.utils.controller - INFO - Disconnected from UE5 server
+2026-09-08 00:23:23 - server.utils.controller - INFO - connected to ws://3.129.236.140:7865
+2026-09-08 00:23:24 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-09-08 00:23:24 - src.server.routes.main - INFO - OpenRouter warm-up complete
+2026-09-08 00:23:35 - server.utils.controller - INFO - Disconnected from UE5 server
+2026-09-08 00:23:37 - server.utils.controller - INFO - connected to ws://3.129.236.140:7865
+2026-09-08 00:23:38 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-09-08 00:23:38 - src.server.routes.main - INFO - OpenRouter warm-up complete
+2026-09-08 00:23:43 - server.utils.controller - INFO - Disconnected from UE5 server
+2026-09-08 00:23:46 - server.utils.controller - INFO - connected to ws://3.129.236.140:7865
+2026-09-08 00:23:47 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-09-08 00:23:47 - src.server.routes.main - INFO - OpenRouter warm-up complete
+2026-09-08 00:23:55 - server.utils.controller - INFO - Disconnected from UE5 server

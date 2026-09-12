@@ -1,0 +1,4 @@
+2026-09-08 01:54:13 - server.utils.controller - INFO - connected to ws://3.129.236.140:7865
+2026-09-08 01:54:14 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 400 Bad Request"
+2026-09-08 01:54:14 - __main__ - INFO - OpenRouter warm-up complete
+2026-09-08 01:55:46 - server.utils.controller - INFO - Disconnected from UE5 server

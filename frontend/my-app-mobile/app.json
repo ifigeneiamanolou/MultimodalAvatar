@@ -6,7 +6,6 @@
     "orientation": "portrait",
     "scheme": "myappmobile",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "icon": "./assets/icons/ios-icon.png"
@@ -14,13 +13,10 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#e6f4fe",
-        "foregroundImage": "./assets/icons/android-icon-foreground.png",
         "backgroundImage": "./assets/icons/android-icon-background.png",
         "monochromeImage": "./assets/icons/android-icon-monochrome.png"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "usesCleartextTraffic": true,
       "permissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.MODIFY_AUDIO_SETTINGS",
@@ -46,7 +42,12 @@
           }
         }
       ],
-      "expo-audio"
+      "expo-audio",
+      "expo-font",
+      "expo-image",
+      "expo-status-bar",
+      "expo-web-browser",
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true,
